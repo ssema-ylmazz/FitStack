@@ -17,9 +17,6 @@
 
 > Fitness Takip Sistemi
 
-**Referans Uygulama:**
-
-> [Geeksinim Analizi](gereksinimler.md)
 
 ---
 
@@ -33,7 +30,7 @@
 
 **Grup Adı:**
 
-> Dev Fit
+> DevFit
 
 **Ekip Üyeleri:**
 
