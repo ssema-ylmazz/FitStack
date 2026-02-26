@@ -88,7 +88,7 @@ Harika Sema! 👏 Şimdi verdiğin bilgilerle profesyonel, temiz ve hocanın kol
 
 Proje dokümantasyonuna aşağıdaki linkten erişebilirsiniz:
 
-1. [Gereksinim Analizi](#) *(Geeksinim Analizi linki buraya gelecek)*
+1. [Gereksinim Analizi](gereksinimler.md)
 
 ---
 
