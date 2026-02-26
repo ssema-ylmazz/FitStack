@@ -1,3 +1,7 @@
+##  **Gereksinim Analizi**
+---
+
+### Tüm Gereksinimler:
 1. Kullanıcı sisteme kayıt olur.(POST)
 2. Kullanıcı sisteme giriş yapar. (POST)
 3.  Kullanıcı profil bilgilerini görüntüler. (GET)
@@ -15,3 +19,6 @@
 15. Kullanıcı günlük seri sayısını görüntüler. (GET)
 16. Kullanıcı seri bilgilerini günceller. (PUT)
 17. Kullanıcı antrenman kaydını siler. (DELETE)
+
+### Gereksinim Dağılımları:
+1.[Sema Nur Yılmaz'ın Gereksinimleri]
