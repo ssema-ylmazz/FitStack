@@ -18,7 +18,7 @@
 14. Kullanıcı kazandığı rozetleri görüntüler. (GET)
 15. Kullanıcı günlük seri sayısını görüntüler. (GET)
 16. Kullanıcı seri bilgilerini günceller. (PUT)
-17. Kullanıcı antrenman kaydını siler. (DELETE)
+17. Kullanıcı antrenman kaydını siler. (DELETE) 
 
 ### Gereksinim Dağılımları:
 1.[Sema Nur Yılmaz'ın Gereksinimleri](semagereksinimler.md)
