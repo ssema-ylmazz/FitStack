@@ -22,7 +22,7 @@ Harika Sema! 👏 Şimdi verdiğin bilgilerle profesyonel, temiz ve hocanın kol
 
 **Referans Uygulama:**
 
-> [Geeksinim Analizi](#) *(linki daha sonra ekleyebilirsiniz)*
+> [Geeksinim Analizi](gereksinimler.md)
 
 ---
 
