@@ -21,4 +21,4 @@
 17. Kullanıcı antrenman kaydını siler. (DELETE)
 
 ### Gereksinim Dağılımları:
-1.[Sema Nur Yılmaz'ın Gereksinimleri]
+1.[Sema Nur Yılmaz'ın Gereksinimleri](semagereksinimler.md)
