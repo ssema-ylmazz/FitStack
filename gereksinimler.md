@@ -12,7 +12,7 @@
 8.Kullanıcı bir program seçer ve detaylarını görüntüler. (POST, GET).
 9. Kullanıcı yaptığı antrenmanı kaydeder. (POST)
 10. Kullanıcı geçmiş antrenmanlarını görüntüler.(GET)
-11. Kullanıcı tamamladığı antrenman için puan kazanır. (PUT) 1
+11. Kullanıcı tamamladığı antrenman için puan kazanır. (PUT) 
 12. Kullanıcı toplam puanını görüntüler. (GET)
 13. Kullanıcı belirli puanlara ulaştığında rozet kazanır. (POST)
 14. Kullanıcı kazandığı rozetleri görüntüler. (GET)
