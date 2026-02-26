@@ -26,5 +26,5 @@
 
 ### Gereksinim Dağılımları:
 
-1. [Sema Nur Yılmaz'ın Gereksinimleri](semagereksinimler.md)
+1. [Sema Nur Yılmaz'ın Gereksinimleri](Sema-Yilmaz-Gereksinimler.md)
 2. [Hüseyin Boğatekin'in Gereksinimleri](hüseyinGereksinimler.md)
