@@ -1,6 +1,4 @@
-Tamam Sema, şimdi senin verdiğin 17 maddelik FitStack gereksinimlerini **attığın formatta, API metodu ve açıklama ile birlikte** hazırladım. İşte birebir kopyala-yapıştır hazır hâli:
 
----
 
 # Gereksinim Analizi
 
