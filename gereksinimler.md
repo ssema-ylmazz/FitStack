@@ -3,7 +3,7 @@
 
 ### Tüm Gereksinimler:
 1. Kullanıcı sisteme kayıt olur.(POST)
-2. Kullanıcı sisteme giriş yapar. (POST)
+2. Kullanıcı sisteme giriş yapar. (POST) 
 3.  Kullanıcı profil bilgilerini görüntüler. (GET)
 4.  4. Kullanıcı profil bilgilerini günceller. (PUT)
 5. Kullanıcı hesabını siler. (DELETE)
