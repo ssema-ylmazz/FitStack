@@ -22,4 +22,4 @@
 
 ### Gereksinim Dağılımları:
 1.[Sema Nur Yılmaz'ın Gereksinimleri](semagereksinimler.md)
-2.[Hüseyin Boğatekin'in Gereksinimleri(hüseyinBogatekin.md)
+2.[Hüseyin Boğatekin'in Gereksinimleri](hüseyinBogatekin.md)
