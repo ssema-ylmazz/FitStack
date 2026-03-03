@@ -1,7 +1,9 @@
 
 
 # FitStack
-
+<p align="center">
+  <img src="images/FitStack.png" width="800">
+</p>
 
 ---
 
