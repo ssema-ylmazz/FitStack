@@ -49,5 +49,5 @@
 Proje dokümantasyonuna aşağıdaki linkten erişebilirsiniz:
 
 1. [Gereksinim Analizi](gereksinimler.md)
-2. [REST API Tasarımı](openapi.yaml)
+2. [REST API Tasarımı](API-Tasarimi.md)
 
