@@ -1,9 +1,8 @@
 
 
 # FitStack
-<p align="center">
-  <img src="images/FitStack.png" width="800">
-</p>
+
+<img width="2752" height="1536" alt="Gemini_Generated_Image_lxc6ralxc6ralxc6" src="https://github.com/user-attachments/assets/2ee58bed-56eb-4527-b161-f3060cd81d83" />
 
 ---
 
