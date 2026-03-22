@@ -15,23 +15,10 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server çalışıyor: http://localhost:${PORT}`);
 });
-app.post('/users/login', (req, res) => {
-  const { email, password } = req.body;
 
-  // Basit kontrol (şimdilik fake)
-  if (email === 'test@mail.com' && password === '123456') {
-    return res.status(200).json({
-      message: 'Giriş başarılı',
-      user: {
-        email: email
-      }
-    });
-  } else {
-    return res.status(401).json({
-      message: 'Email veya şifre yanlış'
-    });
-  }
-});
+/* ---------------- USERS ---------------- */
+
+// KAYIT
 app.post('/users/register', (req, res) => {
   const { email, password } = req.body;
 
@@ -43,79 +30,49 @@ app.post('/users/register', (req, res) => {
 
   return res.status(201).json({
     message: 'Kayıt başarılı',
-    user: {
-      email: email
-    }
+    user: { email }
   });
 });
+
+// PROFİL GÖRÜNTÜLEME
 app.get('/users/profile', (req, res) => {
   return res.status(200).json({
     email: "test@mail.com",
-    name: "Hüseyin",
-    level: "Başlangıç"
+    name: "Sema",
+    level: "Orta"
   });
 });
-app.put('/users/profile', (req, res) => {
-  const { name, level } = req.body;
 
-  return res.status(200).json({
-    message: 'Profil güncellendi',
-    updatedProfile: {
-      name: name,
-      level: level
-    }
-  });
-});
+// HESAP SİLME
 app.delete('/users/profile', (req, res) => {
   return res.status(200).json({
     message: 'Kullanıcı hesabı silindi'
   });
 });
+
+/* ---------------- PROGRAMS ---------------- */
+
+// PROGRAM FİLTRELEME
 app.get('/programs', (req, res) => {
+  const { level } = req.query;
+
   const programs = [
     { id: 1, name: 'Başlangıç Programı', level: 'Başlangıç' },
     { id: 2, name: 'Orta Seviye Program', level: 'Orta' },
     { id: 3, name: 'İleri Seviye Program', level: 'İleri' }
   ];
+
+  if (level) {
+    const filtered = programs.filter(p => p.level === level);
+    return res.status(200).json(filtered);
+  }
 
   res.status(200).json(programs);
 });
-app.get('/programs/:id', (req, res) => {
-  const programs = [
-    { id: 1, name: 'Başlangıç Programı', level: 'Başlangıç' },
-    { id: 2, name: 'Orta Seviye Program', level: 'Orta' },
-    { id: 3, name: 'İleri Seviye Program', level: 'İleri' }
-  ];
 
-  const programId = parseInt(req.params.id);
+/* ---------------- WORKOUTS ---------------- */
 
-  const program = programs.find(p => p.id === programId);
-
-  if (!program) {
-    return res.status(404).json({
-      message: 'Program bulunamadı'
-    });
-  }
-
-  res.status(200).json(program);
-});
-app.post('/programs/:id/select', (req, res) => {
-  const programId = req.params.id;
-
-  return res.status(200).json({
-    message: `Program ${programId} seçildi`,
-    selectedProgramId: programId
-  });
-});
-app.get('/workouts', (req, res) => {
-  const workouts = [
-    { id: 1, name: 'Şınav', duration: '10 dk' },
-    { id: 2, name: 'Koşu', duration: '20 dk' },
-    { id: 3, name: 'Plank', duration: '5 dk' }
-  ];
-
-  res.status(200).json(workouts);
-});
+// ANTRENMAN EKLE
 app.post('/workouts', (req, res) => {
   const { name, duration } = req.body;
 
@@ -127,24 +84,41 @@ app.post('/workouts', (req, res) => {
 
   return res.status(201).json({
     message: 'Workout eklendi',
-    workout: {
-      name,
-      duration
-    }
-  });
-});app.delete('/workouts/:id', (req, res) => {
-  const workoutId = req.params.id;
-
-  return res.status(200).json({
-    message: `Workout ${workoutId} silindi`
+    workout: { name, duration }
   });
 });
+
+// ANTRENMAN SİL
+app.delete('/workouts/:id', (req, res) => {
+  return res.status(200).json({
+    message: `Workout ${req.params.id} silindi`
+  });
+});
+
+// PUAN KAZANMA
 app.put('/workouts/:id/points', (req, res) => {
-  const workoutId = req.params.id;
   const { points } = req.body;
 
   return res.status(200).json({
-    message: `Workout ${workoutId} puanı güncellendi`,
-    newPoints: points
+    message: `Workout ${req.params.id} puan eklendi`,
+    gainedPoints: points
+  });
+});
+
+/* ---------------- BADGES ---------------- */
+
+// ROZET KAZANMA
+app.post('/badges', (req, res) => {
+  return res.status(200).json({
+    message: 'Rozet kazanıldı'
+  });
+});
+
+/* ---------------- STREAK ---------------- */
+
+// GÜNLÜK SERİ
+app.get('/streak', (req, res) => {
+  return res.status(200).json({
+    currentStreak: 5
   });
 });
