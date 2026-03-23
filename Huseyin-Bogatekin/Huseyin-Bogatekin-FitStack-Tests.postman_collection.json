@@ -1,0 +1,83 @@
+{
+  "info": {
+    "_postman_id": "188844d3-99e9-4a0c-a94e-dc8458d24e8d",
+    "name": "Huseyin-Bogatekin-FitStack-Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53400500",
+    "_collection_link": "https://go.postman.co/collection/53400500-188844d3-99e9-4a0c-a94e-dc8458d24e8d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Kullanıcı Girişi",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "profil güncelleme",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "program listeleme",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "program seçme",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "program detay",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "geçmiş antrenmanlar",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "toplam puan",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "rozetleri görüntüle",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "seri güncelleme",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
