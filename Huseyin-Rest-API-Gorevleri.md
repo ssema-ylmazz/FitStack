@@ -1,75 +1,90 @@
-# Hüseyin Boğatekin - REST API Testleri
+Hüseyin Boğatekin - REST API Testleri
 
-**API Test Videosu:** [YOUTUBE_LINKI_BURAYA]  
-**REST API Domain:** `http://localhost:3000`
+API Test Videosu: [Buraya Video Linkini Ekleyin]
+REST API Domain: http://localhost:3000
 
----
+1. Kullanıcı Girişi
 
-## 1. Kullanıcı Girişi
-* **Endpoint:** `POST /users/login`
-* **Request Body:**
-```json
+Endpoint: POST /users/login
+
+Request Body:
+
 {
   "email": "test@mail.com",
   "password": "123456"
 }
+
+
 Response: 200 OK - Giriş başarılı.
 
 2. Profil Güncelleme
+
 Endpoint: PUT /users/profile
 
 Request Body:
-
-JSON
 
 {
   "name": "Hüseyin",
   "level": "Orta"
 }
-Response: 200 OK - Profil güncellendi.
+
+
+Response: 200 OK - Profil başarıyla güncellendi.
 
 3. Program Listeleme
+
 Endpoint: GET /programs
 
-Response: 200 OK - Tüm program listesi döner.
+Response: 200 OK - Tüm spor programlarını listeler.
 
 4. Program Seçme ve Detay
+
 Endpoint: POST /programs/:id/select
 
-Path Parameter: id (Program ID'si)
+Path Parameters:
 
-Response: 200 OK - Seçilen program bilgisi döner.
+id: Seçilecek programın ID'si
+
+Response: 200 OK - Program seçimi başarılı.
 
 5. Geçmiş Antrenmanlar
+
 Endpoint: GET /workouts
 
-Response: 200 OK - Antrenman listesi döner.
+Response: 200 OK - Kullanıcının geçmiş antrenman listesini döndürür.
 
-6. Toplam Puan (Workout Bazlı)
+6. Antrenman Puanı Güncelleme
+
 Endpoint: PUT /workouts/:id/points
+
+Path Parameters:
+
+id: Puanı güncellenecek antrenmanın ID'si
 
 Request Body:
 
-JSON
-
 {
-  "points": 50
+  "points": 100
 }
-Response: 200 OK - Puan güncellendi.
+
+
+Response: 200 OK - Puan başarıyla güncellendi.
 
 7. Rozetleri Görüntüleme
+
 Endpoint: GET /badges
 
-Response: 200 OK - Kullanıcının kazandığı rozetler listelenir.
+Response: 200 OK - Kazanılan rozetlerin listesini döndürür.
 
 8. Seri Bilgisi Güncelleme (Streak)
+
 Endpoint: PUT /streak
 
 Request Body:
 
-JSON
-
 {
   "days": 5
 }
-Response: 200 OK - Günlük seri bilgisi güncellendi.
+
+
+Response: 200 OK - Günlük seri (streak) bilgisi güncellendi.
