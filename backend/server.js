@@ -1,124 +1,118 @@
 const express = require('express');
 const cors = require('cors');
-
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('FitStack API çalışıyor 🚀');
+  res.send('FitStack API çalışıyor 🚀 - 17 Gereksinim Tamamlandı');
 });
 
 const PORT = 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server çalışıyor: http://localhost:${PORT}`);
-});
+/* ---------------- USERS (Gereksinim 1, 2, 3, 4, 5, 12) ---------------- */
 
-/* ---------------- USERS ---------------- */
-
-// KAYIT
+// 1. Kullanıcı Kaydı Olma (Sema)
 app.post('/users/register', (req, res) => {
   const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({
-      message: 'Email ve şifre zorunludur'
-    });
-  }
-
-  return res.status(201).json({
-    message: 'Kayıt başarılı',
-    user: { email }
-  });
+  res.status(201).json({ message: 'Kayıt başarılı', user: { email } });
 });
 
-// PROFİL GÖRÜNTÜLEME
+// 2. Kullanıcı Girişi (Hüseyin)
+app.post('/users/login', (req, res) => {
+  const { email, password } = req.body;
+  res.status(200).json({ message: 'Giriş başarılı', user: { email } });
+});
+
+// 3. Profil Görüntüleme (Sema)
 app.get('/users/profile', (req, res) => {
-  return res.status(200).json({
-    email: "test@mail.com",
-    name: "Sema",
-    level: "Orta"
-  });
+  res.status(200).json({ email: "test@mail.com", name: "FitStacker", level: "Orta" });
 });
 
-// HESAP SİLME
+// 4. Profil Güncelleme (Hüseyin)
+app.put('/users/profile', (req, res) => {
+  res.status(200).json({ message: 'Profil güncellendi', updatedProfile: req.body });
+});
+
+// 5. Hesap Silme (Sema)
 app.delete('/users/profile', (req, res) => {
-  return res.status(200).json({
-    message: 'Kullanıcı hesabı silindi'
-  });
+  res.status(200).json({ message: 'Hesap silindi' });
 });
 
-/* ---------------- PROGRAMS ---------------- */
+// 12. Toplam Puan Görüntüleme (Hüseyin)
+app.get('/users/points', (req, res) => {
+  res.status(200).json({ totalPoints: 1250 });
+});
 
-// PROGRAM FİLTRELEME
+/* ---------------- PROGRAMS (Gereksinim 6, 7, 8) ---------------- */
+
+// 6. Program Listeleme (Hüseyin)
+// 7. Program Filtreleme (Sema)
 app.get('/programs', (req, res) => {
   const { level } = req.query;
-
   const programs = [
-    { id: 1, name: 'Başlangıç Programı', level: 'Başlangıç' },
-    { id: 2, name: 'Orta Seviye Program', level: 'Orta' },
-    { id: 3, name: 'İleri Seviye Program', level: 'İleri' }
+    { id: 1, name: 'Başlangıç', level: 'Başlangıç' },
+    { id: 2, name: 'Orta', level: 'Orta' }
   ];
-
   if (level) {
-    const filtered = programs.filter(p => p.level === level);
-    return res.status(200).json(filtered);
+    return res.status(200).json(programs.filter(p => p.level === level));
   }
-
   res.status(200).json(programs);
 });
 
-/* ---------------- WORKOUTS ---------------- */
+// 8. Program Seçme ve Detay (Hüseyin)
+app.post('/programs/:id/select', (req, res) => {
+  res.status(200).json({ message: `Program ${req.params.id} seçildi` });
+});
+app.get('/programs/:id', (req, res) => {
+  res.status(200).json({ id: req.params.id, name: "Seçilen Program", details: "Detaylar..." });
+});
 
-// ANTRENMAN EKLE
+/* ---------------- WORKOUTS (Gereksinim 9, 10, 11, 17) ---------------- */
+
+// 9. Antrenman Kaydı Oluşturma (Sema)
 app.post('/workouts', (req, res) => {
-  const { name, duration } = req.body;
-
-  if (!name || !duration) {
-    return res.status(400).json({
-      message: 'İsim ve süre zorunludur'
-    });
-  }
-
-  return res.status(201).json({
-    message: 'Workout eklendi',
-    workout: { name, duration }
-  });
+  res.status(201).json({ message: 'Antrenman kaydedildi', data: req.body });
 });
 
-// ANTRENMAN SİL
-app.delete('/workouts/:id', (req, res) => {
-  return res.status(200).json({
-    message: `Workout ${req.params.id} silindi`
-  });
+// 10. Geçmiş Antrenmanları Görüntüleme (Hüseyin)
+app.get('/workouts', (req, res) => {
+  res.status(200).json([{ id: 1, name: "Koşu", date: "2026-03-20" }]);
 });
 
-// PUAN KAZANMA
+// 11. Puan Kazanma (Sema)
 app.put('/workouts/:id/points', (req, res) => {
-  const { points } = req.body;
-
-  return res.status(200).json({
-    message: `Workout ${req.params.id} puan eklendi`,
-    gainedPoints: points
-  });
+  res.status(200).json({ message: "Puan kazanıldı", gainedPoints: 50 });
 });
 
-/* ---------------- BADGES ---------------- */
+// 17. Antrenman Kaydını Silme (Sema)
+app.delete('/workouts/:id', (req, res) => {
+  res.status(200).json({ message: `Antrenman ${req.params.id} silindi` });
+});
 
-// ROZET KAZANMA
+/* ---------------- BADGES & STREAK (Gereksinim 13, 14, 15, 16) ---------------- */
+
+// 13. Rozet Kazanma (Sema)
 app.post('/badges', (req, res) => {
-  return res.status(200).json({
-    message: 'Rozet kazanıldı'
-  });
+  res.status(200).json({ message: 'Yeni rozet kazanıldı!' });
 });
 
-/* ---------------- STREAK ---------------- */
+// 14. Rozetleri Görüntüleme (Hüseyin)
+app.get('/badges', (req, res) => {
+  res.status(200).json([{ id: 1, name: "İlk Koşu Rozeti" }]);
+});
 
-// GÜNLÜK SERİ
+// 15. Günlük Seri Görüntüleme (Sema)
 app.get('/streak', (req, res) => {
-  return res.status(200).json({
-    currentStreak: 5
-  });
+  res.status(200).json({ currentStreak: 5 });
+});
+
+// 16. Seri Bilgisi Güncelleme (Hüseyin)
+app.put('/streak', (req, res) => {
+  res.status(200).json({ message: 'Seri bilgisi güncellendi', newStreak: 6 });
+});
+
+app.listen(PORT, () => {
+  console.log(`FitStack API http://localhost:${PORT} üzerinde aktif.`);
 });
