@@ -2,6 +2,7 @@
 
 # FitStack
 
+<img width="2752" height="1536" alt="Gemini_Generated_Image_lxc6ralxc6ralxc6" src="https://github.com/user-attachments/assets/2ee58bed-56eb-4527-b161-f3060cd81d83" />
 
 ---
 
@@ -17,13 +18,12 @@
 
 > Fitness Takip Sistemi
 
-**Referans Uygulama:**
-
-> [Geeksinim Analizi](gereksinimler.md)
 
 ---
 
 ## Proje Linkleri
+
+**REST-API ADRESİ:** https://fitstack-a5v0.onrender.com
 
 
 
@@ -33,7 +33,7 @@
 
 **Grup Adı:**
 
-> Dev Fit
+> DevFit
 
 **Ekip Üyeleri:**
 
@@ -51,4 +51,6 @@
 Proje dokümantasyonuna aşağıdaki linkten erişebilirsiniz:
 
 1. [Gereksinim Analizi](gereksinimler.md)
+2. [REST API Tasarımı](API-Tasarimi.md)
+3. [REST API](Rest-API.md)
 

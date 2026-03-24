@@ -1,0 +1,83 @@
+{
+  "info": {
+    "_postman_id": "652cbbb5-f7a9-40a6-8c95-5d1409a0604e",
+    "name": "Sema-Yilmaz-FitStack-Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53400500",
+    "_collection_link": "https://go.postman.co/collection/53400500-652cbbb5-f7a9-40a6-8c95-5d1409a0604e?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "kullanıcı kaydı",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "profil görüntüleme",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "hesap silme",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "program filtreleme",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "antrenman kaydı",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "puan kazanma",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "rozet kazanma",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "seri görüntüle",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "antrenman silme",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
