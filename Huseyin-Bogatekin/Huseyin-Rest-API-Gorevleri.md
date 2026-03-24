@@ -1,7 +1,7 @@
 # Hüseyin Boğatekin - REST API Testleri
 
 **API Test Videosu:** [YOUTUBE_LINKI_BURAYA]  
-**REST API Domain:** `http://localhost:3000`
+**REST API Domain:** `[http://localhost:3000](https://fitstack-a5v0.onrender.com)`
 
 ---
 
