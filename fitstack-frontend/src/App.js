@@ -1,31 +1,86 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // 'useState' tanımlandı
+import axios from 'axios'; // 'axios' tanımlandı
 import './App.css';
 
-function App() {
-  const [page, setPage] = useState('login'); // login, dashboard, profile
-  const [filter, setFilter] = useState('Hepsi');
-  const [xp, setXp] = useState(1250);
+// 'API_BASE_URL' tanımlandı
+const API_BASE_URL = "http://localhost:8080/api";
 
-  // Gereksinim 1 & 1.5: Giriş ve Kayıt Paneli
+function App() {
+  // --- STATE TANIMLAMALARI ---
+  const [page, setPage] = useState('login'); 
+  const [filter, setFilter] = useState('Hepsi');
+  const [xp, setXp] = useState(1250); 
+  const [streak, setStreak] = useState(5); 
+  const [programs, setPrograms] = useState([]); 
+  const [workouts, setWorkouts] = useState([
+    { id: 1, name: 'Sabah Koşusu', xp: 120, date: '24 Mart' }
+  ]);
+  const [badges, setBadges] = useState([]);
+
+  // --- HÜSEYİN'İN API FONKSİYONLARI ---
+
+  // GEREKSİNİM 2: Kullanıcı Girişi
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(`${API_BASE_URL}/users/login`, {
+        email: e.target.email.value,
+        password: e.target.password.value
+      });
+      setPage('dashboard');
+      fetchDashboardData();
+    } catch (err) {
+      setPage('dashboard'); // Backend yoksa bile tasarımı gör
+    }
+  };
+
+  // VERİLERİ ÇEKME (G6, G10, G12, G14, G16)
+  const fetchDashboardData = async () => {
+    try {
+      const [pRes, wRes, ptRes, bRes, sRes] = await Promise.all([
+        axios.get(`${API_BASE_URL}/programs`),
+        axios.get(`${API_BASE_URL}/workouts`),
+        axios.get(`${API_BASE_URL}/users/points`),
+        axios.get(`${API_BASE_URL}/badges`),
+        axios.get(`${API_BASE_URL}/streak`)
+      ]);
+      setPrograms(pRes.data);
+      setWorkouts(wRes.data);
+      setXp(ptRes.data);
+      setBadges(bRes.data);
+      setStreak(sRes.data.count);
+    } catch (e) {
+      console.log("Hüseyin: Veriler henüz yüklenemedi.");
+    }
+  };
+
+  // GEREKSİNİM 4: Profil Güncelleme
+  const handleUpdateProfile = async () => {
+    try {
+      await axios.put(`${API_BASE_URL}/users/profile`, { name: "Sema" });
+      alert("Profil Güncellendi! (G4)");
+    } catch (e) { console.error(e); }
+  };
+
+  // GEREKSİNİM 8: Program Seçme
+  const handleSelectProgram = async (id) => {
+    try {
+      await axios.post(`${API_BASE_URL}/programs/${id}/select`);
+      alert(`Program ${id} seçildi! (G8)`);
+    } catch (e) { console.error(e); }
+  };
+
+  // --- TASARIM (SEMA'NIN ELITE UI) ---
   if (page === 'login' || page === 'register') {
     return (
       <div className="auth-wrapper">
         <div className="auth-container">
-          <div className="auth-header">
-            <h1 className="logo-main">FIT<span>STACK</span></h1>
-            <p>{page === 'login' ? 'Yolculuğa devam et.' : 'Yeni bir başlangıç yap.'}</p>
-          </div>
-          <form className="auth-form" onSubmit={(e) => { e.preventDefault(); setPage('dashboard'); }}>
-            {page === 'register' && <input type="text" placeholder="Ad Soyad" className="auth-input" />}
-            <input type="email" placeholder="E-posta" className="auth-input" required />
-            <input type="password" placeholder="Şifre" className="auth-input" required />
-            <button type="submit" className="auth-submit">
-              {page === 'login' ? 'Giriş Yap' : 'Kayıt Ol (Gereksinim 1)'}
-            </button>
+          <h1 className="logo-main">FIT<span>STACK</span></h1>
+          <form className="auth-form" onSubmit={handleLogin}>
+            <input name="email" type="email" placeholder="E-posta" className="auth-input" required />
+            <input name="password" type="password" placeholder="Şifre" className="auth-input" required />
+            <button type="submit" className="auth-submit">GİRİŞ YAP (G2)</button>
           </form>
-          <button className="auth-switch" onClick={() => setPage(page === 'login' ? 'register' : 'login')}>
-            {page === 'login' ? 'Hesabın yok mu? Kayıt Ol' : 'Zaten üye misin? Giriş Yap'}
-          </button>
         </div>
       </div>
     );
@@ -33,12 +88,11 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* Üst Menü - Profesyonel Çizgi */}
       <nav className="top-nav">
         <div className="logo-small">FIT<span>STACK</span></div>
         <div className="nav-links">
           <span onClick={() => setPage('dashboard')} className={page === 'dashboard' ? 'active' : ''}>DASHBOARD</span>
-          <span onClick={() => setPage('profile')} className={page === 'profile' ? 'active' : ''}>PROFİL (G3)</span>
+          <span onClick={() => setPage('profile')} className={page === 'profile' ? 'active' : ''}>PROFİL (G4)</span>
           <span className="logout-link" onClick={() => setPage('login')}>ÇIKIŞ</span>
         </div>
       </nav>
@@ -46,62 +100,44 @@ function App() {
       <main className="content-area">
         {page === 'dashboard' ? (
           <div className="dashboard-grid">
-            {/* Gereksinim 15: Günlük Seri & Gereksinim 11: Puan */}
             <div className="header-stats">
               <div className="stat-unit">
-                <label>GÜNLÜK SERİ (G15)</label>
-                <h2>🔥 5 GÜN</h2>
+                <label>GÜNLÜK SERİ (G16)</label>
+                <h2>🔥 {streak} GÜN</h2>
               </div>
               <div className="stat-unit">
-                <label>TOPLAM PUAN (G11)</label>
+                <label>TOPLAM PUAN (G12)</label>
                 <h2 className="xp-text">{xp} XP</h2>
               </div>
               <div className="stat-unit">
-                <label>ROZETLER (G13)</label>
+                <label>ROZETLER (G14)</label>
                 <div className="mini-badges">🏆 ⚡ 🎖️</div>
               </div>
             </div>
 
-            {/* Gereksinim 7: Filtreleme */}
             <section className="programs-section">
-              <div className="section-bar">
-                <h3>PROGRAMLAR (G7)</h3>
-                <div className="filters">
-                  {['Hepsi', 'Başlangıç', 'İleri'].map(f => (
-                    <button key={f} className={filter === f ? 'f-active' : ''} onClick={() => setFilter(f)}>{f}</button>
-                  ))}
-                </div>
-              </div>
+              <h3>PROGRAMLAR (G6)</h3>
               <div className="program-row">
                 <div className="prog-card">
-                  <span className="tag">BAŞLANGIÇ</span>
+                  <span className="tag">SEVİYE</span>
                   <h4>Kardiyo Temelleri</h4>
-                  <button className="action-btn" onClick={() => setXp(xp + 50)}>Antrenman Kaydet (G9)</button>
+                  <button className="action-btn" onClick={() => handleSelectProgram(1)}>SEÇ (G8)</button>
                 </div>
               </div>
             </section>
 
-            {/* Gereksinim 17: Kayıt Silme */}
             <section className="recent-activity">
-              <h3>AKTİVİTE GEÇMİŞİ</h3>
-              <div className="activity-item">
-                <p>Sabah Koşusu <span>+120 XP</span></p>
-                <button className="item-del" onClick={() => alert('Kayıt Silindi (G17)')}>KAYDI SİL</button>
-              </div>
+              <h3>GEÇMİŞ (G10)</h3>
+              {workouts.map(w => (
+                <div className="activity-item" key={w.id}>
+                  <p>{w.name} <span>+{w.xp} XP</span></p>
+                </div>
+              ))}
             </section>
           </div>
         ) : (
-          /* Gereksinim 3 & 5: Profil ve Hesap Silme */
           <div className="profile-container">
-            <div className="profile-box">
-              <h2>PROFİL AYARLARI (G3)</h2>
-              <div className="info-row"><label>E-posta</label> <span>sema@fitstack.com</span></div>
-              <div className="info-row"><label>Hesap Tipi</label> <span>Premium</span></div>
-              <div className="danger-zone">
-                <p>Dikkat: Hesabınızı sildiğinizde tüm XP ve rozetleriniz sıfırlanır.</p>
-                <button className="delete-btn" onClick={() => alert('Hesap Silindi (G5)')}>HESABI SİL (G5)</button>
-              </div>
-            </div>
+            <button className="action-btn" onClick={handleUpdateProfile}>BİLGİLERİ GÜNCELLE (G4)</button>
           </div>
         )}
       </main>
