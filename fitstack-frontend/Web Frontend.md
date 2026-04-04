@@ -8,7 +8,7 @@
 ## Grup Üyelerinin Web Frontend Görevleri
 
 1. [Sema Yılmaz'ın Web Frontend Görevleri](Ali-Tutar/Ali-Tutar-Web-Frontend-Gorevleri.md)
-2. [Hüseyin Boğatekin'in Web Frontend Görevleri](Grup-Uyesi-2/Grup-Uyesi-2-Frontend-Gorevleri.md)
+2. [Hüseyin Boğatekin'in Web Frontend Görevleri](Huseyin-Bogatekin/Hüseyin-Bogatekin-Web-Frontend-Gorevleri.md)
 
 
 
