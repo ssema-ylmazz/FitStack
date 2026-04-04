@@ -2,7 +2,7 @@ Hüseyin Boğatekin için hazırladığın backend gereksinimlerini, senin front
 
 ---
 
-# Hüseyin Boğatekin'in REST API Görevleri
+# Hüseyin Boğatekin'in Frontend Görevleri
 **Back-end Test Raporu (Postman/Swagger):** [Link buraya eklenecek]
 
 ### 1. Kullanıcı Girişi (G-2)
