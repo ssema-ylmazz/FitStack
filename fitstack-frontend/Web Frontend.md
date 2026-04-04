@@ -1,7 +1,9 @@
 # 🚀 FitStack - Web Frontend Projesi
+# Sema Yılmaz'ın Web Frontend Görevleri
 
 **Canlı Uygulama Adresi:** [https://fit-stack-nine.vercel.app](https://fit-stack-nine.vercel.app)
-
+**Front-end Test Videosu:** [Link buraya eklenecek]
+... (diğer maddeler)
 ---
 
 ## 👥 Grup Üyeleri ve Görev Dağılımı
