@@ -1,4 +1,3 @@
-Hüseyin Boğatekin için hazırladığın backend gereksinimlerini, senin frontend dosyanın görseldeki formatıyla birebir uyumlu hale getirdim. Bu içeriği **Huseyin-Rest-API-Gorevleri.md** olarak kaydedebilirsin:
 
 ---
 
