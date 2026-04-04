@@ -1,40 +1,75 @@
-# 🚀 FitStack - Web Frontend Projesi
-# Sema Yılmaz'ın Web Frontend Görevleri
+Web Frontend Görev Dağılımı (FitStack)
 
-**Canlı Uygulama Adresi:** [https://fit-stack-nine.vercel.app](https://fit-stack-nine.vercel.app)
-**Front-end Test Videosu:** [Link buraya eklenecek]
-... (diğer maddeler)
----
+Web Frontend Adresi: fit-stack-nine.vercel.app
 
-## 👥 Grup Üyeleri ve Görev Dağılımı
+Bu dokümanda, FitStack uygulamasının kullanıcı arayüzü (UI) ve kullanıcı deneyimi (UX) görevleri listelenmektedir. Her grup üyesi, kendisine atanan sayfaların tasarımı, implementasyonu ve API entegrasyonlarından sorumludur.
+Grup Üyelerinin Web Frontend Görevleri
 
-### 🙋‍♀️ Sema Yılmaz (@ssema-ylmazz)
-**Tamamlanan Gereksinimler (Tek Sayılar):**
-* **G-1:** Kullanıcı Kaydı (POST /users/register)
-* **G-3:** Profil Görüntüleme (GET /users/profile)
-* **G-5:** Hesap Silme (DELETE /users/profile)
-* **G-7:** Program Filtreleme (GET /programs?level={seviye})
-* **G-9:** Antrenman Kaydı Oluşturma (POST /workouts)
-* **G-11:** Puan Kazanma (PUT /workouts/{id}/points)
-* **G-13:** Rozet Kazanma (POST /badges)
-* **G-15:** Günlük Seri Görüntüleme (GET /streak)
-* **G-17:** Antrenman Kaydını Silme (DELETE /workouts/{id})
+    Sema Yılmaz'ın Web Frontend Görevleri: Sema-Yilmaz/Sema-Yilmaz-Web-Frontend-Gorevleri.md
 
----
+    Hüseyin Boğatekin'in Web Frontend Görevleri: Huseyin-Bogatekin/Huseyin-Rest-API-Gorevleri.md
 
-### 🙋‍♂️ Hüseyin Boğatekin (@huseyinbogatekin)
-**Tamamlanan Gereksinimler (Çift Sayılar):**
-* **G-2:** Kullanıcı Girişi (POST /users/login)
-* **G-4:** Profil Güncelleme (PUT /users/profile)
-* **G-6:** Program Listeleme (GET /programs)
-* **G-8:** Program Seçme ve Detay Görüntüleme (POST /programs/{id}/select)
-* **G-10:** Geçmiş Antrenmanları Görüntüleme (GET /workouts)
-* **G-12:** Toplam Puan Görüntüleme (GET /users/points)
-* **G-14:** Rozetleri Görüntüleme (GET /badges)
-* **G-16:** Seri Bilgisi Güncelleme (PUT /streak)
+Genel Web Frontend Prensipleri
+1. Responsive Tasarım
 
----
+    Mobile-First Approach: Antrenman takibi için önce mobil tasarım, sonra desktop.
 
-## 📹 Proje Tanıtım Videoları
-* **Sema Yılmaz Test Videosu:** [Buraya YouTube Linkini Yapıştır]
-* **Hüseyin Boğatekin Test Videosu:** [Buraya YouTube Linkini Yapıştır]
+    Breakpoints:
+
+        Mobile: < 768px
+
+        Tablet: 768px - 1024px
+
+        Desktop: > 1024px
+
+    Flexible Layouts: CSS Grid ve Flexbox kullanımı.
+
+2. Tasarım Sistemi
+
+    CSS Framework: Tailwind CSS veya Custom CSS (Dark Mode uyumlu).
+
+    Renk Paleti: FitStack markasına uygun tutarlı karanlık tema renkleri.
+
+    Tipografi: Okunabilirliği yüksek Google Fonts kullanımı.
+
+    Iconography: Antrenman hareketleri için Icon kütüphaneleri (Heroicons).
+
+3. Performans Optimizasyonu
+
+    Lazy Loading: Antrenman GIF'leri ve ağır görsellerin gecikmeli yüklenmesi.
+
+    Minification: Üretim aşamasında CSS ve JavaScript sıkıştırma.
+
+    Bundle Size: Gereksiz paketlerden kaçınarak hızlı açılış sağlama.
+
+4. API Entegrasyonu
+
+    HTTP Client: Axios ile Spring Boot backend servisine bağlantı.
+
+    Request Interceptors: Her isteğe otomatik JWT Token enjeksiyonu.
+
+    Error Handling: API hatalarının (401, 500) merkezi yönetimi ve Toast mesajları.
+
+    Loading States: Veri çekme sırasında Spinner veya Skeleton gösterimi.
+
+5. State Management
+
+    Global State: Kullanıcı oturumu ve XP puanları için Context API.
+
+    Local State: Form girişleri ve anlık filtreler için React Hooks (useState).
+
+6. Routing
+
+    Client-Side Routing: React Router ile sayfalar arası hızlı geçiş.
+
+    Protected Routes: Giriş yapmamış kullanıcılar için yetki kontrolü.
+
+    404 Handling: Özel tasarlanmış "Sayfa Bulunamadı" ekranı.
+
+7. Build ve Deployment
+
+    Build Tool: Vite veya Create React App.
+
+    Environment Variables: API URL bilgilerinin .env dosyasında saklanması.
+
+    CI/CD: GitHub main branch üzerinden otomatik Vercel dağıtımı.
