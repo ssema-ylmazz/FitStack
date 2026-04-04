@@ -1,45 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import api from '../services/api';
 
 const SemaTasks = () => {
-    const [streak, setStreak] = useState(0);
+  // G-1: Kayıt Ol
+  const handleRegister = async () => {
+    try {
+      await api.post('/users/register', { username: 'sema', email: 'sema@test.com', password: '123' });
+      alert("Kayıt Başarılı! (G-1)");
+    } catch (err) { alert("Kayıt Hatası!"); }
+  };
 
-    // 15. GEREKSİNİM: Günlük Seri Görüntüleme
-    useEffect(() => {
-        api.get('/streak')
-           .then(res => setStreak(res.data.count))
-           .catch(err => console.log("Seri bilgisi alınamadı."));
-    }, []);
+  // G-3, 5: Profil Gör ve Sil
+  const manageProfile = async (type) => {
+    try {
+      if (type === 'get') {
+        const res = await api.get('/users/profile'); // G-3
+        alert(`Profil: ${res.data.username} (G-3)`);
+      } else {
+        await api.delete('/users/profile'); // G-5
+        alert("Hesap Silindi! (G-5)");
+      }
+    } catch (err) { alert("Profil işlemi hatası."); }
+  };
 
-    const handleAction = async (label, request) => {
-        try {
-            await request;
-            alert(`${label} başarıyla tamamlandı!`);
-        } catch (err) {
-            alert(`${label} başarısız! API bağlantısını kontrol et.`);
-        }
-    };
+  // G-7, 9, 11, 13, 15, 17: Antrenman ve Puan Süreçleri
+  const handleWorkouts = async (action) => {
+    try {
+      if (action === 'filter') await api.get('/programs?level=beginner'); // G-7
+      if (action === 'add') {
+        await api.post('/workouts', { type: 'Fitness' }); // G-9
+        await api.put('/workouts/1/points'); // G-11
+        await api.post('/badges'); // G-13
+      }
+      if (action === 'streak') await api.get('/streak'); // G-15
+      if (action === 'delete') await api.delete('/workouts/1'); // G-17
+      alert(`${action} işlemi başarıyla tamamlandı!`);
+    } catch (err) { alert("İşlem sırasında hata oluştu."); }
+  };
 
-    return (
-        <div style={{ padding: '30px', fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif' }}>
-            <h1 style={{ color: '#2c3e50' }}>FitStack - Sema'nın Geliştirme Paneli</h1>
-            
-            <div style={{ background: '#ecf0f1', padding: '15px', borderRadius: '10px', marginBottom: '20px' }}>
-                <span style={{ fontSize: '20px' }}>🔥 <strong>Günlük Seriniz (G-15):</strong> {streak}</span>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1 backup 1fr', gap: '15px' }}>
-                <button onClick={() => handleAction("G-1: Kayıt", api.post('/users/register', {name: "Sema"}))}>G-1: Kayıt Ol</button>
-                <button onClick={() => handleAction("G-3: Profil", api.get('/users/profile'))}>G-3: Profil Bilgisi Al</button>
-                <button onClick={() => handleAction("G-5: Hesap Sil", api.delete('/users/profile'))} style={{backgroundColor: '#e74c3c', color: 'white'}}>G-5: Hesabı Kalıcı Sil</button>
-                <button onClick={() => handleAction("G-7: Filtreleme", api.get('/programs?level=zor'))}>G-7: Zor Programları Getir</button>
-                <button onClick={() => handleAction("G-9: Antrenman", api.post('/workouts', {type: 'Kardiyo'}))}>G-9: Antrenman Kaydı Oluştur</button>
-                <button onClick={() => handleAction("G-11: Puan", api.put('/workouts/1/points'))}>G-11: Tamamlanan Antrenmandan Puan Al</button>
-                <button onClick={() => handleAction("G-13: Rozet", api.post('/badges', {name: 'Azimli'}))}>G-13: Rozet Kazan</button>
-                <button onClick={() => handleAction("G-17: Silme", api.delete('/workouts/1'))}>G-17: Antrenman Kaydını Sil</button>
-            </div>
-        </div>
-    );
+  return (
+    <div style={{ backgroundColor: '#0f172a', minHeight: '100vh', color: 'white', padding: '40px' }}>
+      <h2>Sema'nın Yönetim Paneli</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
+        <button onClick={handleRegister} style={btnStyle}>Yeni Kullanıcı Kaydı (G-1)</button>
+        <button onClick={() => manageProfile('get')} style={btnStyle}>Profilimi Görüntüle (G-3)</button>
+        <button onClick={() => handleWorkouts('add')} style={btnStyle}>Antrenman Yap ve Puan Kazan (G-9, 11, 13)</button>
+        <button onClick={() => handleWorkouts('filter')} style={btnStyle}>Zorluk Filtrele (G-7)</button>
+        <button onClick={() => handleWorkouts('streak')} style={btnStyle}>Günlük Serimi Gör (G-15)</button>
+        <button onClick={() => handleWorkouts('delete')} style={{...btnStyle, backgroundColor: 'red'}}>Son Antrenmanı Sil (G-17)</button>
+        <button onClick={() => manageProfile('delete')} style={{gridColumn: 'span 2', background: 'none', color: 'gray'}}>Hesabı Tamamen Sil (G-5)</button>
+      </div>
+    </div>
+  );
 };
-
+const btnStyle = { padding: '15px', backgroundColor: '#1e293b', color: '#adff2f', border: '1px solid #adff2f', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' };
 export default SemaTasks;
