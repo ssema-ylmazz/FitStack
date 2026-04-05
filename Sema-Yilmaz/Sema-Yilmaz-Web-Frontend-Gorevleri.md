@@ -1,6 +1,6 @@
 # Sema Yılmaz'ın Web Frontend Görevleri
 
-**Front-end Test Videosu:** [https://www.youtube.com/watch?v=I5P8yOhV-Hs]
+**Front-end Test Videosu:** [https://www.youtube.com/watch?v=PEZuT-yQX50]
 
 ---
 
