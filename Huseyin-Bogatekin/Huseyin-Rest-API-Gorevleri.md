@@ -1,7 +1,7 @@
 # Hüseyin Boğatekin - REST API Testleri
 
 **API Test Videosu:** [https://youtu.be/as0rYff1fEY?si=fFm6nSja8yYMOfhj]  
-**REST API Domain:** `http://localhost:3000`
+**REST API Domain:** `https://fitstack-a5v0.onrender.com`
 
 ---
 
