@@ -2,7 +2,7 @@
 ---
 
 # Hüseyin Boğatekin'in Web Frontend Görevleri
-**Front-end Test Videosu:** [Link buraya eklenecek]
+**Front-end Test Videosu:** [[Link](https://youtu.be/qyqRJu3tfpU?si=LH2XAOtdsCYqkk0O)]
 
 ### 1. Kullanıcı Giriş Sayfası (G-2)
 **API Endpoint:** `POST /users/login`
