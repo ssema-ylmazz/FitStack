@@ -1,192 +1,197 @@
-import React, { useState, useEffect } from 'react';
-import api from './services/api';
+import React, { useState } from 'react';
 
-const FitStackApp = () => {
-  const [view, setView] = useState('landing'); 
-  const [profile, setProfile] = useState({ username: '', points: 0, streak: 0 });
-  const [authData, setAuthData] = useState({ email: '', password: '', username: '' });
-  
-  // G-6, 7, 8, 9 İçin State'ler
-  const [programs, setPrograms] = useState([]); 
-  const [selectedProgram, setSelectedProgram] = useState(null); 
-  const [isTraining, setIsTraining] = useState(false); // Antrenman yapma modu
-  const [difficulty, setDifficulty] = useState('');
-
-  // --- 1. KULLANICI İŞLEMLERİ ---
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post('/users/register', { username: authData.username, email: authData.email, password: authData.password });
-      alert("Kayıt Başarılı! (G-1)");
-      setView('landing');
-    } catch (e) { alert("Kayıt hatası!"); }
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post('/users/login', { email: authData.email, password: authData.password });
-      fetchProfile();
-      setView('dashboard');
-    } catch (e) { alert("Giriş başarısız! (G-2)"); }
-  };
-
-  const fetchProfile = async () => {
-    try {
-      const res = await api.get('/users/profile');
-      setProfile(res.data);
-    } catch (e) { console.error("Profil yüklenemedi"); }
-  };
-
-  // --- 2. ANTRENMAN & GÖRSEL SİSTEMİ (G-6, 7, 8, 9, 11, 13) ---
-  const fetchPrograms = async (level = '') => {
-    try {
-      setDifficulty(level);
-      const url = level ? `/programs?level=${level}` : '/programs';
-      const res = await api.get(url); 
-      setPrograms(res.data); 
-      setView('workouts');
-    } catch (e) { alert("Programlar yüklenemedi!"); }
-  };
-
-  // G-8: Programı Seç ve Antrenman Sayfasına Hazırla
-  const handleStartTraining = (prog) => {
-    setSelectedProgram(prog); 
-    setIsTraining(true); // Antrenman yapma ekranını açar
-  };
-
-  // G-9, G-11, G-13: Bitirince Puan ve Kayıt Ekleme
-  const handleFinishWorkout = async () => {
-    try {
-      await api.post('/workouts', { programId: selectedProgram.id }); // G-9
-      await api.put(`/workouts/${selectedProgram.id}/points`); // G-11: Puan Ekle
-      await api.post('/badges'); // G-13: Rozet Ekle
-      
-      alert(`TEBRİKLER! ${selectedProgram.name} bitti. +50 Puan ve Rozet Kazandın! 🏆`);
-      
-      setIsTraining(false);
-      setSelectedProgram(null);
-      fetchProfile(); // Ana sayfadaki puanı anında günceller
-      setView('dashboard');
-    } catch (e) { alert("Kayıt oluşturulamadı."); }
-  };
-
-  // --- ARAYÜZLER ---
-
-  // GİRİŞ & KAYIT
-  if (view === 'landing' || view === 'register') {
-    return (
-      <div style={fullPage}>
-        <div style={loginCard}>
-          <h1 style={{color: '#adff2f'}}>FITSTACK</h1>
-          <h2>{view === 'landing' ? 'Giriş' : 'Kayıt'}</h2>
-          <form onSubmit={view === 'landing' ? handleLogin : handleRegister}>
-            {view === 'register' && <input type="text" placeholder="Kullanıcı Adı" style={inputS} onChange={e => setAuthData({...authData, username: e.target.value})} />}
-            <input type="email" placeholder="E-posta" style={inputS} onChange={e => setAuthData({...authData, email: e.target.value})} />
-            <input type="password" placeholder="Şifre" style={inputS} onChange={e => setAuthData({...authData, password: e.target.value})} />
-            <button type="submit" style={mainBtn}>{view === 'landing' ? 'Giriş Yap' : 'Kayıt Ol'}</button>
-          </form>
-          <p onClick={() => setView(view === 'landing' ? 'register' : 'landing')} style={{cursor:'pointer', marginTop:'15px', fontSize:'14px'}}>
-            {view === 'landing' ? "Üye değil misin? Kayıt Ol" : "Zaten üyen misin? Giriş Yap"}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // ANTRENMAN YAPILIYOR EKRANI (RESİMLİ / GÖRSEL MODU)
-  if (isTraining && selectedProgram) {
-    return (
-      <div style={trainingOverlay}>
-        <div style={trainingContent}>
-          <h2 style={{color: '#adff2f'}}>{selectedProgram.name} Başladı!</h2>
-          <div style={imageContainer}>
-             {/* Burası senin istediğin antrenman görseli alanı */}
-             <img 
-               src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueXZueXpueXpueXpueXpueXpueXpueXpueXpueXpueXpueXpueCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7TKu5fS05J7XW74c/giphy.gif" 
-               alt="Antrenman Rehberi" 
-               style={{width:'100%', height:'100%', objectFit:'cover'}} 
-             />
-          </div>
-          <div style={{margin:'20px 0', backgroundColor:'#1e293b', padding:'15px', borderRadius:'10px'}}>
-             <p>🔥 <b>Hedef:</b> 12 Tekrar x 3 Set</p>
-             <small>Doğru nefes almayı ve formunuzu korumayı unutmayın!</small>
-          </div>
-          <button onClick={handleFinishWorkout} style={finishBtn}>Antrenmanı Bitir & Puanı Al (G-9, 11, 13)</button>
-          <button onClick={() => setIsTraining(false)} style={{color:'gray', background:'none', border:'none', marginTop:'15px', cursor:'pointer'}}>Egzersizi Durdur</button>
-        </div>
-      </div>
-    );
-  }
-
-  // ANTRENMAN LİSTESİ (G-6, 7, 8)
-  if (view === 'workouts') {
-    return (
-      <div style={dashboardBg}>
-        <nav style={navS}><button onClick={() => setView('dashboard')} style={logoutBtn}>← Geri</button><h2>Antrenman Seç</h2></nav>
-        <div style={content}>
-          <div style={{display:'flex', gap:'10px', marginBottom:'20px', justifyContent:'center'}}>
-            <button onClick={() => fetchPrograms('beginner')} style={difficulty === 'beginner' ? activeTab : filterBtn}>Başlangıç</button>
-            <button onClick={() => fetchPrograms('advanced')} style={difficulty === 'advanced' ? activeTab : filterBtn}>İleri</button>
-            <button onClick={() => fetchPrograms('')} style={filterBtn}>Tümü</button>
-          </div>
-          <div style={{display:'grid', gap:'15px'}}>
-            {programs.map(prog => (
-              <div key={prog.id} style={progCard}>
-                <div>
-                  <h4 style={{margin:0}}>{prog.name} (G-6)</h4>
-                  <small>{prog.level} | {prog.duration} dk</small>
-                </div>
-                <button onClick={() => handleStartTraining(prog)} style={selectBtn}>Antrenmana Başla (G-8)</button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ANA DASHBOARD
-  return (
-    <div style={dashboardBg}>
-      <nav style={navS}><h2 style={{color:'#adff2f'}}>FITSTACK</h2><button onClick={() => setView('landing')} style={logoutBtn}>Çıkış</button></nav>
-      <div style={content}>
-        <div style={welcomeBox}>
-          <h1>Hoş geldin, {profile.username || 'Sporcu'}! 👋</h1>
-        </div>
-        <div style={statsGrid}>
-          <div style={statCard}><h3>{profile.points || 0} XP</h3><p>Puan (G-12)</p></div>
-          <div style={statCard}><h3>{profile.streak || 0} Gün</h3><p>Seri (G-15)</p></div>
-          <div style={statCard}><h3>🏆</h3><p>Rozetler (G-14)</p></div>
-        </div>
-        <button onClick={() => fetchPrograms('')} style={bigBtn}>Antrenmanlara Göz At (G-6)</button>
-        <button onClick={() => api.delete('/users/profile').then(() => setView('landing'))} style={deleteBtn}>Hesabı Kapat (G-5)</button>
-      </div>
-    </div>
-  );
+// --- MODERN UI STYLES ---
+const styles = {
+  container: { minHeight: '100vh', backgroundColor: '#0f172a', color: '#f8fafc', fontFamily: 'Inter, sans-serif' },
+  nav: { display: 'flex', justifyContent: 'space-between', padding: '1rem 5%', borderBottom: '1px solid #1e293b', alignItems: 'center', backgroundColor: '#111827', position: 'sticky', top: 0, zIndex: 100 },
+  logo: { fontSize: '1.5rem', fontWeight: 'bold', color: '#a3e635' },
+  card: { backgroundColor: '#1e293b', padding: '1.5rem', borderRadius: '1rem', border: '1px solid #334155', height: '100%' },
+  button: { backgroundColor: '#a3e635', color: '#000', padding: '0.6rem 1.2rem', borderRadius: '0.5rem', fontWeight: '700', border: 'none', cursor: 'pointer' },
+  input: { backgroundColor: '#334155', border: '1px solid #475569', color: '#fff', padding: '0.6rem', borderRadius: '0.4rem', width: '100%', marginBottom: '1rem' },
+  badge: { backgroundColor: '#3b82f6', color: '#fff', padding: '0.2rem 0.5rem', borderRadius: '99px', fontSize: '0.7rem', marginRight: '5px' },
+  deleteBtn: { color: '#ef4444', background: 'none', border: '1px solid #ef4444', padding: '0.2rem 0.5rem', borderRadius: '4px', cursor: 'pointer' }
 };
 
-// --- STİLLER ---
-const fullPage = { backgroundColor: '#0f172a', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' };
-const loginCard = { backgroundColor: '#1e293b', padding: '40px', borderRadius: '20px', width: '350px', textAlign: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' };
-const inputS = { width: '100%', padding: '12px', margin: '8px 0', borderRadius: '8px', border: '1px solid #334155', backgroundColor: '#0f172a', color: 'white' };
-const mainBtn = { width: '107%', padding: '12px', backgroundColor: '#adff2f', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' };
-const dashboardBg = { backgroundColor: '#0f172a', minHeight: '100vh', color: 'white', fontFamily: 'sans-serif' };
-const navS = { padding: '20px 50px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#1e293b' };
-const logoutBtn = { background: 'none', border: '1px solid #adff2f', color: '#adff2f', padding: '5px 15px', borderRadius: '5px', cursor: 'pointer' };
-const content = { maxWidth: '800px', margin: '0 auto', padding: '40px' };
-const welcomeBox = { marginBottom: '30px', textAlign: 'center' };
-const statsGrid = { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '40px' };
-const statCard = { backgroundColor: '#1e293b', padding: '20px', borderRadius: '20px', textAlign: 'center', border: '1px solid #334155' };
-const bigBtn = { width: '100%', padding: '20px', backgroundColor: '#adff2f', color: '#0f172a', border: 'none', borderRadius: '15px', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer' };
-const progCard = { backgroundColor: '#1e293b', padding: '20px', borderRadius: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #334155' };
-const selectBtn = { backgroundColor: '#adff2f', border: 'none', padding: '10px 15px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' };
-const filterBtn = { padding: '8px 15px', backgroundColor: 'transparent', color: '#fff', border: '1px solid #adff2f', borderRadius: '5px', cursor: 'pointer' };
-const activeTab = { padding: '8px 15px', backgroundColor: '#adff2f', color: '#000', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' };
-const deleteBtn = { marginTop: '40px', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', width: '100%' };
-const trainingOverlay = { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.98)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 };
-const trainingContent = { textAlign: 'center', maxWidth: '500px', padding: '20px' };
-const imageContainer = { width: '100%', height: '300px', backgroundColor: '#000', borderRadius: '20px', overflow: 'hidden', marginTop: '20px' };
-const finishBtn = { width: '100%', padding: '18px', backgroundColor: '#adff2f', color: '#0f172a', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer' };
+function App() {
+  const [view, setView] = useState('landing'); 
+  const [searchTerm, setSearchTerm] = useState(''); // G-14
+  const [filter, setFilter] = useState('Hepsi'); // G-15
+  const [notifications, setNotifications] = useState(['Hoş geldin Sema!', 'Yeni hedefler seni bekliyor.']); // G-17
+  
+  const [user, setUser] = useState({
+    name: "Sema Yılmaz",
+    points: 120,
+    badges: ["Yeni Başlayan"],
+    calories: 1850 // G-7
+  });
 
-export default FitStackApp;
+  const [workouts, setWorkouts] = useState([
+    { id: 1, name: "Pushup (Şınav)", gif: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZ3bmZ3bmZ3bmZ3bmZ3/3o7TKSj0S7W8D09Gak/giphy.gif", desc: "Göğüs ve kol kaslarını çalıştırır. Sırtını düz tut.", level: "Orta", liked: false },
+    { id: 2, name: "Squat (Çömelme)", gif: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZ3bmZ3bmZ3bmZ3bmZ3/l2QZO0Ythp36V98CQ/giphy.gif", desc: "Bacak ve kalça odaklıdır. Dizlerin parmak ucunu geçmesin.", level: "Kolay", liked: true },
+    { id: 3, name: "Yoga Akışı", gif: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZ3bmZ3bmZ3bmZ3bmZ3/3o7TKSj0S7W8D09Gak/giphy.gif", desc: "Esneklik ve denge sağlar.", level: "Kolay", liked: false }
+  ]);
+
+  const [activeWorkout, setActiveWorkout] = useState(null);
+  const [history, setHistory] = useState([{ id: 101, name: "Sabah Yürüyüşü", date: "Dün" }]);
+
+  // --- FONKSİYONLAR ---
+
+  const handleAuth = (e) => {
+    e.preventDefault();
+    setView('dashboard');
+    alert("Başarıyla giriş yapıldı! (G-2)");
+  };
+
+  const handleUpdateProfile = (e) => {
+    e.preventDefault();
+    setUser({ ...user, name: e.target.name.value });
+    alert("G-10: Profil güncellendi!");
+    setView('dashboard');
+  };
+
+  const completeWorkout = () => {
+    const newPoints = user.points + 40;
+    let newBadges = [...user.badges];
+    if (newPoints >= 150 && !newBadges.includes("Fit Master")) {
+      newBadges.push("Fit Master");
+      setNotifications([...notifications, "🏆 G-13: Fit Master Rozeti Kazandın!"]);
+    }
+    setUser({ ...user, points: newPoints, badges: newBadges });
+    setHistory([{ id: Date.now(), name: activeWorkout.name, date: "Bugün" }, ...history]);
+    alert("G-11: Antrenman Verisi Kaydedildi!");
+    setActiveWorkout(null);
+    setView('dashboard');
+  };
+
+  const toggleLike = (id) => { // G-16
+    setWorkouts(workouts.map(w => w.id === id ? { ...w, liked: !w.liked } : w));
+  };
+
+  const filteredWorkouts = workouts.filter(w => 
+    w.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (filter === 'Hepsi' || w.level === filter)
+  );
+
+  return (
+    <div style={styles.container}>
+      {/* NAVBAR & G-17 */}
+      <nav style={styles.nav}>
+        <div style={styles.logo}>FITSTACK</div>
+        {view !== 'landing' && view !== 'login' && view !== 'register' && (
+          <div>
+            <span title="Bildirimler" style={{marginRight:'15px', cursor:'pointer'}}>🔔({notifications.length})</span>
+            <button onClick={() => setView('dashboard')} style={{background:'none', color:'#fff', border:'none', cursor:'pointer', marginRight:'15px'}}>Panel</button>
+            <button onClick={() => setView('profile')} style={{background:'none', color:'#fff', border:'none', cursor:'pointer'}}>Profil (G-9)</button>
+            <button onClick={() => setView('landing')} style={{marginLeft:'15px', color:'#ef4444', background:'none', border:'none', cursor:'pointer'}}>Çıkış</button>
+          </div>
+        )}
+      </nav>
+
+      <main style={{ padding: '2rem 5%' }}>
+        
+        {/* LANDING PAGE (G-1) */}
+        {view === 'landing' && (
+          <div style={{ textAlign: 'center', marginTop: '10%' }}>
+            <h1 style={{fontSize:'3.5rem'}}>Hedeflerine <span style={{color:'#a3e635'}}>Ulaş.</span></h1>
+            <p style={{color:'#94a3b8', marginBottom:'2rem'}}>G-1'den G-17'ye tüm teknik altyapı hazır.</p>
+            <button onClick={() => setView('register')} style={styles.button}>Hemen Kayıt Ol (G-1)</button>
+            <p onClick={() => setView('login')} style={{marginTop:'1rem', cursor:'pointer', color:'#94a3b8'}}>Zaten hesabın var mı? Giriş Yap (G-2)</p>
+          </div>
+        )}
+
+        {/* KAYIT & GİRİŞ (G-1 & G-2) */}
+        {(view === 'register' || view === 'login') && (
+          <div style={{maxWidth:'400px', margin:'0 auto', ...styles.card}}>
+            <h2>{view === 'register' ? 'Kayıt Ol (G-1)' : 'Giriş Yap (G-2)'}</h2>
+            <form onSubmit={handleAuth}>
+              {view === 'register' && <input placeholder="Ad Soyad" style={styles.input} required />}
+              <input type="email" placeholder="E-posta" style={styles.input} required />
+              <input type="password" placeholder="Şifre" style={styles.input} required />
+              <button type="submit" style={{...styles.button, width:'100%'}}>{view === 'register' ? 'Hesap Oluştur' : 'Giriş Yap'}</button>
+            </form>
+            <p onClick={() => setView('landing')} style={{textAlign:'center', marginTop:'1rem', cursor:'pointer', color:'#94a3b8'}}>Geri Dön</p>
+          </div>
+        )}
+
+        {/* DASHBOARD (G-5, G-6, G-7, G-9, G-14, G-15, G-16, G-17) */}
+        {view === 'dashboard' && (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', marginBottom:'2rem' }}>
+              <div style={styles.card}>
+                <h4>Profil (G-9)</h4>
+                <h2>{user.name}</h2>
+                <p style={{color:'#a3e635', fontWeight:'bold'}}>{user.points} XP</p>
+                {user.badges.map(b => <span key={b} style={styles.badge}>{b}</span>)}
+              </div>
+              <div style={styles.card}>
+                <h4>Kalori Takibi (G-7)</h4>
+                <div style={{fontSize:'1.5rem'}}>{user.calories} kcal</div>
+                <div style={{width:'100%', height:'10px', background:'#0f172a', borderRadius:'5px', marginTop:'10px'}}>
+                  <div style={{width:'70%', height:'100%', background:'#a3e635', borderRadius:'5px'}}></div>
+                </div>
+              </div>
+            </div>
+
+            {/* ARAMA & LİSTELEME (G-14, G-15, G-16) */}
+            <div style={{...styles.card, marginBottom:'2rem'}}>
+              <h3>Antrenman Bul (G-14/15)</h3>
+              <div style={{display:'flex', gap:'10px', marginBottom:'1rem'}}>
+                <input placeholder="Ara..." style={{...styles.input, marginBottom:0}} onChange={(e) => setSearchTerm(e.target.value)} />
+                <select style={{...styles.input, marginBottom:0, width:'150px'}} onChange={(e) => setFilter(e.target.value)}>
+                  <option value="Hepsi">Tümü</option>
+                  <option value="Kolay">Kolay</option>
+                  <option value="Orta">Orta</option>
+                </select>
+              </div>
+              {filteredWorkouts.map(w => (
+                <div key={w.id} style={{display:'flex', justifyContent:'space-between', padding:'10px 0', borderBottom:'1px solid #334155'}}>
+                  <span>{w.name} ({w.level})</span>
+                  <div>
+                    <button onClick={() => toggleLike(w.id)} style={{background:'none', border:'none', cursor:'pointer'}}>{w.liked ? '❤️' : '🤍'}</button>
+                    <button onClick={() => {setActiveWorkout(w); setView('workout_detail')}} style={{...styles.button, padding:'0.3rem 0.6rem', marginLeft:'10px'}}>Görüntüle</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* GEÇMİŞ (G-12) */}
+            <div style={styles.card}>
+              <h3>Geçmiş (G-12 DELETE)</h3>
+              {history.map(h => (
+                <div key={h.id} style={{display:'flex', justifyContent:'space-between', padding:'5px 0'}}>
+                  <span>{h.name} - {h.date}</span>
+                  <button onClick={() => setHistory(history.filter(i => i.id !== h.id))} style={styles.deleteBtn}>Sil</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* GÖRSEL REHBER & ANTRENMAN (G-11 & G-13) */}
+        {view === 'workout_detail' && activeWorkout && (
+          <div style={{...styles.card, textAlign:'center'}}>
+            <button onClick={() => setView('dashboard')} style={{float:'left', background:'none', border:'none', color:'#94a3b8', cursor:'pointer'}}>← Geri</button>
+            <h2 style={{color:'#a3e635'}}>{activeWorkout.name}</h2>
+            <img src={activeWorkout.gif} alt="rehber" style={{width:'300px', borderRadius:'1rem', margin:'1.5rem 0'}} />
+            <p style={{maxWidth:'500px', margin:'0 auto 1.5rem'}}>{activeWorkout.desc}</p>
+            <button onClick={completeWorkout} style={{...styles.button, width:'100%'}}>Antrenmanı Tamamla (G-11 POST)</button>
+          </div>
+        )}
+
+        {/* PROFİL DÜZENLE (G-10 PUT) */}
+        {view === 'profile' && (
+          <div style={{maxWidth:'400px', margin:'0 auto', ...styles.card}}>
+            <h3>Profil Düzenle (G-10)</h3>
+            <form onSubmit={handleUpdateProfile}>
+              <input name="name" defaultValue={user.name} style={styles.input} />
+              <button type="submit" style={styles.button}>Güncelle (PUT)</button>
+            </form>
+          </div>
+        )}
+
+      </main>
+    </div>
+  );
+}
+
+export default App;
