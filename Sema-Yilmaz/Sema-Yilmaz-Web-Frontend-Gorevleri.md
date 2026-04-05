@@ -1,6 +1,7 @@
 # Sema Yılmaz'ın Web Frontend Görevleri
 
 **Front-end Test Videosu:** [https://www.youtube.com/watch?v=PEZuT-yQX50]
+**Web Frontend Adresi:** [frontend](https://fit-stack-nine.vercel.app)
 
 ---
 
