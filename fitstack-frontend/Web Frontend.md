@@ -1,6 +1,6 @@
 # Web Frontend Görev Dağılımı
 
-**Web Frontend Adresi:** [frontend.yazmuh.com](https://fit-stack-nine.vercel.app)
+**Web Frontend Adresi:** [frontend](https://fit-stack-nine.vercel.app)
 
 
 ---
