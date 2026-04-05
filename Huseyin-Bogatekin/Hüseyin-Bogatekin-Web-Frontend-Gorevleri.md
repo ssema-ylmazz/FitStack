@@ -3,7 +3,7 @@
 
 # Hüseyin Boğatekin'in Web Frontend Görevleri
 **Front-end Test Videosu:** [[Link](https://youtu.be/qyqRJu3tfpU?si=LH2XAOtdsCYqkk0O)]
-**Web Frontend Adresi:** [frontend](https://fit-stack-nine.vercel.app)
+**Web Frontend Adresi:** [(https://fit-stack-nine.vercel.app)]
 
 ### 1. Kullanıcı Giriş Sayfası (G-2)
 **API Endpoint:** `POST /users/login`
