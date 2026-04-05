@@ -1,7 +1,8 @@
 # Sema Yılmaz - REST API Testleri
 
 **API Test Videosu:** [YOUTUBE_LINKI_BURAYA]  
-**REST API Domain:** 'https://fitstack-a5v0.onrender.com`
+**REST API Domain:** '[https://fitstack-a5v0.onrender.com](https://fitstack-a5v0.onrender.com
+)`
 
 ---
 
