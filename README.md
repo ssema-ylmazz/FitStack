@@ -48,6 +48,16 @@
 
 
 
+## Backend (yerel çalıştırma)
+
+```bash
+cd backend && npm install && npm start
+```
+
+Sunucu varsayılan olarak `http://localhost:3000` adresinde dinler. İlk açılışta `demo@fitstack.local` / `demo` ile giriş yapılabilir (mock oturum).
+
+---
+
 ## Dokümantasyon
 
 Proje dokümantasyonuna aşağıdaki linkten erişebilirsiniz:

@@ -1,36 +1,35 @@
 openapi: 3.0.3
 
 info:
-  title: Fitness Tracking API
-  description: Kullanıcıların egzersiz programlarını takip ettiği sistem
+  title: FitStack Fitness API
+  description: |
+    Kullanıcıların egzersiz programlarını takip ettiği sistem. Tüm yollar API kökündedir (`/v1` öneki yoktur).
+    Mock/in-memory backend ile uyumludur.
   version: 1.0.0
 
 servers:
-  - url: http://localhost:3000/v1
-    description: Development Server
+  - url: http://localhost:3000
+    description: Yerel geliştirme
 
 tags:
   - name: auth
-    description: Kullanıcı kayıt ve giriş işlemleri
+    description: Kayıt ve giriş
   - name: users
-    description: Kullanıcı profil işlemleri
+    description: Profil ve puan
   - name: programs
     description: Egzersiz programları
   - name: workouts
     description: Antrenman kayıtları
   - name: badges
-    description: Rozet işlemleri
+    description: Rozetler
   - name: streak
-    description: Günlük seri işlemleri
+    description: Günlük seri
 
 paths:
-
   /users/register:
     post:
-      tags:
-        - auth
+      tags: [auth]
       summary: Kullanıcı kaydı
-      description: Yeni kullanıcı sisteme kayıt olur
       requestBody:
         required: true
         content:
@@ -39,185 +38,668 @@ paths:
               $ref: '#/components/schemas/UserRegister'
       responses:
         '201':
-          description: Kullanıcı oluşturuldu
+          description: Oluşturuldu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
 
   /users/login:
     post:
-      tags:
-        - auth
+      tags: [auth]
       summary: Kullanıcı girişi
-      description: Kullanıcı email ve şifre ile giriş yapar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
       responses:
         '200':
-          description: Giriş başarılı
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /users/profile:
     get:
-      tags:
-        - users
+      tags: [users]
       summary: Profil görüntüleme
       responses:
         '200':
-          description: Profil bilgileri döner
-
+          description: Profil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     put:
-      tags:
-        - users
+      tags: [users]
       summary: Profil güncelleme
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
       responses:
         '200':
-          description: Profil güncellendi
-
+          description: Güncellendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileUpdateResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
     delete:
-      tags:
-        - users
-      summary: Hesap silme
+      tags: [users]
+      summary: Hesap silme (mock sunucu yeni demo oturumu oluşturur)
       responses:
-        '204':
-          description: Hesap silindi
+        '200':
+          description: Silindi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteAccountResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /users/points:
     get:
-      tags:
-        - users
-      summary: Toplam puanı görüntüleme
+      tags: [users]
+      summary: Toplam puan
       responses:
         '200':
-          description: Kullanıcı puanı
+          description: Puan özeti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PointsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /programs:
     get:
-      tags:
-        - programs
-      summary: Program listeleme
+      tags: [programs]
+      summary: Program listeleme veya filtreleme
+      parameters:
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [beginner, intermediate, advanced]
+          description: Zorluk filtresi
       responses:
         '200':
           description: Program listesi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /programs/{id}:
     get:
-      tags:
-        - programs
-      summary: Program detay görüntüleme
+      tags: [programs]
+      summary: Program detayı
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ProgramId'
       responses:
         '200':
-          description: Program detayı
+          description: Program
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramDetailResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /programs/{id}/select:
     post:
-      tags:
-        - programs
+      tags: [programs]
       summary: Program seçme
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ProgramId'
       responses:
         '200':
-          description: Program seçildi
+          description: Seçildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramSelectResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /workouts:
     post:
-      tags:
-        - workouts
+      tags: [workouts]
       summary: Antrenman kaydı oluşturma
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkoutCreate'
       responses:
         '201':
-          description: Antrenman kaydedildi
-
+          description: Oluşturuldu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkoutCreateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     get:
-      tags:
-        - workouts
-      summary: Geçmiş antrenmanları görüntüleme
+      tags: [workouts]
+      summary: Geçmiş antrenmanlar
       responses:
         '200':
-          description: Antrenman listesi
+          description: Liste
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkoutListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /workouts/{id}/points:
     put:
-      tags:
-        - workouts
-      summary: Antrenman tamamlanınca puan kazanma
+      tags: [workouts]
+      summary: Antrenman tamamlanınca puan ekleme
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/WorkoutId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                points:
+                  type: number
+                  default: 50
       responses:
         '200':
-          description: Puan eklendi
+          description: Puan güncellendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkoutPointsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /workouts/{id}:
     delete:
-      tags:
-        - workouts
+      tags: [workouts]
       summary: Antrenman kaydını silme
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/WorkoutId'
       responses:
-        '204':
-          description: Antrenman silindi
+        '200':
+          description: Silindi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkoutDeleteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /badges:
     post:
-      tags:
-        - badges
+      tags: [badges]
       summary: Rozet kazanma
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadgeCreate'
       responses:
         '201':
           description: Rozet eklendi
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadgeCreateResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     get:
-      tags:
-        - badges
-      summary: Rozetleri görüntüleme
+      tags: [badges]
+      summary: Rozetleri listeleme
       responses:
         '200':
-          description: Kullanıcı rozetleri
+          description: Rozet listesi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadgeListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /streak:
     get:
-      tags:
-        - streak
+      tags: [streak]
       summary: Günlük seri görüntüleme
       responses:
         '200':
           description: Seri bilgisi
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreakResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     put:
-      tags:
-        - streak
+      tags: [streak]
       summary: Seri bilgisi güncelleme
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StreakUpdate'
       responses:
         '200':
-          description: Seri güncellendi
+          description: Güncellendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreakUpdateResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
 components:
+  parameters:
+    ProgramId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    WorkoutId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+
+  responses:
+    BadRequest:
+      description: Geçersiz istek
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Yetkisiz
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Bulunamadı
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Çakışma
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
   schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+        message:
+          type: string
 
     UserRegister:
       type: object
-      required:
-        - email
-        - password
-        - username
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        username:
+          type: string
+        name:
+          type: string
+
+    UserLogin:
+      type: object
+      required: [email, password]
       properties:
         email:
           type: string
         password:
           type: string
+
+    UserPublic:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
         username:
           type: string
+        email:
+          type: string
+        level:
+          type: string
+          description: Kullanıcı seviye etiketi (serbest metin)
+
+    RegisterResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        user:
+          $ref: '#/components/schemas/UserPublic'
+
+    LoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        token:
+          type: string
+          description: Mock JWT benzeri dize
+        user:
+          $ref: '#/components/schemas/UserPublic'
+
+    ProfileResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        user:
+          $ref: '#/components/schemas/UserPublic'
+
+    UserProfileUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        level:
+          type: string
+
+    ProfileUpdateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        user:
+          $ref: '#/components/schemas/UserPublic'
+
+    DeleteAccountResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+
+    PointsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        totalPoints:
+          type: number
+        userId:
+          type: integer
+        updatedAt:
+          type: string
+          format: date-time
+
+    Program:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        duration:
+          type: integer
+          description: Tahmini süre (dakika)
+        category:
+          type: string
+        calories:
+          type: integer
+        description:
+          type: string
+
+    ProgramListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        programs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Program'
+        count:
+          type: integer
+
+    ProgramDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        program:
+          $ref: '#/components/schemas/Program'
+
+    ProgramSelectResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        programId:
+          type: integer
+        program:
+          $ref: '#/components/schemas/Program'
+
+    Workout:
+      type: object
+      properties:
+        id:
+          type: integer
+        programId:
+          type: integer
+        programTitle:
+          type: string
+        duration:
+          type: number
+        calories:
+          type: number
+        date:
+          type: string
+          description: YYYY-MM-DD
+        note:
+          type: string
+
+    WorkoutCreate:
+      type: object
+      properties:
+        programId:
+          type: integer
+        duration:
+          type: number
+        calories:
+          type: number
+        date:
+          type: string
+        note:
+          type: string
+
+    WorkoutCreateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        workout:
+          $ref: '#/components/schemas/Workout'
+
+    WorkoutListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        workouts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Workout'
+        count:
+          type: integer
+
+    WorkoutPointsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        gainedPoints:
+          type: number
+        totalPoints:
+          type: number
+        workout:
+          $ref: '#/components/schemas/Workout'
+
+    WorkoutDeleteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        id:
+          type: integer
+        workout:
+          $ref: '#/components/schemas/Workout'
+
+    Badge:
+      type: object
+      properties:
+        id:
+          type: integer
+        key:
+          type: string
+        name:
+          type: string
+        earnedAt:
+          type: string
+          format: date-time
+
+    BadgeCreate:
+      type: object
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+
+    BadgeCreateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        badge:
+          $ref: '#/components/schemas/Badge'
+
+    BadgeListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        badges:
+          type: array
+          items:
+            $ref: '#/components/schemas/Badge'
+        count:
+          type: integer
+
+    StreakPayload:
+      type: object
+      properties:
+        currentStreak:
+          type: integer
+        lastWorkoutDate:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+
+    StreakResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        streak:
+          $ref: '#/components/schemas/StreakPayload'
+
+    StreakUpdate:
+      type: object
+      properties:
+        currentStreak:
+          type: integer
+        lastWorkoutDate:
+          type: string
+
+    StreakUpdateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        streak:
+          $ref: '#/components/schemas/StreakPayload'
