@@ -60,10 +60,24 @@ Sunucu varsayılan olarak `http://localhost:3000` adresinde dinler. İlk açıl�
 
 ## Dokümantasyon
 
-Proje dokümantasyonuna aşağıdaki linkten erişebilirsiniz:
+Proje dokümantasyonuna aşağıdaki bağlantılardan erişebilirsiniz:
+
+### Genel
 
 1. [Gereksinim Analizi](gereksinimler.md)
 2. [REST API Tasarımı](API-Tasarimi.md)
 3. [REST API](Rest-API.md)
 4. [Web Front-End](Web%20Frontend.md)
+
+### Mobil (final)
+
+5. [Mobil Front-End](MobilFrontEnd.md) — React Native + Expo, klasör yapısı, ekranlar, navigasyon, API mantığı ve 17 gereksinim eşlemesi
+6. [Mobil Back-End (REST)](MobilBackEnd.md) — Mobil istemcinin kullanacağı endpoint özetleri ve örnek yanıtlar
+
+### Mobil görev dağılımı
+
+7. [Sema — Mobil Front-End görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md)
+8. [Sema — Mobil Back-End (API) görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Backend-Gorevleri.md)
+9. [Hüseyin — Mobil Front-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Frontend-Gorevleri.md)
+10. [Hüseyin — Mobil Back-End (API) görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md)
 
