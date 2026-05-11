@@ -7,20 +7,26 @@ import React, {
   useState,
 } from 'react';
 import * as tokenStorage from '../storage/tokenStorage';
+import * as authService from '../api/authService';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [token, setTokenState] = useState(null);
+  const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
+  const [authBusy, setAuthBusy] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const stored = await tokenStorage.getToken();
-      if (!cancelled) {
-        setTokenState(stored);
-        setReady(true);
+      try {
+        const stored = await tokenStorage.getToken();
+        if (!cancelled) {
+          setTokenState(stored);
+        }
+      } finally {
+        if (!cancelled) setReady(true);
       }
     })();
     return () => {
@@ -28,28 +34,48 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  /** Gerçek API çağrısı yok — sadece iskelet oturumu. */
-  const login = useCallback(async (_email, _password) => {
-    const shellToken = 'fitstack-shell-token';
-    await tokenStorage.saveToken(shellToken);
-    setTokenState(shellToken);
+  const login = useCallback(async (email, password) => {
+    setAuthBusy(true);
+    try {
+      const { token: newToken, user: nextUser } = await authService.loginWithPassword(email, password);
+      await tokenStorage.setToken(newToken);
+      setUser(nextUser);
+      setTokenState(newToken);
+      return { ok: true };
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Giriş yapılamadı.';
+      return { ok: false, error: message };
+    } finally {
+      setAuthBusy(false);
+    }
   }, []);
 
-  /** Gerçek API çağrısı yok — sadece iskelet oturumu. */
-  const register = useCallback(async (_payload) => {
-    const shellToken = 'fitstack-shell-token';
-    await tokenStorage.saveToken(shellToken);
-    setTokenState(shellToken);
+  const register = useCallback(async ({ email, password, name, username }) => {
+    setAuthBusy(true);
+    try {
+      await authService.registerAccount({ email, password, name, username });
+      const { token: newToken, user: nextUser } = await authService.loginWithPassword(email, password);
+      await tokenStorage.setToken(newToken);
+      setUser(nextUser);
+      setTokenState(newToken);
+      return { ok: true };
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Kayıt tamamlanamadı.';
+      return { ok: false, error: message };
+    } finally {
+      setAuthBusy(false);
+    }
   }, []);
 
   const logout = useCallback(async () => {
     await tokenStorage.removeToken();
+    setUser(null);
     setTokenState(null);
   }, []);
 
   const value = useMemo(
-    () => ({ token, ready, login, register, logout }),
-    [token, ready, login, register, logout],
+    () => ({ token, user, ready, authBusy, login, register, logout }),
+    [token, user, ready, authBusy, login, register, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
