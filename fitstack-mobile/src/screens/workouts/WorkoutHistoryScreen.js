@@ -15,12 +15,14 @@ import AppCard from '../../components/AppCard';
 import AppButton from '../../components/AppButton';
 import EmptyState from '../../components/EmptyState';
 import * as workoutService from '../../api/workoutService';
+import * as pointsService from '../../api/pointsService';
 
 export default function WorkoutHistoryScreen({ navigation }) {
   const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
+  const [earningId, setEarningId] = useState(null);
 
   const loadWorkouts = useCallback(async () => {
     setError('');
@@ -85,6 +87,22 @@ export default function WorkoutHistoryScreen({ navigation }) {
     [],
   );
 
+  const onEarnPoints = useCallback(async (item) => {
+    setEarningId(item.id);
+    try {
+      const r = await pointsService.awardWorkoutPoints(item.id);
+      Alert.alert(
+        'Puan kazandın',
+        `+${r.gainedPoints} XP eklendi. Yeni toplam: ${r.totalPoints} XP. Puanlar sekmesinden detay görebilirsin.`,
+        [{ text: 'Tamam' }],
+      );
+    } catch (e) {
+      Alert.alert('Hata', e instanceof Error ? e.message : 'Puan eklenemedi.');
+    } finally {
+      setEarningId(null);
+    }
+  }, []);
+
   const renderItem = useCallback(
     ({ item }) => (
       <AppCard style={styles.card}>
@@ -107,12 +125,21 @@ export default function WorkoutHistoryScreen({ navigation }) {
             <Text style={styles.note}>{item.note}</Text>
           </View>
         ) : null}
-        <Pressable onPress={() => confirmDelete(item)} style={styles.deleteBtn}>
-          <Text style={styles.deleteText}>Sil</Text>
-        </Pressable>
+        <View style={styles.actionRow}>
+          <AppButton
+            title="Puan kazan"
+            onPress={() => onEarnPoints(item)}
+            loading={earningId === item.id}
+            disabled={earningId !== null}
+            style={styles.earnBtn}
+          />
+          <Pressable onPress={() => confirmDelete(item)} style={styles.deleteBtn}>
+            <Text style={styles.deleteText}>Sil</Text>
+          </Pressable>
+        </View>
       </AppCard>
     ),
-    [confirmDelete],
+    [confirmDelete, onEarnPoints, earningId],
   );
 
   const keyExtractor = useCallback((item) => String(item.id), []);
@@ -195,6 +222,13 @@ const styles = StyleSheet.create({
   value: { fontSize: 14, color: '#e2e8f0', fontWeight: '600' },
   noteBlock: { marginTop: 8 },
   note: { fontSize: 14, color: '#cbd5e1', marginTop: 4, lineHeight: 20 },
-  deleteBtn: { marginTop: 12, alignSelf: 'flex-end', paddingVertical: 6, paddingHorizontal: 10 },
+  actionRow: {
+    marginTop: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  earnBtn: { flex: 1, marginRight: 10, marginBottom: 0 },
+  deleteBtn: { paddingVertical: 10, paddingHorizontal: 12 },
   deleteText: { color: '#f87171', fontWeight: '700', fontSize: 14 },
 });
