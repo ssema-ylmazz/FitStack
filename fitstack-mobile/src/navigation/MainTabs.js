@@ -15,6 +15,7 @@ import WorkoutCreateScreen from '../screens/workouts/WorkoutCreateScreen';
 
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
+import LeaderboardScreen from '../screens/leaderboard/LeaderboardScreen';
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -101,6 +102,14 @@ export default function MainTabs() {
         options={{
           tabBarLabel: 'Antrenmanlar',
           tabBarIcon: ({ color, size }) => <Ionicons name="calendar-outline" size={size ?? 22} color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="LeaderboardTab"
+        component={LeaderboardScreen}
+        options={{
+          tabBarLabel: 'Liderlik',
+          tabBarIcon: ({ color, size }) => <Ionicons name="trophy-outline" size={size ?? 22} color={color} />,
         }}
       />
       <Tab.Screen

@@ -252,6 +252,70 @@ app.get('/users/points', (req, res) => {
   });
 });
 
+/** Mock ek katılımcılar — gerçek DB yok; sıralama in-memory. */
+const LEADERBOARD_MOCK_EXTRAS = [
+  { id: 99001, username: 'NeoRunner', streak: 24 },
+  { id: 99002, username: 'IronSena', streak: 18 },
+  { id: 99003, username: 'ZenLifter', streak: 31 },
+  { id: 99004, username: 'PulseAce', streak: 9 },
+];
+
+function leaderboardPeriodPoints(userId, username, basePoints, streak, period) {
+  let seed = userId * 7919;
+  for (let i = 0; i < String(username).length; i += 1) {
+    seed = (seed + String(username).charCodeAt(i) * (i + 3)) % 2147483647;
+  }
+  seed = (seed + streak * 97) % 10000;
+  if (period === 'month') {
+    return Math.round(basePoints * 0.92 + seed * 0.35 + streak * 5);
+  }
+  return Math.round(basePoints * 0.28 + seed * 0.12 + streak * 8);
+}
+
+app.get('/leaderboard', (req, res) => {
+  if (!activeUser) {
+    return res.status(401).json({
+      success: false,
+      error: 'UNAUTHORIZED',
+      message: 'Oturum yok.',
+    });
+  }
+  const q = String(req.query.period || 'week').toLowerCase();
+  const period = q === 'month' ? 'month' : 'week';
+  const rows = [];
+  for (const u of usersByEmail.values()) {
+    const st = getState(u.id);
+    const points = leaderboardPeriodPoints(u.id, u.username, st.totalPoints, st.streak.currentStreak, period);
+    rows.push({
+      id: u.id,
+      username: u.username,
+      points,
+      streak: st.streak.currentStreak,
+      rank: 0,
+    });
+  }
+  for (const bot of LEADERBOARD_MOCK_EXTRAS) {
+    const base = 720 + (bot.id % 500) * 4;
+    const points = leaderboardPeriodPoints(bot.id, bot.username, base, bot.streak, period);
+    rows.push({
+      id: bot.id,
+      username: bot.username,
+      points,
+      streak: bot.streak,
+      rank: 0,
+    });
+  }
+  rows.sort((a, b) => b.points - a.points || b.streak - a.streak || a.username.localeCompare(b.username));
+  rows.forEach((r, i) => {
+    r.rank = i + 1;
+  });
+  return res.status(200).json({
+    success: true,
+    period,
+    leaderboard: rows,
+  });
+});
+
 /* ---------------- PROGRAMS (liste / filtre önce, :id rotaları sonra) ---------------- */
 
 app.get('/programs', (req, res) => {
