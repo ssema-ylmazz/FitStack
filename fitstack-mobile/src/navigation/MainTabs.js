@@ -13,6 +13,8 @@ import ProgramDetailScreen from '../screens/programs/ProgramDetailScreen';
 import WorkoutHistoryScreen from '../screens/workouts/WorkoutHistoryScreen';
 import WorkoutCreateScreen from '../screens/workouts/WorkoutCreateScreen';
 
+import StatisticsScreen from '../screens/statistics/StatisticsScreen';
+
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
 
@@ -101,6 +103,14 @@ export default function MainTabs() {
         options={{
           tabBarLabel: 'Antrenmanlar',
           tabBarIcon: ({ color, size }) => <Ionicons name="calendar-outline" size={size ?? 22} color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="StatisticsTab"
+        component={StatisticsScreen}
+        options={{
+          tabBarLabel: 'İstatistikler',
+          tabBarIcon: ({ color, size }) => <Ionicons name="stats-chart-outline" size={size ?? 22} color={color} />,
         }}
       />
       <Tab.Screen
