@@ -3,7 +3,13 @@ const cors = require('cors');
 const crypto = require('crypto');
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: false,
+    optionsSuccessStatus: 200,
+  }),
+);
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
@@ -42,6 +48,38 @@ const PROGRAMS = [
 let nextUserId = 1;
 let nextWorkoutId = 1;
 let nextBadgeId = 1;
+let nextGoalId = 1;
+let nextActivityId = 1;
+
+function seedDefaultGoals() {
+  const t = new Date().toISOString();
+  return [
+    {
+      id: nextGoalId++,
+      type: 'weekly_workouts',
+      title: 'Haftada 3 antrenman',
+      target: 3,
+      createdAt: t,
+      manualComplete: false,
+    },
+    {
+      id: nextGoalId++,
+      type: 'total_points',
+      title: '500 puan kazan',
+      target: 500,
+      createdAt: t,
+      manualComplete: false,
+    },
+    {
+      id: nextGoalId++,
+      type: 'streak_days',
+      title: '5 günlük seri oluştur',
+      target: 5,
+      createdAt: t,
+      manualComplete: false,
+    },
+  ];
+}
 
 /** @type {Map<string, {id:number,email:string,password:string,name:string,username:string,level:string}>} */
 const usersByEmail = new Map();
@@ -67,12 +105,112 @@ function defaultUserState() {
       updatedAt: new Date().toISOString(),
     },
     selectedProgramId: null,
+    goals: seedDefaultGoals(),
+    activities: [],
   };
 }
 
 function getState(userId) {
   if (!userState.has(userId)) userState.set(userId, defaultUserState());
-  return userState.get(userId);
+  const st = userState.get(userId);
+  if (!Array.isArray(st.goals)) {
+    st.goals = seedDefaultGoals();
+  }
+  if (!Array.isArray(st.activities)) {
+    st.activities = [];
+  }
+  return st;
+}
+
+function toDateKeyLocal(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function addDaysLocal(d, n) {
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  x.setDate(x.getDate() + n);
+  return x;
+}
+
+function startOfWeekMondayLocal(ref) {
+  const d = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate());
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+
+function parseWorkoutDateKey(raw) {
+  if (raw == null) return null;
+  const s = String(raw).slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
+  return s;
+}
+
+function countWorkoutsThisCalendarWeek(workouts) {
+  const today = new Date();
+  const mon = startOfWeekMondayLocal(today);
+  const sun = addDaysLocal(mon, 6);
+  const monK = toDateKeyLocal(mon);
+  const sunK = toDateKeyLocal(sun);
+  return workouts.filter((w) => {
+    const k = parseWorkoutDateKey(w.date);
+    return k != null && k >= monK && k <= sunK;
+  }).length;
+}
+
+function computeGoalProgress(st, g) {
+  let current = 0;
+  if (g.type === 'weekly_workouts') {
+    current = countWorkoutsThisCalendarWeek(st.workouts);
+  } else if (g.type === 'total_points') {
+    current = st.totalPoints;
+  } else if (g.type === 'streak_days') {
+    current = st.streak.currentStreak;
+  } else {
+    current = 0;
+  }
+  const target = Math.max(1, Number(g.target) || 1);
+  const completed = g.manualComplete === true || current >= target;
+  const progressPercent = Math.min(100, Math.round((current / target) * 1000) / 10);
+  return {
+    id: g.id,
+    type: g.type,
+    title: g.title,
+    target,
+    current,
+    completed,
+    manualComplete: g.manualComplete === true,
+    progressPercent,
+    createdAt: g.createdAt,
+  };
+}
+
+function userFirstName(u) {
+  if (!u || u.name == null) return 'Kullanıcı';
+  const p = String(u.name).trim().split(/\s+/)[0];
+  return p || 'Kullanıcı';
+}
+
+/**
+ * @param {object} st userState
+ * @param {string} type
+ * @param {string} message
+ */
+function pushActivity(st, type, message) {
+  if (!Array.isArray(st.activities)) st.activities = [];
+  st.activities.unshift({
+    id: nextActivityId++,
+    type,
+    message,
+    createdAt: new Date().toISOString(),
+  });
+  if (st.activities.length > 100) {
+    st.activities.length = 100;
+  }
 }
 
 function publicUser(u) {
@@ -350,7 +488,9 @@ app.post('/workouts', (req, res) => {
     date: body.date ? String(body.date) : new Date().toISOString().slice(0, 10),
     note: body.note != null ? String(body.note) : '',
   };
-  getState(activeUser.id).workouts.unshift(workout);
+  const st = getState(activeUser.id);
+  st.workouts.unshift(workout);
+  pushActivity(st, 'workout', `${userFirstName(activeUser)} ${workout.duration} dakikalık bir antrenman tamamladı.`);
   return res.status(201).json({
     success: true,
     message: 'Antrenman kaydedildi',
@@ -394,6 +534,7 @@ app.put('/workouts/:id/points', (req, res) => {
   }
   const gained = req.body && req.body.points != null ? Number(req.body.points) : 50;
   st.totalPoints += gained;
+  pushActivity(st, 'points', `${userFirstName(activeUser)} ${gained} puan kazandı.`);
   return res.status(200).json({
     success: true,
     message: 'Puan eklendi',
@@ -449,7 +590,9 @@ app.post('/badges', (req, res) => {
     name,
     earnedAt: new Date().toISOString(),
   };
-  getState(activeUser.id).badges.push(badge);
+  const st = getState(activeUser.id);
+  st.badges.push(badge);
+  pushActivity(st, 'badge', `Yeni rozet kazanıldı: ${badge.name}.`);
   return res.status(201).json({
     success: true,
     message: 'Rozet kazanıldı',
@@ -513,6 +656,132 @@ app.put('/streak', (req, res) => {
       lastWorkoutDate: st.streak.lastWorkoutDate,
       updatedAt: st.streak.updatedAt,
     },
+  });
+});
+
+/* ---------------- GOALS ---------------- */
+
+const GOAL_TYPES = new Set(['weekly_workouts', 'total_points', 'streak_days']);
+
+app.get('/goals', (req, res) => {
+  if (!activeUser) {
+    return res.status(401).json({
+      success: false,
+      error: 'UNAUTHORIZED',
+      message: 'Oturum yok.',
+    });
+  }
+  const st = getState(activeUser.id);
+  const goals = (st.goals || []).map((g) => computeGoalProgress(st, g));
+  return res.status(200).json({
+    success: true,
+    goals,
+    count: goals.length,
+  });
+});
+
+app.post('/goals', (req, res) => {
+  if (!activeUser) {
+    return res.status(401).json({
+      success: false,
+      error: 'UNAUTHORIZED',
+      message: 'Oturum yok.',
+    });
+  }
+  const body = req.body || {};
+  const type = body.type != null ? String(body.type) : '';
+  if (!GOAL_TYPES.has(type)) {
+    return res.status(400).json({
+      success: false,
+      error: 'INVALID_TYPE',
+      message: 'type: weekly_workouts, total_points veya streak_days olmalıdır.',
+    });
+  }
+  let title = body.title != null ? String(body.title).trim() : '';
+  let target = body.target != null ? Number(body.target) : NaN;
+  if (type === 'weekly_workouts') {
+    if (!title) title = 'Haftada 3 antrenman';
+    if (Number.isNaN(target) || target <= 0) target = 3;
+  } else if (type === 'total_points') {
+    if (!title) title = '500 puan kazan';
+    if (Number.isNaN(target) || target <= 0) target = 500;
+  } else if (type === 'streak_days') {
+    if (!title) title = '5 günlük seri oluştur';
+    if (Number.isNaN(target) || target <= 0) target = 5;
+  }
+  const st = getState(activeUser.id);
+  const goal = {
+    id: nextGoalId++,
+    type,
+    title,
+    target,
+    createdAt: new Date().toISOString(),
+    manualComplete: false,
+  };
+  st.goals.push(goal);
+  pushActivity(st, 'goal', `Yeni hedef oluşturuldu: ${title}.`);
+  return res.status(201).json({
+    success: true,
+    message: 'Hedef oluşturuldu',
+    goal: computeGoalProgress(st, goal),
+  });
+});
+
+app.put('/goals/:id', (req, res) => {
+  if (!activeUser) {
+    return res.status(401).json({
+      success: false,
+      error: 'UNAUTHORIZED',
+      message: 'Oturum yok.',
+    });
+  }
+  const gid = Number(req.params.id);
+  if (Number.isNaN(gid)) {
+    return res.status(400).json({
+      success: false,
+      error: 'INVALID_ID',
+      message: 'Geçersiz hedef id.',
+    });
+  }
+  const st = getState(activeUser.id);
+  const g = st.goals.find((x) => x.id === gid);
+  if (!g) {
+    return res.status(404).json({
+      success: false,
+      error: 'NOT_FOUND',
+      message: 'Hedef bulunamadı.',
+    });
+  }
+  const body = req.body || {};
+  if (body.title != null) g.title = String(body.title).trim() || g.title;
+  if (body.target != null) {
+    const t = Number(body.target);
+    if (!Number.isNaN(t) && t > 0) g.target = t;
+  }
+  if (body.manualComplete != null) {
+    g.manualComplete = Boolean(body.manualComplete);
+  }
+  return res.status(200).json({
+    success: true,
+    message: 'Hedef güncellendi',
+    goal: computeGoalProgress(st, g),
+  });
+});
+
+app.get('/activity-feed', (req, res) => {
+  if (!activeUser) {
+    return res.status(401).json({
+      success: false,
+      error: 'UNAUTHORIZED',
+      message: 'Oturum yok.',
+    });
+  }
+  const st = getState(activeUser.id);
+  const activities = Array.isArray(st.activities) ? st.activities : [];
+  return res.status(200).json({
+    success: true,
+    activities,
+    count: activities.length,
   });
 });
 
