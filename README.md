@@ -8,8 +8,6 @@
 
 ## Proje Hakkında
 
-
-
 **Proje Tanımı:**
 
 > FitStack uygulaması, kullanıcıların kişisel antrenmanlarını takip edebildiği, hazır egzersiz programlarını keşfedip tamamlayabildiği ve ilerlemelerini puan ve rozetlerle görüntüleyebildiği kapsamlı bir fitness takip sistemidir. Kullanıcılar sisteme kayıt olabilir, profil bilgilerini yönetebilir ve hesaplarını silebilir. Mevcut egzersiz programlarını listeleyebilir, filtreleyebilir, istedikleri programı seçip detaylarını görüntüleyebilir ve egzersizleri tamamladıkça işaretleyebilirler. Ayrıca, kullanıcılar antrenmanlarını kaydedebilir, geçmiş egzersizlerini görebilir, puan ve rozet kazanabilir, toplam puanlarını takip edebilir ve günlük serilerini güncelleyebilirler. Uygulama, düzenli egzersizi motive eden ve ilerlemeyi görselleştiren bir sistem sunar.
@@ -18,84 +16,150 @@
 
 > Fitness Takip Sistemi
 
+---
+
+## Kullanılan teknolojiler
+
+| Katman | Teknolojiler |
+|--------|----------------|
+| **Backend** | Node.js, Express, in-memory mock veri; isteğe bağlı **Redis** (önbellek) ve **RabbitMQ** (olay yayını) |
+| **Web** | React (Create React App), Axios, React Router |
+| **Mobil** | React Native, Expo, React Navigation |
+| **Altyapı** | Docker, Docker Compose, Jenkins (CI/CD) |
 
 ---
 
-## Proje Linkleri
+## Proje linkleri
 
-**REST-API ADRESİ:**(https://fitstack-a5v0.onrender.com)
-
-**Web-Frontend ADRESİ:**(https://fit-stack-nine.vercel.app)
-
-
+- **REST API adresi:** [https://fitstack-a5v0.onrender.com](https://fitstack-a5v0.onrender.com)
+- **Web frontend adresi:** [https://fit-stack-nine.vercel.app](https://fit-stack-nine.vercel.app)
 
 ---
 
-## Proje Ekibi
+## Proje ekibi
 
-**Grup Adı:**
+**Grup adı:** DevFit
 
-> DevFit
-
-**Ekip Üyeleri:**
+**Ekip üyeleri:**
 
 * Sema Nur Yılmaz
 * Hüseyin Boğatekin
 
 ---
 
+## Yerel geliştirme
 
-
-
-
-## Backend (yerel çalıştırma)
+### Backend
 
 ```bash
 cd backend && npm install && npm start
 ```
 
-Sunucu varsayılan olarak `http://localhost:3000` adresinde dinler. İlk açılışta `demo@fitstack.local` / `demo` ile giriş yapılabilir (mock oturum).
+Sunucu varsayılan olarak `http://localhost:3000` adresinde dinler.
+
+### Web frontend
+
+```bash
+cd fitstack-frontend && npm install && npm start
+```
+
+Geliştirme sunucusu varsayılan olarak **3000** portunu kullanır. Backend ile aynı anda çalıştırırken port çakışmasını önlemek için örneğin `PORT=3001 npm start` kullanabilirsiniz. API tabanı için `REACT_APP_API_URL` (ör. `http://localhost:3000`) ortam değişkenini ayarlayın.
+
+### Mobil uygulama
+
+```bash
+cd fitstack-mobile && npm install && npx expo start
+```
+
+**fitstack-mobile** Docker Compose yığınının parçası değildir; yerelde Expo ile çalıştırılır. Aynı makinede geliştirme için API genelde `http://localhost:3000`; Android emülatörde `http://10.0.2.2:3000` veya bilgisayarın LAN IP’si (`EXPO_PUBLIC_API_URL`, mobil `client.js` dokümantasyonuna bakın).
 
 ---
 
-## Docker (REST API + Web Frontend)
+## Docker Compose
 
-Backend ve React web arayüzünü konteyner olarak çalıştırmak için:
+Tam yığın aşağıdaki dört servisi birlikte kapsar: **backend**, **web-frontend**, **redis**, **rabbitmq**. Proje kökündeki `docker-compose.yml` dosyasına göre servis seti güncellenebilir; tipik port eşlemeleri şöyledir:
 
-```bash
-docker compose build
-docker compose up
-```
-
-Durdurmak için:
-
-```bash
-docker compose down
-```
-
-- **Backend:** [http://localhost:3000](http://localhost:3000) — kök yanıt ve REST API.
-- **Web frontend:** [http://localhost:3001](http://localhost:3001) — statik build; tarayıcıdan API istekleri `http://localhost:3000` adresine gider (`REACT_APP_API_URL` ile derlenir).
+| Servis | Açıklama | Örnek erişim |
+|--------|-----------|----------------|
+| **backend** | REST API | [http://localhost:3000](http://localhost:3000) |
+| **web-frontend** | React üretim build’i (nginx vb.) | [http://localhost:3001](http://localhost:3001) — istemci istekleri `REACT_APP_API_URL` ile backend’e gider |
+| **redis** | Önbellek (leaderboard vb.) | `localhost:6379` |
+| **rabbitmq** | AMQP broker; yönetim paneli | AMQP varsayılan **5672**; panel [http://localhost:15672](http://localhost:15672) — kullanıcı **guest** / şifre **guest** |
 
 ### Docker ile test
 
-1. `docker compose up --build` (veya önce `build`, sonra `up`).
-2. Tarayıcıda `http://localhost:3000` → API çalışıyor mesajını doğrula.
-3. `http://localhost:3001` → web uygulaması; kayıt/giriş ve API çağrılarının çalıştığını kontrol et.
+```bash
+docker compose build
+docker compose up -d
+docker compose ps
+docker compose down
+```
+
+1. `docker compose build` ardından `docker compose up -d` (veya tek seferde `docker compose up -d --build`).
+2. `http://localhost:3000` → API kök yanıtını doğrulayın.
+3. `http://localhost:3001` → web uygulaması; kayıt/giriş ve API çağrılarını kontrol edin.
+4. Redis/RabbitMQ servisleri tanımlıysa leaderboard önbelleği ve antrenman olayları için broker erişimini doğrulayın.
 
 ### Port çakışmaları
 
-- Bilgisayarda **3000** veya **3001** başka bir süreç tarafından kullanılıyorsa `docker compose.yml` içindeki `ports` eşlemesini değiştirin (örn. `"3002:3000"` ve `REACT_APP_API_URL` ile uyumlu yeni backend URL’si; web için build arg’ı da aynı makineden erişilebilir URL olmalıdır).
+Bilgisayarda **3000**, **3001**, **6379** veya **5672** / **15672** başka süreçlerde kullanılıyorsa `docker-compose.yml` içindeki `ports` eşlemelerini ve web build argümanı `REACT_APP_API_URL` değerini uyumlu olacak şekilde güncelleyin.
 
-### Mobil (Expo)
+---
 
-- **fitstack-mobile** bu Docker kurulumunun parçası değildir; yerelde `cd fitstack-mobile && npx expo start` ile çalıştırılır.
-- Mobil istemcinin API adresi: aynı makinede geliştirme için genelde `http://localhost:3000` veya emülatör/LAN için `http://10.0.2.2:3000` / bilgisayarın **LAN IP**’si (`EXPO_PUBLIC_API_URL` ile, mobil `client.js` dokümantasyonuna bakın).
+## Jenkins CI/CD
+
+Kök dizinde **`Jenkinsfile`** bulunur. Declarative pipeline şu aşamaları çalıştırır:
+
+1. **Checkout** — `checkout scm` (job’un SCM ile bağlanmış olması gerekir).
+2. **Backend install** — `backend` içinde `npm ci` veya başarısızsa `npm install`.
+3. **Backend syntax check** — `node --check server.js` (backend’deki `npm test` placeholder olduğu için kullanılmaz).
+4. **Web frontend install** — `fitstack-frontend` içinde `npm ci` veya `npm install`.
+5. **Web frontend build** — `npm run build`.
+6. **Mobile install** — `fitstack-mobile` içinde `npm ci` veya `npm install`.
+7. **Mobile export check** — `npx expo export --platform android` (başarısızsa yedek olarak `npm run start -- --help` / `expo --help`); **mobil deploy yok**, yalnızca derlenebilirlik kanıtı.
+8. **Docker compose build** — proje kökünde `docker compose build` (veya `docker-compose build`). **İmaj push ve canlı deploy bu dosyada yok.**
+
+### Jenkins’te job oluşturma (özet)
+
+1. Yeni Item → **Pipeline** (veya **Multibranch Pipeline**).
+2. **Pipeline** bölümünde *Definition*: **Pipeline script from SCM**.
+3. Git repo URL’inizi ve dalı (branch) seçin; *Script Path*: `Jenkinsfile`.
+4. Agent’ta **Node.js**, **npm** ve **Docker** (ve tercihen `docker compose` eklentisi) bulunduğundan emin olun.
+
+### Gereksinimler
+
+- **Node.js** ve **npm** (Expo export için uyumlu Node sürümü, projede `>=18` önerilir).
+- **Docker** — `docker compose build` adımı için Jenkins çalıştığı makinede Docker erişimi (Linux agent + docker grubu veya Docker-in-Docker yapılandırması).
+
+Bu pipeline **GitHub token / secret / credential** tanımlamaz; özel registry push veya sunucu deploy adımları eklenmemiştir.
+
+---
+
+## Redis önbelleği
+
+Backend, **leaderboard** yanıtlarını Redis üzerinde kısa süreli (TTL) önbelleğe alabilir. Anahtarlar `fitstack:` önekiyle saklanır. Redis kapalı veya `REDIS_DISABLED=1` iken uygulama çalışmaya devam eder; önbellek atlanır ve yanıt doğrudan hesaplanır.
+
+---
+
+## RabbitMQ
+
+Antrenman oluşturma olayları **`fitstack.workout.created`** kuyruğuna yayınlanabilir. Broker erişilemez veya `amqplib` / bağlantı yapılandırması yoksa backend çökmez; yayın no-op olur. Yönetim arayüzü: [http://localhost:15672](http://localhost:15672) — **guest** / **guest**.
+
+---
+
+## Demo kullanıcı
+
+Mock oturum için: **`demo@fitstack.local`** / **`demo`**.
+
+---
+
+## API ve OpenAPI
+
+Makine okunur API sözleşmesi: **[openapi.yaml](openapi.yaml)** (kök dizin, `/v1` öneki kullanılmaz).
 
 ---
 
 ## Dokümantasyon
-
-Proje dokümantasyonuna aşağıdaki bağlantılardan erişebilirsiniz:
 
 ### Genel
 
@@ -115,4 +179,3 @@ Proje dokümantasyonuna aşağıdaki bağlantılardan erişebilirsiniz:
 8. [Sema — Mobil Back-End (API) görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Backend-Gorevleri.md)
 9. [Hüseyin — Mobil Front-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Frontend-Gorevleri.md)
 10. [Hüseyin — Mobil Back-End (API) görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md)
-
