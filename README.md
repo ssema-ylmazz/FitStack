@@ -58,6 +58,35 @@ Sunucu varsayılan olarak `http://localhost:3000` adresinde dinler. İlk açıl�
 
 ---
 
+## Jenkins CI/CD
+
+Kök dizinde **`Jenkinsfile`** bulunur. Declarative pipeline şu aşamaları çalıştırır:
+
+1. **Checkout** — `checkout scm` (job’un SCM ile bağlanmış olması gerekir).
+2. **Backend install** — `backend` içinde `npm ci` veya başarısızsa `npm install`.
+3. **Backend syntax check** — `node --check server.js` (backend’deki `npm test` placeholder olduğu için kullanılmaz).
+4. **Web frontend install** — `fitstack-frontend` içinde `npm ci` veya `npm install`.
+5. **Web frontend build** — `npm run build`.
+6. **Mobile install** — `fitstack-mobile` içinde `npm ci` veya `npm install`.
+7. **Mobile export check** — `npx expo export --platform android` (başarısızsa yedek olarak `npm run start -- --help` / `expo --help`); **mobil deploy yok**, yalnızca derlenebilirlik kanıtı.
+8. **Docker compose build** — proje kökünde `docker compose build` (veya `docker-compose build`). **İmaj push ve canlı deploy bu dosyada yok.**
+
+### Jenkins’te job oluşturma (özet)
+
+1. Yeni Item → **Pipeline** (veya **Multibranch Pipeline**).
+2. **Pipeline** bölümünde *Definition*: **Pipeline script from SCM**.
+3. Git repo URL’inizi ve dalı (branch) seçin; *Script Path*: `Jenkinsfile`.
+4. Agent’ta **Node.js**, **npm** ve **Docker** (ve tercihen `docker compose` eklentisi) bulunduğundan emin olun.
+
+### Gereksinimler
+
+- **Node.js** ve **npm** (Expo export için uyumlu Node sürümü, projede `>=18` önerilir).
+- **Docker** — `docker compose build` adımı için Jenkins çalıştığı makinede Docker erişimi (Linux agent + docker grubu veya Docker-in-Docker yapılandırması).
+
+Bu pipeline **GitHub token / secret / credential** tanımlamaz; özel registry push veya sunucu deploy adımları eklenmemiştir.
+
+---
+
 ## Dokümantasyon
 
 Proje dokümantasyonuna aşağıdaki bağlantılardan erişebilirsiniz:
