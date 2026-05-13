@@ -1,12 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
+const redisCache = require('./redisCache');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 /** @type {Array<{id:number,title:string,level:'beginner'|'intermediate'|'advanced',duration:number,category:string,calories:number,description:string}>} */
 const PROGRAMS = [
@@ -250,6 +252,104 @@ app.get('/users/points', (req, res) => {
     userId: activeUser.id,
     updatedAt: new Date().toISOString(),
   });
+});
+
+/** Mock ek katılımcılar — leaderboard (Redis cache ile servis edilir) */
+const LEADERBOARD_MOCK_EXTRAS = [
+  { id: 99001, username: 'NeoRunner', streak: 24 },
+  { id: 99002, username: 'IronSena', streak: 18 },
+  { id: 99003, username: 'ZenLifter', streak: 31 },
+  { id: 99004, username: 'PulseAce', streak: 9 },
+];
+
+function leaderboardPeriodPoints(userId, username, basePoints, streak, period) {
+  let seed = userId * 7919;
+  for (let i = 0; i < String(username).length; i += 1) {
+    seed = (seed + String(username).charCodeAt(i) * (i + 3)) % 2147483647;
+  }
+  seed = (seed + streak * 97) % 10000;
+  if (period === 'month') {
+    return Math.round(basePoints * 0.92 + seed * 0.35 + streak * 5);
+  }
+  return Math.round(basePoints * 0.28 + seed * 0.12 + streak * 8);
+}
+
+function buildLeaderboardPayload(period) {
+  const rows = [];
+  for (const u of usersByEmail.values()) {
+    const st = getState(u.id);
+    const points = leaderboardPeriodPoints(u.id, u.username, st.totalPoints, st.streak.currentStreak, period);
+    rows.push({
+      id: u.id,
+      username: u.username,
+      points,
+      streak: st.streak.currentStreak,
+      rank: 0,
+    });
+  }
+  for (const bot of LEADERBOARD_MOCK_EXTRAS) {
+    const base = 720 + (bot.id % 500) * 4;
+    const points = leaderboardPeriodPoints(bot.id, bot.username, base, bot.streak, period);
+    rows.push({
+      id: bot.id,
+      username: bot.username,
+      points,
+      streak: bot.streak,
+      rank: 0,
+    });
+  }
+  rows.sort((a, b) => b.points - a.points || b.streak - a.streak || a.username.localeCompare(b.username));
+  rows.forEach((r, i) => {
+    r.rank = i + 1;
+  });
+  return {
+    success: true,
+    leaderboard: rows,
+  };
+}
+
+const LEADERBOARD_CACHE_TTL_SEC = 60;
+
+app.get('/leaderboard', async (req, res) => {
+  if (!activeUser) {
+    return res.status(401).json({
+      success: false,
+      error: 'UNAUTHORIZED',
+      message: 'Oturum yok.',
+    });
+  }
+  const q = String(req.query.period || 'week').toLowerCase();
+  const period = q === 'month' ? 'month' : 'week';
+  const cacheKey = `leaderboard:${period}`;
+
+  try {
+    const cached = await redisCache.cacheGet(cacheKey);
+    if (cached) {
+      console.log('Leaderboard cache hit');
+      try {
+        const body = JSON.parse(cached);
+        if (body && Array.isArray(body.leaderboard)) {
+          return res.status(200).json({
+            success: true,
+            leaderboard: body.leaderboard,
+          });
+        }
+      } catch {
+        console.warn('Leaderboard cache bozuk, yeniden hesaplanıyor');
+      }
+    } else {
+      console.log('Leaderboard cache miss');
+    }
+
+    const payload = buildLeaderboardPayload(period);
+    const json = JSON.stringify(payload);
+    await redisCache.cacheSet(cacheKey, json, LEADERBOARD_CACHE_TTL_SEC);
+    return res.status(200).json(payload);
+  } catch (err) {
+    console.error('Leaderboard hatası:', err && err.message ? err.message : err);
+    const payload = buildLeaderboardPayload(period);
+    return res.status(200).json(payload);
+  }
 });
 
 /* ---------------- PROGRAMS (liste / filtre önce, :id rotaları sonra) ---------------- */
@@ -516,6 +616,6 @@ app.put('/streak', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`FitStack API http://localhost:${PORT} üzerinde aktif.`);
+app.listen(PORT, HOST, () => {
+  console.log(`FitStack API http://${HOST}:${PORT} üzerinde aktif.`);
 });

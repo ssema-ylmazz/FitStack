@@ -54,7 +54,29 @@
 cd backend && npm install && npm start
 ```
 
-Sunucu varsayılan olarak `http://localhost:3000` adresinde dinler. İlk açılışta `demo@fitstack.local` / `demo` ile giriş yapılabilir (mock oturum).
+Varsayılan API adresi: `http://localhost:3000` (veya `HOST`/`PORT` ortam değişkenleri). Demo giriş: `demo@fitstack.local` / `demo`. Yerel çalışırken Redis kullanacaksanız `docker compose up -d redis` ile Redis’i açın ve `REDIS_HOST=127.0.0.1` bırakın (varsayılan).
+
+---
+
+## Docker Compose
+
+Tek dosyada üç servis:
+
+| Servis        | Açıklama              | Host erişimi        |
+|---------------|------------------------|---------------------|
+| **backend**   | Node + Express         | `http://localhost:3000` |
+| **web-frontend** | React build + nginx | `http://localhost:3001` |
+| **redis**     | Cache (leaderboard)    | `localhost:6379`   |
+
+Backend konteynerinde `REDIS_HOST=redis`, `REDIS_PORT=6379` ve `depends_on: redis` tanımlıdır. Web arayüzü derlemesinde API adresi `REACT_APP_API_URL=http://localhost:3000` kullanılır (tarayıcıdan makinenin 3000 portuna gider).
+
+```bash
+docker compose build
+docker compose up -d
+docker compose down
+```
+
+**Leaderboard cache:** Yalnızca `GET /leaderboard` Redis kullanır. Anahtarlar: `fitstack:leaderboard:week` ve `fitstack:leaderboard:month` (TTL 60 sn). Redis yoksa veya hata olursa yanıt yine hesaplanır. Loglar: `Leaderboard cache hit` / `Leaderboard cache miss`. Cache’i kapatmak: `REDIS_DISABLED=1`.
 
 ---
 
