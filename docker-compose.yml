@@ -1,0 +1,19 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "3000:3000/tcp"
+    environment:
+      PORT: "3000"
+      HOST: "0.0.0.0"
+
+  web-frontend:
+    build:
+      context: ./fitstack-frontend
+      args:
+        REACT_APP_API_URL: http://localhost:3000
+    ports:
+      - "3001:80/tcp"
+    depends_on:
+      - backend

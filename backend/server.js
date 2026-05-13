@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
+const redisCache = require('./redisCache');
+const rabbitmq = require('./rabbitmq');
 
 const app = express();
 app.use(
@@ -12,7 +14,9 @@ app.use(
 );
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
+/** Docker ve dış erişim için tüm arayüzlerde dinle (varsayılan 0.0.0.0) */
+const HOST = process.env.HOST || '0.0.0.0';
 
 /** @type {Array<{id:number,title:string,level:'beginner'|'intermediate'|'advanced',duration:number,category:string,calories:number,description:string}>} */
 const PROGRAMS = [
@@ -410,16 +414,7 @@ function leaderboardPeriodPoints(userId, username, basePoints, streak, period) {
   return Math.round(basePoints * 0.28 + seed * 0.12 + streak * 8);
 }
 
-app.get('/leaderboard', (req, res) => {
-  if (!activeUser) {
-    return res.status(401).json({
-      success: false,
-      error: 'UNAUTHORIZED',
-      message: 'Oturum yok.',
-    });
-  }
-  const q = String(req.query.period || 'week').toLowerCase();
-  const period = q === 'month' ? 'month' : 'week';
+function buildLeaderboardPayload(period) {
   const rows = [];
   for (const u of usersByEmail.values()) {
     const st = getState(u.id);
@@ -447,11 +442,52 @@ app.get('/leaderboard', (req, res) => {
   rows.forEach((r, i) => {
     r.rank = i + 1;
   });
-  return res.status(200).json({
+  return {
     success: true,
     period,
     leaderboard: rows,
-  });
+  };
+}
+
+const LEADERBOARD_CACHE_TTL_SEC = 60;
+
+app.get('/leaderboard', async (req, res) => {
+  if (!activeUser) {
+    return res.status(401).json({
+      success: false,
+      error: 'UNAUTHORIZED',
+      message: 'Oturum yok.',
+    });
+  }
+  const q = String(req.query.period || 'week').toLowerCase();
+  const period = q === 'month' ? 'month' : 'week';
+  const cacheKey = `leaderboard:${period}`;
+
+  try {
+    const cached = await redisCache.cacheGet(cacheKey);
+    if (cached) {
+      console.log('Leaderboard cache hit');
+      try {
+        const body = JSON.parse(cached);
+        if (body && Array.isArray(body.leaderboard)) {
+          return res.status(200).json(body);
+        }
+      } catch {
+        console.warn('Leaderboard cache bozuk, yeniden hesaplanıyor');
+      }
+    } else {
+      console.log('Leaderboard cache miss');
+    }
+
+    const payload = buildLeaderboardPayload(period);
+    const json = JSON.stringify(payload);
+    await redisCache.cacheSet(cacheKey, json, LEADERBOARD_CACHE_TTL_SEC);
+    return res.status(200).json(payload);
+  } catch (err) {
+    console.error('Leaderboard hatası:', err && err.message ? err.message : err);
+    const payload = buildLeaderboardPayload(period);
+    return res.status(200).json(payload);
+  }
 });
 
 /* ---------------- PROGRAMS (liste / filtre önce, :id rotaları sonra) ---------------- */
@@ -555,6 +591,13 @@ app.post('/workouts', (req, res) => {
   const st = getState(activeUser.id);
   st.workouts.unshift(workout);
   pushActivity(st, 'workout', `${userFirstName(activeUser)} ${workout.duration} dakikalık bir antrenman tamamladı.`);
+  rabbitmq.publishWorkoutCreated({
+    type: 'WORKOUT_CREATED',
+    workoutId: workout.id,
+    userId: activeUser.id,
+    duration: workout.duration,
+    createdAt: new Date().toISOString(),
+  });
   return res.status(201).json({
     success: true,
     message: 'Antrenman kaydedildi',
@@ -849,6 +892,10 @@ app.get('/activity-feed', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`FitStack API http://localhost:${PORT} üzerinde aktif.`);
+setImmediate(() => {
+  rabbitmq.initRabbitMQ();
+});
+
+app.listen(PORT, HOST, () => {
+  console.log(`FitStack API http://${HOST}:${PORT} üzerinde aktif.`);
 });
