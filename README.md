@@ -58,6 +58,41 @@ Sunucu varsayılan olarak `http://localhost:3000` adresinde dinler. İlk açıl�
 
 ---
 
+## Docker (REST API + Web Frontend)
+
+Backend ve React web arayüzünü konteyner olarak çalıştırmak için:
+
+```bash
+docker compose build
+docker compose up
+```
+
+Durdurmak için:
+
+```bash
+docker compose down
+```
+
+- **Backend:** [http://localhost:3000](http://localhost:3000) — kök yanıt ve REST API.
+- **Web frontend:** [http://localhost:3001](http://localhost:3001) — statik build; tarayıcıdan API istekleri `http://localhost:3000` adresine gider (`REACT_APP_API_URL` ile derlenir).
+
+### Docker ile test
+
+1. `docker compose up --build` (veya önce `build`, sonra `up`).
+2. Tarayıcıda `http://localhost:3000` → API çalışıyor mesajını doğrula.
+3. `http://localhost:3001` → web uygulaması; kayıt/giriş ve API çağrılarının çalıştığını kontrol et.
+
+### Port çakışmaları
+
+- Bilgisayarda **3000** veya **3001** başka bir süreç tarafından kullanılıyorsa `docker compose.yml` içindeki `ports` eşlemesini değiştirin (örn. `"3002:3000"` ve `REACT_APP_API_URL` ile uyumlu yeni backend URL’si; web için build arg’ı da aynı makineden erişilebilir URL olmalıdır).
+
+### Mobil (Expo)
+
+- **fitstack-mobile** bu Docker kurulumunun parçası değildir; yerelde `cd fitstack-mobile && npx expo start` ile çalıştırılır.
+- Mobil istemcinin API adresi: aynı makinede geliştirme için genelde `http://localhost:3000` veya emülatör/LAN için `http://10.0.2.2:3000` / bilgisayarın **LAN IP**’si (`EXPO_PUBLIC_API_URL` ile, mobil `client.js` dokümantasyonuna bakın).
+
+---
+
 ## Dokümantasyon
 
 Proje dokümantasyonuna aşağıdaki bağlantılardan erişebilirsiniz:

@@ -6,7 +6,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
+/** Docker ve dış erişim için tüm arayüzlerde dinle (varsayılan 0.0.0.0) */
+const HOST = process.env.HOST || '0.0.0.0';
 
 /** @type {Array<{id:number,title:string,level:'beginner'|'intermediate'|'advanced',duration:number,category:string,calories:number,description:string}>} */
 const PROGRAMS = [
@@ -516,6 +518,6 @@ app.put('/streak', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`FitStack API http://localhost:${PORT} üzerinde aktif.`);
+app.listen(PORT, HOST, () => {
+  console.log(`FitStack API http://${HOST}:${PORT} üzerinde aktif.`);
 });
