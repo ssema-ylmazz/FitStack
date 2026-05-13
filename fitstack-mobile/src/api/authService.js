@@ -5,7 +5,10 @@ function messageFromAxiosError(error) {
   if (data && typeof data.message === 'string') return data.message;
   if (error.code === 'ECONNABORTED') return 'İstek zaman aşımına uğradı.';
   if (error.message === 'Network Error') {
-    return 'Sunucuya ulaşılamıyor. Backend açık mı ve adres doğru mu kontrol edin (localhost / Expo Go).';
+    if (typeof window !== 'undefined' && window.location?.protocol === 'https:') {
+      return 'Sayfa HTTPS ile açık; HTTP API (ör. localhost:3000) tarayıcıda engellenmiş olabilir. Expo Web’i http:// ile açın veya EXPO_PUBLIC_API_URL ile API kökünü ayarlayın.';
+    }
+    return 'Sunucuya ulaşılamıyor (Network Error). Backend’in 3000 portunda dinlediğinden ve tarayıcının CORS’a izin verdiğinden emin olun. Fiziksel cihazda EXPO_PUBLIC_API_URL kullanın.';
   }
   return 'Beklenmeyen bir hata oluştu.';
 }
