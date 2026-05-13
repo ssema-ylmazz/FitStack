@@ -1,3 +1,4 @@
+import { View, Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,9 +14,29 @@ import ProgramDetailScreen from '../screens/programs/ProgramDetailScreen';
 import WorkoutHistoryScreen from '../screens/workouts/WorkoutHistoryScreen';
 import WorkoutCreateScreen from '../screens/workouts/WorkoutCreateScreen';
 
+import LeaderboardScreen from '../screens/leaderboard/LeaderboardScreen';
+import StatisticsScreen from '../screens/statistics/StatisticsScreen';
+
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
-import LeaderboardScreen from '../screens/leaderboard/LeaderboardScreen';
+
+/** Repoda `screens/goals/GoalsScreen` yoksa bile sekme çalışsın diye geçici yer tutucu (ileride dosyayla değiştirilebilir). */
+function GoalsPlaceholderScreen() {
+  return (
+    <View style={goalsPlaceholderStyles.wrap}>
+      <Text style={goalsPlaceholderStyles.title}>Hedefler</Text>
+      <Text style={goalsPlaceholderStyles.hint}>
+        Tam hedefler arayüzü için src/screens/goals/GoalsScreen.js dosyasını ekleyip bu sekmede component olarak bağlayın.
+      </Text>
+    </View>
+  );
+}
+
+const goalsPlaceholderStyles = StyleSheet.create({
+  wrap: { flex: 1, backgroundColor: '#0f172a', padding: 24, justifyContent: 'center' },
+  title: { fontSize: 22, fontWeight: '800', color: '#f8fafc', marginBottom: 12 },
+  hint: { fontSize: 14, color: '#94a3b8', lineHeight: 20 },
+});
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -110,6 +131,22 @@ export default function MainTabs() {
         options={{
           tabBarLabel: 'Liderlik',
           tabBarIcon: ({ color, size }) => <Ionicons name="trophy-outline" size={size ?? 22} color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="StatisticsTab"
+        component={StatisticsScreen}
+        options={{
+          tabBarLabel: 'İstatistikler',
+          tabBarIcon: ({ color, size }) => <Ionicons name="stats-chart-outline" size={size ?? 22} color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="GoalsTab"
+        component={GoalsPlaceholderScreen}
+        options={{
+          tabBarLabel: 'Hedefler',
+          tabBarIcon: ({ color, size }) => <Ionicons name="flag-outline" size={size ?? 22} color={color} />,
         }}
       />
       <Tab.Screen
