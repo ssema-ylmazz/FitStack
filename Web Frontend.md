@@ -90,10 +90,10 @@
 - **Visual Regression:** Percy, Chromatic
 - **Accessibility Tests:** axe-core, Lighthouse
 
-### 11. Build ve Deployment
-- **Build Tool:** Webpack, Vite, Parcel, esbuild
-- **Module Bundler:** ES modules, CommonJS
-- **Environment Variables:** .env files
-- **CI/CD:** GitHub Actions, GitLab CI, Jenkins
-- **Hosting:** Vercel, Netlify, AWS, Azure şu formatı benim projeme göre yap
->>>>>>> 24e47cfeb40f0cb32d093518b82a70b84aa101fe
+### 11. Build ve Deployment (FitStack)
+- **Build Tool:** Create React App (`react-scripts`), production build `npm run build`
+- **API adresi:** `REACT_APP_API_URL` (Docker build arg; varsayılan `http://localhost:3000`)
+- **Yerel geliştirme:** `cd fitstack-frontend && npm install && npm start` (port çakışması için `PORT=3001`)
+- **Docker:** `fitstack-frontend/Dockerfile` — multi-stage build + nginx; host `3001` → konteyner `80`
+- **CI/CD:** Kök `Jenkinsfile` — `npm run build` ve `docker compose build` adımları
+- **Canlı örnek:** [fit-stack-nine.vercel.app](https://fit-stack-nine.vercel.app)

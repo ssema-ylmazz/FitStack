@@ -181,3 +181,13 @@ Makine okunur API sözleşmesi: **[openapi.yaml](openapi.yaml)** (kök dizin, `/
 8. [Sema — Mobil Back-End (API) görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Backend-Gorevleri.md)
 9. [Hüseyin — Mobil Front-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Frontend-Gorevleri.md)
 10. [Hüseyin — Mobil Back-End (API) görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md)
+
+### Ek özellikler ve altyapı (görev dağılımı)
+
+| Özellik | Sorumlu |
+|---------|---------|
+| **Leaderboard** | Hüseyin Boğatekin |
+| **Statistics** (istemci tarafı özet) | Sema Nur Yılmaz |
+| **Goals** | Sema Nur Yılmaz |
+| **Activity Feed** | Ortak |
+| **Docker / Jenkins / Redis / RabbitMQ** | Ortak |

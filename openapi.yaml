@@ -24,6 +24,12 @@ tags:
     description: Rozetler
   - name: streak
     description: Günlük seri
+  - name: leaderboard
+    description: Sıralama tablosu
+  - name: goals
+    description: Kullanıcı hedefleri
+  - name: activity
+    description: Aktivite akışı
 
 paths:
   /users/register:
@@ -294,6 +300,101 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
+  /leaderboard:
+    get:
+      tags: [leaderboard]
+      summary: Sıralama tablosu (haftalık veya aylık)
+      parameters:
+        - name: period
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [week, month]
+            default: week
+      responses:
+        '200':
+          description: Sıralama listesi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaderboardResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /goals:
+    get:
+      tags: [goals]
+      summary: Hedef listesi
+      responses:
+        '200':
+          description: Hedefler
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: [goals]
+      summary: Yeni hedef oluşturma
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoalCreate'
+      responses:
+        '201':
+          description: Oluşturuldu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalCreateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /goals/{id}:
+    put:
+      tags: [goals]
+      summary: Hedef güncelleme
+      parameters:
+        - $ref: '#/components/parameters/GoalId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoalUpdate'
+      responses:
+        '200':
+          description: Güncellendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalUpdateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /activity-feed:
+    get:
+      tags: [activity]
+      summary: Aktivite akışı
+      responses:
+        '200':
+          description: Son aktiviteler
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityFeedResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
   /streak:
     get:
       tags: [streak]
@@ -334,6 +435,12 @@ components:
       schema:
         type: integer
     WorkoutId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    GoalId:
       name: id
       in: path
       required: true
@@ -703,3 +810,134 @@ components:
           type: string
         streak:
           $ref: '#/components/schemas/StreakPayload'
+
+    LeaderboardEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        points:
+          type: number
+        streak:
+          type: integer
+        rank:
+          type: integer
+
+    LeaderboardResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        period:
+          type: string
+          enum: [week, month]
+        leaderboard:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaderboardEntry'
+
+    Goal:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [weekly_workouts, total_points, streak_days]
+        title:
+          type: string
+        target:
+          type: number
+        current:
+          type: number
+        completed:
+          type: boolean
+        manualComplete:
+          type: boolean
+        progressPercent:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+
+    GoalListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        goals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Goal'
+        count:
+          type: integer
+
+    GoalCreate:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [weekly_workouts, total_points, streak_days]
+        title:
+          type: string
+        target:
+          type: number
+
+    GoalCreateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        goal:
+          $ref: '#/components/schemas/Goal'
+
+    GoalUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        target:
+          type: number
+        manualComplete:
+          type: boolean
+
+    GoalUpdateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        goal:
+          $ref: '#/components/schemas/Goal'
+
+    ActivityItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          description: workout, points, badge, goal
+        message:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    ActivityFeedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        activities:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityItem'
+        count:
+          type: integer

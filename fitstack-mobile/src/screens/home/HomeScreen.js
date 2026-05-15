@@ -63,7 +63,7 @@ export default function HomeScreen({ navigation }) {
       >
         <Text style={styles.title}>Ana Sayfa</Text>
         <Text style={styles.desc}>
-          Özet panel ve hızlı erişim burada olacak. Şimdilik yalnızca iskelet; 17 gereksinim sonradan bağlanacak.
+          Son aktivitelerinizi ve puan, rozet ile seri ekranlarına hızlı erişimi buradan takip edebilirsiniz.
         </Text>
 
         <Text style={styles.feedHeading}>Son aktiviteler</Text>

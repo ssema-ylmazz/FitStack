@@ -149,13 +149,57 @@ Başarılı işlemlerde çoğu endpoint `success: true` ve ilgili veri alanları
 
 ---
 
-## 10. Sonraki aşamalar (final kapsamı dışı — bilgilendirme)
+## 10. Leaderboard (sıralama tablosu)
 
-Aşağıdaki başlıklar **bu mobil doküman kapsamında uygulanmamıştır**; ders / proje gereksinimlerine göre **ileriki aşamada** ele alınacaktır:
+### `GET /leaderboard`
 
-- **Docker:** API ve istemcilerin konteyner içinde çalıştırılması, `docker-compose` ile ortamın tek komutta ayağa kalkması.  
-- **Redis / Memcache:** Oturum, önbellek veya hız sınırlandırma gibi kullanım kanıtı.  
-- **RabbitMQ / Kafka:** Asenkron iş kuyruğu veya olay akışı kanıtı.  
-- **CI/CD (ör. Jenkinsfile):** Otomatik derleme, test ve dağıtım hattı.
+- **Amaç:** Haftalık veya aylık puan sıralaması (mobil: Liderlik sekmesi).  
+- **Sorgu:** `?period=week` | `month` (varsayılan `week`).  
+- **Yanıt (özet):** `200` — `success`, `period`, `leaderboard[]` (`id`, `username`, `points`, `streak`, `rank`).  
+- **Önbellek:** Redis ile `fitstack:leaderboard:week` / `fitstack:leaderboard:month` (TTL 60 sn). Ayrıntı: [README.md](README.md).
 
-Bu maddeler eklendiğinde hem [README.md](README.md) hem de dağıtım adresleri güncellenmelidir.
+---
+
+## 11. Goals (hedefler)
+
+### `GET /goals`
+
+- **Amaç:** Kullanıcının hedef listesi ve ilerleme yüzdeleri.  
+- **Yanıt (özet):** `200` — `success`, `goals[]`, `count`.
+
+### `POST /goals`
+
+- **Amaç:** Yeni hedef oluşturma.  
+- **İstek gövdesi (özet):** `type` (`weekly_workouts` | `total_points` | `streak_days`); isteğe bağlı `title`, `target`.  
+- **Yanıt (özet):** `201` — `success`, `message`, `goal` (ilerleme alanlarıyla).
+
+### `PUT /goals/:id`
+
+- **Amaç:** Hedef güncelleme veya manuel tamamlama.  
+- **İstek gövdesi (özet):** `title`, `target`, `manualComplete` (isteğe bağlı).  
+- **Yanıt (özet):** `200` — `success`, `message`, `goal`.
+
+---
+
+## 12. Activity Feed (aktivite akışı)
+
+### `GET /activity-feed`
+
+- **Amaç:** Son kullanıcı aktiviteleri (antrenman, puan, rozet, hedef).  
+- **Yanıt (özet):** `200` — `success`, `activities[]` (`id`, `type`, `message`, `createdAt`), `count`.  
+- **Mobil not:** `HomeScreen` son 5 kaydı gösterir; tam liste aynı endpoint’ten alınabilir.
+
+---
+
+## 13. Altyapı (Docker, Jenkins, Redis, RabbitMQ)
+
+Proje final kapsamında aşağıdaki bileşenler **tamamlanmıştır**; ayrıntılar [README.md](README.md) içindedir:
+
+| Bileşen | Kullanım |
+|---------|----------|
+| **Docker Compose** | `backend`, `web-frontend`, `redis`, `rabbitmq` — tek komutla yerel yığın |
+| **Redis** | Leaderboard önbelleği (`fitstack:` öneki) |
+| **RabbitMQ** | `fitstack.workout.created` kuyruğu; `POST /workouts` sonrası olay yayını |
+| **Jenkins** | Kök `Jenkinsfile` — kurulum, syntax check, web build, mobil export, `docker compose build` |
+
+**Statistics (mobil):** Ayrı REST endpoint yoktur; mobil uygulama workout/program/points verisinden istemci tarafında özet üretir.
