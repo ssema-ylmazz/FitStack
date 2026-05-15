@@ -394,7 +394,7 @@ app.get('/users/points', (req, res) => {
   });
 });
 
-/** Mock ek katılımcılar — gerçek DB yok; sıralama in-memory. */
+/** Mock ek katılımcılar — leaderboard (Redis cache ile servis edilir) */
 const LEADERBOARD_MOCK_EXTRAS = [
   { id: 99001, username: 'NeoRunner', streak: 24 },
   { id: 99002, username: 'IronSena', streak: 18 },

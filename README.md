@@ -55,7 +55,7 @@
 cd backend && npm install && npm start
 ```
 
-Sunucu varsayılan olarak `http://localhost:3000` adresinde dinler.
+Sunucu varsayılan olarak `http://localhost:3000` adresinde dinler. Demo giriş: `demo@fitstack.local` / `demo`. Yerel Redis için `docker compose up -d redis` ile Redis’i açın; `REDIS_HOST=127.0.0.1` ve `REDIS_PORT=6379` kullanın.
 
 ### Web frontend
 
@@ -77,14 +77,16 @@ cd fitstack-mobile && npm install && npx expo start
 
 ## Docker Compose
 
-Tam yığın aşağıdaki dört servisi birlikte kapsar: **backend**, **web-frontend**, **redis**, **rabbitmq**. Proje kökündeki `docker-compose.yml` dosyasına göre servis seti güncellenebilir; tipik port eşlemeleri şöyledir:
+Tam yığın dört servisi birlikte kapsar: **backend**, **web-frontend**, **redis**, **rabbitmq**.
 
 | Servis | Açıklama | Örnek erişim |
 |--------|-----------|----------------|
 | **backend** | REST API | [http://localhost:3000](http://localhost:3000) |
-| **web-frontend** | React üretim build’i (nginx vb.) | [http://localhost:3001](http://localhost:3001) — istemci istekleri `REACT_APP_API_URL` ile backend’e gider |
+| **web-frontend** | React üretim build’i (nginx) | [http://localhost:3001](http://localhost:3001) — istemci istekleri `REACT_APP_API_URL` ile backend’e gider |
 | **redis** | Önbellek (leaderboard vb.) | `localhost:6379` |
-| **rabbitmq** | AMQP broker; yönetim paneli | AMQP varsayılan **5672**; panel [http://localhost:15672](http://localhost:15672) — kullanıcı **guest** / şifre **guest** |
+| **rabbitmq** | AMQP broker; yönetim paneli | AMQP **5672**; panel [http://localhost:15672](http://localhost:15672) — **guest** / **guest** |
+
+Backend konteynerinde `REDIS_HOST=redis`, `REDIS_PORT=6379`, `RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672` tanımlıdır.
 
 ### Docker ile test
 
@@ -98,7 +100,7 @@ docker compose down
 1. `docker compose build` ardından `docker compose up -d` (veya tek seferde `docker compose up -d --build`).
 2. `http://localhost:3000` → API kök yanıtını doğrulayın.
 3. `http://localhost:3001` → web uygulaması; kayıt/giriş ve API çağrılarını kontrol edin.
-4. Redis/RabbitMQ servisleri tanımlıysa leaderboard önbelleği ve antrenman olayları için broker erişimini doğrulayın.
+4. Leaderboard önbelleği ve antrenman olayları için Redis/RabbitMQ erişimini doğrulayın.
 
 ### Port çakışmaları
 
@@ -137,7 +139,7 @@ Bu pipeline **GitHub token / secret / credential** tanımlamaz; özel registry p
 
 ## Redis önbelleği
 
-Backend, **leaderboard** yanıtlarını Redis üzerinde kısa süreli (TTL) önbelleğe alabilir. Anahtarlar `fitstack:` önekiyle saklanır. Redis kapalı veya `REDIS_DISABLED=1` iken uygulama çalışmaya devam eder; önbellek atlanır ve yanıt doğrudan hesaplanır.
+Backend, **leaderboard** yanıtlarını Redis üzerinde kısa süreli (TTL) önbelleğe alır. Anahtarlar `fitstack:` önekiyle saklanır (ör. `fitstack:leaderboard:week`, `fitstack:leaderboard:month`; TTL 60 sn). Loglar: `Leaderboard cache hit` / `Leaderboard cache miss`. Redis kapalı, hata veya `REDIS_DISABLED=1` iken uygulama çalışmaya devam eder; yanıt doğrudan hesaplanır.
 
 ---
 
