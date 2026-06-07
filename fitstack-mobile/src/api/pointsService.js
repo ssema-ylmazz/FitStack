@@ -63,3 +63,30 @@ export async function awardWorkoutPoints(workoutId, points) {
     throw wrapAxiosError(error);
   }
 }
+
+/**
+ * Sıralı program adımlarının tamamlanması sonrası puanı sunucudan alır.
+ * @param {number|string} programId
+ * @param {Array<number|string>} completedStepIds
+ */
+export async function completeExercise(programId, completedStepIds) {
+  try {
+    const { data } = await client.post('/exercises/complete', {
+      programId: Number(programId),
+      completedStepIds: completedStepIds.map(Number),
+    });
+    if (!data?.success) {
+      throw new Error(data?.message || 'Egzersiz tamamlanamadı.');
+    }
+    const payload = {
+      gainedPoints: Number(data.gainedPoints) || 0,
+      totalPoints: Number(data.totalPoints) || 0,
+      programId: Number(programId),
+      completedAt: data.completedAt || '',
+    };
+    DeviceEventEmitter.emit(POINTS_UPDATED_EVENT, payload);
+    return payload;
+  } catch (error) {
+    throw wrapAxiosError(error);
+  }
+}
