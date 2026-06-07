@@ -16,7 +16,7 @@
 
 > **Video Linki:** [Sema Yılmaz Video]()
 
-> **Video Linki:** [MHüseyin Video]()
+> **Video Linki:** [Hüseyin Video]()
 
 
 
