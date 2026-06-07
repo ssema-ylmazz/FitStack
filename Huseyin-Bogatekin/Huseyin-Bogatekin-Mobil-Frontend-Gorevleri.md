@@ -1,5 +1,7 @@
 # Hüseyin Boğatekin — Mobil Front-End Görevleri (FitStack)
 
+**Mobile Front-end Demo Videosu:** [Video eklenecek](https://example.com)
+
 Bu doküman, **DevFit / FitStack** mobil uygulamasında **Hüseyin Boğatekin** tarafından üstlenmesi planlanan **mobil arayüz** görevlerini listeler. Gereksinim numaraları [gereksinimler.md](../gereksinimler.md) ile uyumludur.
 
 ---
