@@ -4,36 +4,51 @@ Bu sayfa final tesliminde kullanılacak bireysel ve ekip kanıt videolarının
 tek noktadan erişilebilir olmasını sağlar. Video bağlantıları teslim öncesinde
 gerçek bağlantılarla güncellenmelidir.
 
-## Altyapı Kanıt Videoları
+## CI-CD ve Docker Kanıt Videosu Tek Video
 
-| Kanıt | Sema Nur Yılmaz | Hüseyin Boğatekin |
-|-------|------------------|--------------------|
-| Docker ve CI/CD | [Video eklenecek](https://example.com) | [Video eklenecek](https://example.com) |
-| RabbitMQ/Kafka | [Video eklenecek](https://example.com) | [Video eklenecek](https://example.com) |
-| Redis/Memcached | [Video eklenecek](https://example.com) | [Video eklenecek](https://example.com) |
+| Ekip Üyesi | Video Bağlantısı |
+|------------|------------------|
+| Sema Nur Yılmaz | [YOUTUBE_LINKI_BURAYA] |
+| Hüseyin Boğatekin | [YOUTUBE_LINKI_BURAYA] |
 
-## Mobil Front-End Kanıt Videoları
+## RabbitMQ/Kafka Kanıt Videosu
+
+| Ekip Üyesi | Video Bağlantısı |
+|------------|------------------|
+| Sema Nur Yılmaz | [YOUTUBE_LINKI_BURAYA] |
+| Hüseyin Boğatekin | [YOUTUBE_LINKI_BURAYA] |
+
+## Redis/Memcached Kanıt Videosu
+
+| Ekip Üyesi | Video Bağlantısı |
+|------------|------------------|
+| Sema Nur Yılmaz | [YOUTUBE_LINKI_BURAYA] |
+| Hüseyin Boğatekin | [YOUTUBE_LINKI_BURAYA] |
+
+## Sunum Videosu (Cep Telefonunda Gösterilmeli, Tüm ekip bir arada)
+
+| Video | Bağlantı |
+|-------|----------|
+| Genel Ekip Sunum Videosu | [YOUTUBE_LINKI_BURAYA] |
+
+### Mobil Front-End Kanıt Videoları
 
 | Üye | Video | Görev Sayfası |
 |-----|-------|---------------|
-| Sema Nur Yılmaz | [Video eklenecek](https://example.com) | [Mobil Front-End görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md) |
-| Hüseyin Boğatekin | [Video eklenecek](https://example.com) | [Mobil Front-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Frontend-Gorevleri.md) |
+| Sema Nur Yılmaz | [YOUTUBE_LINKI_BURAYA] | [Mobil Front-End görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md) |
+| Hüseyin Boğatekin | [YOUTUBE_LINKI_BURAYA] | [Mobil Front-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Frontend-Gorevleri.md) |
 
-## Mobil Front-End ve Back-End Bağlantı Kanıt Videoları
+### Mobil Front-End ve Back-End Bağlantı Kanıt Videoları
 
 Her videoda mobil uygulamadaki işlem, REST isteği, backend logu ve kalıcı veri
 değişimi aynı akış içinde sesli olarak gösterilmelidir.
 
 | Üye | Video | Görev Sayfası |
 |-----|-------|---------------|
-| Sema Nur Yılmaz | [Video eklenecek](https://example.com) | [Mobil Back-End görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Backend-Gorevleri.md) |
-| Hüseyin Boğatekin | [Video eklenecek](https://example.com) | [Mobil Back-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md) |
+| Sema Nur Yılmaz | [YOUTUBE_LINKI_BURAYA] | [Mobil Back-End görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Backend-Gorevleri.md) |
+| Hüseyin Boğatekin | [YOUTUBE_LINKI_BURAYA] | [Mobil Back-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md) |
 
-## Genel Ekip Sunumu
-
-> **Cep telefonunda gösterilen ekip sunumu:** [Video eklenecek](https://example.com)
-
-## Sunum Kontrol Listesi
+### Sunum Kontrol Listesi
 
 - [ ] Her üye yüzü görünecek şekilde kendisini ve görevlerini tanıttı.
 - [ ] Her mobil front-end görevi simülatör veya gerçek cihazda gösterildi.

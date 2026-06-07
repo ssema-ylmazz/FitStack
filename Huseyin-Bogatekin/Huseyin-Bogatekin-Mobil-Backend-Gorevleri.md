@@ -1,6 +1,11 @@
 # Hüseyin Boğatekin — Mobil Back-End (API) Görevleri (FitStack)
 
-**Mobil Front-end ile Back-end Bağlanmış Test Videosu:** [Video eklenecek](https://example.com)
+## Mobil Front-end ile Back-end Bağlanmış Test Videosu (Sesli ve Log Kanıtlı)
+
+**Video Linki:** [YOUTUBE_LINKI_BURAYA]
+
+Bu videoda mobil uygulamadan gönderilen REST API isteği, backend terminal logu
+ve işlemin sonucunda oluşan veri değişimi sesli olarak gösterilmelidir.
 
 Bu doküman, Hüseyin’in mobil tarafta karşıladığı işlevlerin bağlandığı **REST API uçları** ve **beklenen kullanım** özetidir. Sunucu adresi: **`http://localhost:3000`**. Tam sözleşme: [MobilBackEnd.md](../MobilBackEnd.md), [openapi.yaml](../openapi.yaml).
 

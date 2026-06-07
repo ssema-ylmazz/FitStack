@@ -1,6 +1,11 @@
 # Sema Nur Yılmaz — Mobil Front-End Görevleri (FitStack)
 
-**Mobile Front-end Demo Videosu:** [Video eklenecek](https://example.com)
+## Mobile Front-end Demo Videosu
+
+**Video Linki:** [YOUTUBE_LINKI_BURAYA]
+
+Bu videoda görev kapsamındaki mobil ekranlar simülatör veya gerçek cihaz
+üzerinde çalışır durumda gösterilmelidir.
 
 Bu doküman, **DevFit / FitStack** mobil uygulamasında **Sema Nur Yılmaz** tarafından üstlenmesi planlanan **mobil arayüz** görevlerini listeler. Gereksinim numaraları [gereksinimler.md](../gereksinimler.md) ile uyumludur.
 

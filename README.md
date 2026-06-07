@@ -163,33 +163,19 @@ Makine okunur API sözleşmesi: **[openapi.yaml](openapi.yaml)** (kök dizin, `/
 
 ## Dokümantasyon
 
-### Genel
+Proje dokümantasyonuna aşağıdaki bağlantılardan ulaşabilirsiniz:
 
-1. [Gereksinim Analizi](gereksinimler.md)
-2. [REST API Tasarımı](API-Tasarimi.md)
+1. [Gereksinim Analizi](docs/Kullanim-Senaryolari.md)
+2. [REST API Tasarımı](openapi.yaml)
 3. [REST API](Rest-API.md)
 4. [Web Front-End](Web%20Frontend.md)
-
-### Mobil (final)
-
-5. [Mobil Front-End](MobilFrontEnd.md) — React Native + Expo, klasör yapısı, ekranlar, navigasyon, API mantığı ve 17 gereksinim eşlemesi
-6. [Mobil Back-End (REST)](MobilBackEnd.md) — Mobil istemcinin kullanacağı endpoint özetleri ve örnek yanıtlar
+5. [Mobil Front-End](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md)
+6. [Mobil Backend](Sema-Yilmaz/Sema-Yilmaz-Mobil-Backend-Gorevleri.md)
+7. [Video Sunum](Sunum.md)
 
 ### Mobil görev dağılımı
 
-7. [Sema — Mobil Front-End görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md)
-8. [Sema — Mobil Back-End (API) görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Backend-Gorevleri.md)
-9. [Hüseyin — Mobil Front-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Frontend-Gorevleri.md)
-10. [Hüseyin — Mobil Back-End (API) görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md)
-11. [Kullanım Senaryoları](docs/Kullanim-Senaryolari.md)
-12. [Video Sunum ve Kanıtlar](Sunum.md)
-
-### Ek özellikler ve altyapı (görev dağılımı)
-
-| Özellik | Sorumlu |
-|---------|---------|
-| **Leaderboard** | Hüseyin Boğatekin |
-| **Statistics** (istemci tarafı özet) | Sema Nur Yılmaz |
-| **Goals** | Sema Nur Yılmaz |
-| **Activity Feed** | Ortak |
-| **Docker / Jenkins / Redis / RabbitMQ** | Ortak |
+- [Sema Nur Yılmaz — Mobil Front-End görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md)
+- [Sema Nur Yılmaz — Mobil Back-End görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Backend-Gorevleri.md)
+- [Hüseyin Boğatekin — Mobil Front-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Frontend-Gorevleri.md)
+- [Hüseyin Boğatekin — Mobil Back-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md)
