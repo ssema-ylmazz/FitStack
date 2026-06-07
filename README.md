@@ -171,7 +171,8 @@ Makine okunur API sözleşmesi: **[openapi.yaml](openapi.yaml)** (kök dizin, `/
 4. [Web Front-End](Web%20Frontend.md)
 5. [Mobil Front-End](MobilFrontEnd.md) — React Native + Expo, klasör yapısı, ekranlar, navigasyon, API mantığı ve 17 gereksinim eşlemesi
 6. [Mobil Back-End (REST)](MobilBackEnd.md) — Mobil istemcinin kullanacağı endpoint özetleri ve örnek yanıtlar
-7.[Sunum](Sunum.md)
+7. [Sunum](Sunum.md)
+
 ### Mobil görev dağılımı
 
  -[Sema — Mobil Front-End görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md)
