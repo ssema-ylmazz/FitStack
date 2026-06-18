@@ -24,7 +24,6 @@
 |--------|----------------|
 | **Backend** | Node.js, Express, in-memory mock veri; isteğe bağlı **Redis** (önbellek) ve **RabbitMQ** (olay yayını) |
 | **Web** | React (Create React App), Axios, React Router |
-| **Mobil** | React Native, Expo, React Navigation |
 | **Altyapı** | Docker, Docker Compose, Jenkins (CI/CD) |
 
 ---
@@ -64,16 +63,6 @@ cd fitstack-frontend && npm install && npm start
 ```
 
 Geliştirme sunucusu varsayılan olarak **3000** portunu kullanır. Backend ile aynı anda çalıştırırken port çakışmasını önlemek için örneğin `PORT=3001 npm start` kullanabilirsiniz. API tabanı için `REACT_APP_API_URL` (ör. `http://localhost:3000`) ortam değişkenini ayarlayın.
-
-### Mobil uygulama
-
-```bash
-cd fitstack-mobile && npm install && npx expo start
-```
-
-**fitstack-mobile** Docker Compose yığınının parçası değildir; yerelde Expo ile çalıştırılır. Aynı makinede geliştirme için API genelde `http://localhost:3000`; Android emülatörde `http://10.0.2.2:3000` veya bilgisayarın LAN IP’si (`EXPO_PUBLIC_API_URL`, mobil `client.js` dokümantasyonuna bakın).
-
----
 
 ## Docker Compose
 
@@ -117,9 +106,7 @@ Kök dizinde **`Jenkinsfile`** bulunur. Declarative pipeline şu aşamaları ça
 3. **Backend syntax check** — `node --check server.js` (backend’deki `npm test` placeholder olduğu için kullanılmaz).
 4. **Web frontend install** — `fitstack-frontend` içinde `npm ci` veya `npm install`.
 5. **Web frontend build** — `npm run build`.
-6. **Mobile install** — `fitstack-mobile` içinde `npm ci` veya `npm install`.
-7. **Mobile export check** — `npx expo export --platform android` (başarısızsa yedek olarak `npm run start -- --help` / `expo --help`); **mobil deploy yok**, yalnızca derlenebilirlik kanıtı.
-8. **Docker compose build** — proje kökünde `docker compose build` (veya `docker-compose build`). **İmaj push ve canlı deploy bu dosyada yok.**
+6. **Docker compose build** — proje kökünde `docker compose build` (veya `docker-compose build`). **İmaj push ve canlı deploy bu dosyada yok.**
 
 ### Jenkins’te job oluşturma (özet)
 
@@ -130,7 +117,7 @@ Kök dizinde **`Jenkinsfile`** bulunur. Declarative pipeline şu aşamaları ça
 
 ### Gereksinimler
 
-- **Node.js** ve **npm** (Expo export için uyumlu Node sürümü, projede `>=18` önerilir).
+- **Node.js** ve **npm** (projede `>=18` önerilir).
 - **Docker** — `docker compose build` adımı için Jenkins çalıştığı makinede Docker erişimi (Linux agent + docker grubu veya Docker-in-Docker yapılandırması).
 
 Bu pipeline **GitHub token / secret / credential** tanımlamaz; özel registry push veya sunucu deploy adımları eklenmemiştir.
@@ -169,13 +156,4 @@ Proje dokümantasyonuna aşağıdaki bağlantılardan ulaşabilirsiniz:
 2. [REST API Tasarımı](openapi.yaml)
 3. [REST API](Rest-API.md)
 4. [Web Front-End](Web%20Frontend.md)
-5. [Mobil Front-End](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md)
-6. [Mobil Backend](Sema-Yilmaz/Sema-Yilmaz-Mobil-Backend-Gorevleri.md)
-7. [Video Sunum](Sunum.md)
-
-### Mobil görev dağılımı
-
-- [Sema Nur Yılmaz — Mobil Front-End görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md)
-- [Sema Nur Yılmaz — Mobil Back-End görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Backend-Gorevleri.md)
-- [Hüseyin Boğatekin — Mobil Front-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Frontend-Gorevleri.md)
-- [Hüseyin Boğatekin — Mobil Back-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md)
+5. [Video Sunum](Sunum.md)

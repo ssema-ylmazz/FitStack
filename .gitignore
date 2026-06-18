@@ -11,10 +11,9 @@ target/
 *.jar
 *.war
 
-# Frontend and mobile build output
+# Frontend build output
 build/
 dist/
-.expo/
 web-build/
 
 # Local configuration and secrets
