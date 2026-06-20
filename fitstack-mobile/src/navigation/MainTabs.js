@@ -1,6 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DashboardScreen from '../screens/DashboardScreen';
+import LeaderboardScreen from '../screens/LeaderboardScreen';
 import ProgramDetailScreen from '../screens/ProgramDetailScreen';
 import ProgramsScreen from '../screens/ProgramsScreen';
 import WorkoutHistoryScreen from '../screens/WorkoutHistoryScreen';
@@ -39,6 +40,7 @@ export default function MainTabs() {
       <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Dashboard' }} />
       <Tab.Screen name="Programs" component={ProgramsStack} options={{ headerShown: false, title: 'Programs' }} />
       <Tab.Screen name="Workouts" component={WorkoutHistoryScreen} options={{ title: 'Workouts' }} />
+      <Tab.Screen name="Leaderboard" component={LeaderboardScreen} options={{ title: 'Leaderboard' }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
     </Tab.Navigator>
   );

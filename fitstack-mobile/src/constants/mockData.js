@@ -38,6 +38,30 @@ export const mockWorkouts = [
   },
 ];
 
+export const mockLeaderboard = [
+  {
+    id: 'mock-leader-1',
+    username: 'Sema',
+    points: 1240,
+    streak: 6,
+    rank: 1,
+  },
+  {
+    id: 'mock-leader-2',
+    username: 'Huseyin',
+    points: 1120,
+    streak: 5,
+    rank: 2,
+  },
+  {
+    id: 'mock-leader-3',
+    username: 'FitStacker',
+    points: 980,
+    streak: 4,
+    rank: 3,
+  },
+];
+
 export const programs = [
   {
     id: 'full-body-beginner',

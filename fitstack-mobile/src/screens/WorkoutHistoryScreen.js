@@ -4,7 +4,7 @@ import AppButton from '../components/AppButton';
 import ErrorState from '../components/ErrorState';
 import LoadingState from '../components/LoadingState';
 import ScreenContainer from '../components/ScreenContainer';
-import { deleteWorkout, getWorkouts } from '../api/workoutsApi';
+import { createWorkout, deleteWorkout, getWorkouts } from '../api/workoutsApi';
 import colors from '../constants/colors';
 import { mockWorkouts } from '../constants/mockData';
 
@@ -13,6 +13,7 @@ export default function WorkoutHistoryScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [usingFallback, setUsingFallback] = useState(false);
+  const [creatingDemo, setCreatingDemo] = useState(false);
 
   useEffect(() => {
     loadWorkouts();
@@ -56,12 +57,45 @@ export default function WorkoutHistoryScreen() {
     }
   }
 
+  async function handleCreateDemoWorkout() {
+    if (creatingDemo) return;
+
+    setCreatingDemo(true);
+    setError('');
+    try {
+      await createWorkout({
+        programId: 1,
+        duration: 25,
+        calories: 180,
+        note: 'RabbitMQ demo workout',
+      });
+      Alert.alert('Antrenman kaydedildi', 'RabbitMQ kuyruğunu kontrol edebilirsiniz.');
+      await loadWorkouts();
+    } catch (err) {
+      setError(err.userMessage || 'Demo antrenman kaydedilemedi. Backend kapali olabilir.');
+    } finally {
+      setCreatingDemo(false);
+    }
+  }
+
   return (
     <ScreenContainer scroll contentStyle={styles.container}>
       <Text style={styles.title}>Antrenman Gecmisi</Text>
       <Text style={styles.subtitle}>
         {usingFallback ? 'Backend kapaliyken demo kayitlar gosteriliyor.' : 'Tamamlanan antrenman kayitlari.'}
       </Text>
+
+      <View style={styles.demoBox}>
+        <Text style={styles.demoTitle}>RabbitMQ Kanit Aksiyonu</Text>
+        <Text style={styles.demoText}>
+          Bu islem POST /workouts endpointini cagirir ve backend RabbitMQ'ya WORKOUT_CREATED mesaji uretir.
+        </Text>
+        <AppButton
+          disabled={creatingDemo}
+          title={creatingDemo ? 'Kaydediliyor...' : 'Demo Antrenman Kaydet'}
+          onPress={handleCreateDemoWorkout}
+        />
+      </View>
 
       {loading ? <LoadingState message="Antrenmanlar yukleniyor..." /> : null}
       {error ? <ErrorState message={error} /> : null}
@@ -113,6 +147,24 @@ const styles = StyleSheet.create({
     color: colors.mutedText,
     fontSize: 15,
     lineHeight: 22,
+  },
+  demoBox: {
+    backgroundColor: colors.infoSoft,
+    borderColor: colors.info,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 10,
+    padding: 14,
+  },
+  demoTitle: {
+    color: colors.info,
+    fontSize: 16,
+    fontWeight: '900',
+  },
+  demoText: {
+    color: colors.text,
+    fontSize: 14,
+    lineHeight: 20,
   },
   empty: {
     backgroundColor: colors.surface,
