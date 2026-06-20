@@ -68,6 +68,25 @@ pipeline {
             }
         }
 
+        stage('Mobile Install and Config Check') {
+            steps {
+                echo '=== Mobile Install and Config Check ==='
+                echo 'Expo development server başlatılmaz; yalnızca bağımlılık kurulumu ve config doğrulaması yapılır.'
+                dir('fitstack-mobile') {
+                    sh '''
+                        set -e
+                        if npm ci; then
+                          echo 'fitstack-mobile: npm ci tamam.'
+                        else
+                          echo 'UYARI: npm ci başarısız; npm install deneniyor.'
+                          npm install
+                        fi
+                        npx expo config --type public
+                    '''
+                }
+            }
+        }
+
         stage('Docker compose build') {
             steps {
                 echo '=== Docker compose build ==='
