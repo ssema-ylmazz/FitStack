@@ -1,12 +1,63 @@
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import AppButton from '../components/AppButton';
 import SectionTitle from '../components/SectionTitle';
 import ScreenContainer from '../components/ScreenContainer';
 import StatCard from '../components/StatCard';
+import { getBadges, getStreak, getUserPoints } from '../api/profileApi';
 import colors from '../constants/colors';
 import { dashboardSummary } from '../constants/mockData';
 
 export default function DashboardScreen({ navigation }) {
+  const [summary, setSummary] = useState({
+    totalPoints: dashboardSummary.totalPoints,
+    streakDays: dashboardSummary.streakDays,
+    badges: ['Yeni Baslayan', 'Kararli Sporcu'],
+    usingFallback: false,
+    error: '',
+  });
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadDashboard() {
+      try {
+        const [pointsResponse, badgesResponse, streakResponse] = await Promise.all([
+          getUserPoints(),
+          getBadges(),
+          getStreak(),
+        ]);
+
+        if (!mounted) return;
+
+        const totalPoints = pointsResponse.data?.totalPoints ?? dashboardSummary.totalPoints;
+        const badges = badgesResponse.data?.badges || [];
+        const streak = streakResponse.data?.streak;
+
+        setSummary({
+          totalPoints,
+          streakDays: streak?.currentStreak ?? dashboardSummary.streakDays,
+          badges,
+          usingFallback: false,
+          error: '',
+        });
+      } catch (error) {
+        if (!mounted) return;
+        setSummary((current) => ({
+          ...current,
+          usingFallback: true,
+          error: error.userMessage || 'Canli ozet alinamadi; demo veriler gosteriliyor.',
+        }));
+      }
+    }
+
+    loadDashboard();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <ScreenContainer scroll contentStyle={styles.container}>
       <View style={styles.header}>
@@ -16,19 +67,29 @@ export default function DashboardScreen({ navigation }) {
       </View>
 
       <View style={styles.statsRow}>
-        <StatCard label="Toplam Puan" value={dashboardSummary.totalPoints} />
-        <StatCard label="Streak" value={`${dashboardSummary.streakDays} gun`} tone="accent" />
+        <StatCard label="Toplam Puan" value={summary.totalPoints} />
+        <StatCard label="Streak" value={`${summary.streakDays} gun`} tone="accent" />
       </View>
       <View style={styles.statsRow}>
         <StatCard label="Tamamlanan" value={dashboardSummary.completedWorkouts} tone="info" />
-        <StatCard label="Aktif Program" value="1" />
+        <StatCard label="Rozet" value={summary.badges.length} />
       </View>
+      {summary.error ? <Text style={styles.notice}>{summary.error}</Text> : null}
 
       <View style={styles.programCard}>
         <Text style={styles.programLabel}>Secili program</Text>
         <Text style={styles.programTitle}>{dashboardSummary.selectedProgram}</Text>
         <Text style={styles.programText}>Baslangic icin dengeli ve takip etmesi kolay bir antrenman plani.</Text>
         <AppButton title="Programlara Git" onPress={() => navigation.navigate('Programs')} />
+      </View>
+
+      <SectionTitle title="Rozetler" />
+      <View style={styles.badgeList}>
+        {(summary.badges.length > 0 ? summary.badges : [{ name: 'Demo Rozet' }]).map((badge, index) => (
+          <Text key={badge.id || badge.key || badge.name || badge || index} style={styles.badge}>
+            {badge.name || badge}
+          </Text>
+        ))}
       </View>
 
       <SectionTitle title="Son Aktiviteler" />
@@ -95,6 +156,28 @@ const styles = StyleSheet.create({
     color: colors.mutedText,
     fontSize: 15,
     lineHeight: 22,
+  },
+  notice: {
+    backgroundColor: colors.accentSoft,
+    borderRadius: 8,
+    color: colors.accent,
+    fontSize: 13,
+    fontWeight: '700',
+    padding: 12,
+  },
+  badgeList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  badge: {
+    backgroundColor: colors.primarySoft,
+    borderRadius: 999,
+    color: colors.primaryDark,
+    fontSize: 13,
+    fontWeight: '800',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   activityList: {
     backgroundColor: colors.surface,

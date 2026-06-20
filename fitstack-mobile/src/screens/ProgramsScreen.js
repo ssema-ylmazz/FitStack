@@ -8,6 +8,13 @@ import colors from '../constants/colors';
 import { getPrograms } from '../api/programsApi';
 import { programs as mockPrograms } from '../constants/mockData';
 
+const filters = [
+  { label: 'All', value: '' },
+  { label: 'Beginner', value: 'beginner' },
+  { label: 'Intermediate', value: 'intermediate' },
+  { label: 'Advanced', value: 'advanced' },
+];
+
 function normalizeProgram(program) {
   return {
     ...program,
@@ -19,6 +26,7 @@ function normalizeProgram(program) {
 
 export default function ProgramsScreen({ navigation }) {
   const [programs, setPrograms] = useState(mockPrograms);
+  const [selectedLevel, setSelectedLevel] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [usingFallback, setUsingFallback] = useState(false);
@@ -30,19 +38,19 @@ export default function ProgramsScreen({ navigation }) {
       setLoading(true);
       setError('');
       try {
-        const response = await getPrograms();
+        const response = await getPrograms(selectedLevel ? { level: selectedLevel } : undefined);
         const apiPrograms = response.data?.programs || response.data?.data?.programs || [];
         if (mounted && apiPrograms.length > 0) {
           setPrograms(apiPrograms.map(normalizeProgram));
           setUsingFallback(false);
         } else if (mounted) {
-          setPrograms(mockPrograms);
+          setPrograms(filterMockPrograms(selectedLevel));
           setUsingFallback(true);
           setError('API program listesi bos geldi. Demo liste gosteriliyor.');
         }
       } catch (err) {
         if (mounted) {
-          setPrograms(mockPrograms);
+          setPrograms(filterMockPrograms(selectedLevel));
           setUsingFallback(true);
           setError(err.userMessage || 'Programlar API uzerinden alinamadi. Demo liste gosteriliyor.');
         }
@@ -56,7 +64,7 @@ export default function ProgramsScreen({ navigation }) {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [selectedLevel]);
 
   return (
     <ScreenContainer scroll contentStyle={styles.container}>
@@ -65,6 +73,20 @@ export default function ProgramsScreen({ navigation }) {
         <Text style={styles.subtitle}>
           {usingFallback ? 'API baglantisi yokken demo programlar gosteriliyor.' : 'FitStack hazir egzersiz programlari.'}
         </Text>
+      </View>
+      <View style={styles.filters}>
+        {filters.map((filter) => {
+          const active = selectedLevel === filter.value;
+          return (
+            <Text
+              key={filter.label}
+              onPress={() => setSelectedLevel(filter.value)}
+              style={[styles.filterButton, active && styles.filterButtonActive]}
+            >
+              {filter.label}
+            </Text>
+          );
+        })}
       </View>
       {loading ? <LoadingState message="Programlar yukleniyor..." /> : null}
       {error ? <ErrorState message={error} /> : null}
@@ -81,6 +103,11 @@ export default function ProgramsScreen({ navigation }) {
   );
 }
 
+function filterMockPrograms(level) {
+  if (!level) return mockPrograms;
+  return mockPrograms.filter((program) => program.level === level);
+}
+
 const styles = StyleSheet.create({
   container: {
     paddingBottom: 28,
@@ -90,6 +117,28 @@ const styles = StyleSheet.create({
   },
   list: {
     gap: 14,
+  },
+  filters: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 14,
+  },
+  filterButton: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: 999,
+    borderWidth: 1,
+    color: colors.mutedText,
+    fontSize: 13,
+    fontWeight: '800',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  filterButtonActive: {
+    backgroundColor: colors.primarySoft,
+    borderColor: colors.primary,
+    color: colors.primaryDark,
   },
   title: {
     color: colors.text,
