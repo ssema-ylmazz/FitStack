@@ -1,12 +1,34 @@
+import { useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import AppButton from '../components/AppButton';
+import ErrorState from '../components/ErrorState';
 import SectionTitle from '../components/SectionTitle';
 import ScreenContainer from '../components/ScreenContainer';
+import { selectProgram } from '../api/programsApi';
 import colors from '../constants/colors';
 import { programs } from '../constants/mockData';
 
 export default function ProgramDetailScreen({ route }) {
-  const program = programs.find((item) => item.id === route?.params?.programId) ?? programs[0];
+  const routeProgram = route?.params?.program;
+  const program = routeProgram || programs.find((item) => item.id === route?.params?.programId) || programs[0];
+  const exercises = program.exercises || program.steps || [];
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleSelectProgram() {
+    if (submitting) return;
+
+    setError('');
+    setSubmitting(true);
+    try {
+      await selectProgram(program.id);
+      Alert.alert('Program secildi', `${program.title} aktif programa eklendi.`);
+    } catch (err) {
+      setError(err.userMessage || 'Program secilemedi. Backend kapali olabilir.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <ScreenContainer scroll contentStyle={styles.container}>
@@ -16,21 +38,26 @@ export default function ProgramDetailScreen({ route }) {
         <Text style={styles.description}>{program.description}</Text>
         <View style={styles.metaRow}>
           <Text style={styles.meta}>{program.duration} dakika</Text>
-          <Text style={styles.meta}>{program.exercises.length} egzersiz</Text>
+          <Text style={styles.meta}>{exercises.length} egzersiz</Text>
         </View>
       </View>
 
       <SectionTitle title="Egzersiz Listesi" />
       <View style={styles.exerciseList}>
-        {program.exercises.map((exercise, index) => (
-          <View key={exercise} style={styles.exerciseItem}>
+        {exercises.map((exercise, index) => (
+          <View key={exercise.id || exercise.title || exercise} style={styles.exerciseItem}>
             <Text style={styles.exerciseNumber}>{index + 1}</Text>
-            <Text style={styles.exerciseText}>{exercise}</Text>
+            <Text style={styles.exerciseText}>{exercise.title || exercise}</Text>
           </View>
         ))}
       </View>
 
-      <AppButton title="Programi Sec" onPress={() => Alert.alert('Demo', `${program.title} secildi.`)} />
+      {error ? <ErrorState message={error} /> : null}
+      <AppButton
+        disabled={submitting}
+        title={submitting ? 'Seciliyor...' : 'Programi Sec'}
+        onPress={handleSelectProgram}
+      />
     </ScreenContainer>
   );
 }

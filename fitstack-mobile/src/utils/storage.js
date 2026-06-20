@@ -1,16 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SESSION_KEY = 'fitstack.session';
+const TOKEN_KEY = 'fitstack.token';
 
-export async function saveSession(session) {
-  await AsyncStorage.setItem(SESSION_KEY, JSON.stringify(session));
+export async function saveToken(token) {
+  if (!token) return;
+  await AsyncStorage.setItem(TOKEN_KEY, token);
 }
 
-export async function loadSession() {
-  const raw = await AsyncStorage.getItem(SESSION_KEY);
-  return raw ? JSON.parse(raw) : null;
+export async function getToken() {
+  return AsyncStorage.getItem(TOKEN_KEY);
 }
 
-export async function clearSession() {
-  await AsyncStorage.removeItem(SESSION_KEY);
+export async function removeToken() {
+  await AsyncStorage.removeItem(TOKEN_KEY);
 }
