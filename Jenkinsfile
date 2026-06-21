@@ -68,9 +68,10 @@ pipeline {
             }
         }
 
-        stage('Mobile install') {
+        stage('Mobile Install and Config Check') {
             steps {
-                echo '=== Mobile install ==='
+                echo '=== Mobile Install and Config Check ==='
+                echo 'Expo development server başlatılmaz; yalnızca bağımlılık kurulumu ve config doğrulaması yapılır.'
                 dir('fitstack-mobile') {
                     sh '''
                         set -e
@@ -80,28 +81,7 @@ pipeline {
                           echo 'UYARI: npm ci başarısız; npm install deneniyor.'
                           npm install
                         fi
-                    '''
-                }
-            }
-        }
-
-        stage('Mobile export check') {
-            steps {
-                echo '=== Mobile export check ==='
-                echo 'Mobil uygulama deploy edilmez; yalnızca bundle/export ile derlenebilirlik doğrulanır.'
-                dir('fitstack-mobile') {
-                    sh '''
-                        set +e
-                        npx expo export --platform android --output-dir /tmp/fitstack-mobile-export
-                        EX=$?
-                        set -e
-                        if [ "$EX" -ne 0 ]; then
-                          echo "UYARI: expo export başarısız (çıkış $EX). Ağ veya ortam eksik olabilir."
-                          echo 'Yedek: npm run start -- --help (Expo CLI erişimi kontrolü)'
-                          npm run start -- --help || npx expo --help || true
-                        else
-                          echo 'expo export başarılı.'
-                        fi
+                        npx expo config --type public
                     '''
                 }
             }

@@ -1,205 +1,219 @@
-# FitStack — Mobil Back-End (REST API) Dokümantasyonu
+# Mobil Backend (REST API Bağlantısı) Görev Dağılımı
 
-Bu doküman, **mobil uygulamanın** bağlanacağı FitStack **REST API** özetidir. Sunucu kökünde çalışır; **`/v1` öneki kullanılmaz**. Ayrıntılı şema için [openapi.yaml](openapi.yaml) dosyasına bakınız.
+## Genel Bilgi
 
----
+Bu dokümanda FitStack mobil uygulamasının backend REST API bağlantısı ve mobil veri akışı görevleri listelenir. Mobil tarafta API istekleri `fitstack-mobile/src/api/` klasörü altında toplanmıştır. Auth state ve token yönetimi `AuthContext` ve `AsyncStorage` ile yapılır.
 
-## 1. Base URL
+## REST API Adresi
 
-| Ortam | URL |
-|--------|-----|
-| Yerel geliştirme (mobil emülatör / aynı makine) | **`http://localhost:3000`** |
+| Ortam | API adresi |
+|---|---|
+| Local/web test | `http://localhost:3000` |
+| Android emulator | `http://10.0.2.2:3000` |
+| Fiziksel telefon | `http://BILGISAYAR_LAN_IP:3000` |
 
-**Not:** Android emülatörde bilgisayardaki sunucuya erişim genelde `http://10.0.2.2:3000` ile yapılır. Fiziksel telefonda bilgisayarın yerel ağ IP adresi kullanılmalıdır.
+Fiziksel telefonda `localhost` telefonun kendisini gösterdiği için bilgisayarın LAN IP adresi kullanılmalıdır. Kişisel IP değerleri repo'ya commitlenmemelidir.
 
----
+## Grup Üyelerinin Mobil Backend Görevleri
 
-## 2. Genel yanıt biçimi
+| Üye | Görev alanı | Doküman |
+|---|---|---|
+| Hüseyin Boğatekin | Mobil REST API bağlantıları, token yönetimi, Redis/RabbitMQ tetikleyicileri | [Hüseyin mobil backend görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md) |
+| Sema Nur Yılmaz | Mobil ekran ve component tasarımları | [Sema mobil frontend görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md) |
 
-Başarılı işlemlerde çoğu endpoint `success: true` ve ilgili veri alanlarını döner. Hatalarda HTTP durum kodu ile birlikte tipik olarak:
+## Genel Mobil Backend Prensipleri
 
-```json
-{
-  "success": false,
-  "error": "KOD",
-  "message": "Açıklama"
-}
+- Tüm HTTP istekleri ortak Axios client üzerinden yönetilir.
+- Token varsa isteklerde `Authorization: Bearer <token>` header'ı kullanılır.
+- AsyncStorage, mobil oturum token'ını saklamak için kullanılır.
+- API hataları kullanıcıya gösterilebilir mesajlara dönüştürülür.
+- Backend kapalıyken kritik ekranlarda mock/fallback veri gösterilir.
+- Uygulama backend bağlantısı başarısız olduğunda çökmeyecek şekilde tasarlanmıştır.
+
+## API Client ve Auth Yönetimi
+
+Ana dosya:
+
+```text
+fitstack-mobile/src/api/client.js
 ```
 
----
+API client özellikleri:
+
+- `baseURL`, `src/constants/config.js` içindeki `API_BASE_URL` değerinden gelir.
+- İsteklerde JSON header kullanılır.
+- AsyncStorage içinden token okunur.
+- Token varsa istek headerına şu formatta eklenir:
+
+```text
+Authorization: Bearer <token>
+```
 
-## 3. Auth (kayıt ve giriş)
+- Response interceptor API hatalarını kullanıcıya gösterilebilir mesaja çevirir.
+- Hata durumunda uygulama çökmez; hata ilgili ekranda gösterilir.
 
-### `POST /users/register`
+## AuthContext
 
-- **Amaç:** Yeni kullanıcı kaydı (mobil: Kayıt ekranı).  
-- **İstek gövdesi (özet):** `email`, `password` (zorunlu); `username`, `name` (isteğe bağlı).  
-- **Yanıt (özet):** `201` — `success`, `message`, `user` (`id`, `name`, `username`, `email`, `level`).
-
-### `POST /users/login`
-
-- **Amaç:** Oturum açma (mobil: Giriş ekranı).  
-- **İstek gövdesi (özet):** `email`, `password`.  
-- **Yanıt (özet):** `200` — `success`, `message`, **`token`** (mock JWT benzeri), `user` (yukarıdaki alanlar).
-
----
-
-## 4. Profile (profil ve hesap)
-
-### `GET /users/profile`
-
-- **Amaç:** Oturumdaki kullanıcının profilini okuma.  
-- **Yanıt (özet):** `200` — `success`, `user` (`id`, `name`, `username`, `email`, `level`).
-
-### `PUT /users/profile`
-
-- **Amaç:** Profil güncelleme.  
-- **İstek gövdesi (özet):** `name`, `username`, `email`, `level` (gönderilen alanlar güncellenir).  
-- **Yanıt (özet):** `200` — `success`, `message`, `user`.
-
-### `DELETE /users/profile`
-
-- **Amaç:** Hesabı silme (mobilde onay diyaloğu önerilir).  
-- **Yanıt (özet):** `200` — `success`, `message` (mock ortamda yeni demo oturumu oluşabilir).
-
----
-
-## 5. Programs (programlar)
-
-### `GET /programs`
-
-- **Amaç:** Tüm programları veya filtreyi listeleme.  
-- **Sorgu:** `?level=beginner` | `intermediate` | `advanced` (isteğe bağlı).  
-- **Yanıt (özet):** `200` — `success`, `programs[]` (her biri: `id`, `title`, `level`, `duration`, `category`, `calories`, `description`), `count`.
-
-### `GET /programs/:id`
-
-- **Amaç:** Tek program detayı.  
-- **Yanıt (özet):** `200` — `success`, `program` nesnesi; bulunamazsa `404`.
-
-### `POST /programs/:id/select`
-
-- **Amaç:** Kullanıcının aktif program seçimi (sonraki `POST /workouts` için varsayılan program).  
-- **Yanıt (özet):** `200` — `success`, `message`, `programId`, `program`.
-
----
-
-## 6. Workouts (antrenmanlar)
-
-### `POST /workouts`
-
-- **Amaç:** Yeni antrenman kaydı.  
-- **İstek gövdesi (özet):** `programId` (isteğe bağlı; yoksa seçili veya varsayılan program), `duration`, `calories`, `date`, `note`.  
-- **Yanıt (özet):** `201` — `success`, `message`, `workout` (`id`, `programId`, `programTitle`, `duration`, `calories`, `date`, `note`).
-
-### `GET /workouts`
-
-- **Amaç:** Geçmiş antrenman listesi.  
-- **Yanıt (özet):** `200` — `success`, `workouts[]`, `count`.
-
-### `PUT /workouts/:id/points`
-
-- **Amaç:** Tamamlama / puan ekleme.  
-- **İstek gövdesi (özet):** `points` (sayı; varsayılan sunucu tarafında tanımlı olabilir).  
-- **Yanıt (özet):** `200` — `success`, `gainedPoints`, `totalPoints`, `workout`, vb.
-
-### `DELETE /workouts/:id`
-
-- **Amaç:** Kayıt silme.  
-- **Yanıt (özet):** `200` — `success`, `message`, `id`, `workout` (silinen kayıt özeti).
-
----
-
-## 7. Points (toplam puan)
-
-### `GET /users/points`
-
-- **Amaç:** Kullanıcının toplam puanını görüntüleme.  
-- **Yanıt (özet):** `200` — `success`, `totalPoints`, `userId`, `updatedAt`.
-
----
-
-## 8. Badges (rozetler)
-
-### `GET /badges`
-
-- **Amaç:** Kazanılan rozetlerin listesi.  
-- **Yanıt (özet):** `200` — `success`, `badges[]` (`id`, `key`, `name`, `earnedAt`), `count`.
-
-### `POST /badges`
-
-- **Amaç:** Yeni rozet kazanma (kurallar istemci veya sunucu iş kuralına bağlı).  
-- **İstek gövdesi (özet):** `key`, `name` (isteğe bağlı; varsayılanlar uygulanabilir).  
-- **Yanıt (özet):** `201` — `success`, `message`, `badge`.
-
----
-
-## 9. Streak (günlük seri)
-
-### `GET /streak`
-
-- **Amaç:** Seri bilgisini okuma.  
-- **Yanıt (özet):** `200` — `success`, `streak` (`currentStreak`, `lastWorkoutDate`, `updatedAt`).
-
-### `PUT /streak`
-
-- **Amaç:** Seri güncelleme.  
-- **İstek gövdesi (özet):** `currentStreak`, `lastWorkoutDate` (isteğe bağlı alanlar).  
-- **Yanıt (özet):** `200` — `success`, `message`, `streak`.
-
----
-
-## 10. Leaderboard (sıralama tablosu)
-
-### `GET /leaderboard`
-
-- **Amaç:** Haftalık veya aylık puan sıralaması (mobil: Liderlik sekmesi).  
-- **Sorgu:** `?period=week` | `month` (varsayılan `week`).  
-- **Yanıt (özet):** `200` — `success`, `period`, `leaderboard[]` (`id`, `username`, `points`, `streak`, `rank`).  
-- **Önbellek:** Redis ile `fitstack:leaderboard:week` / `fitstack:leaderboard:month` (TTL 60 sn). Ayrıntı: [README.md](README.md).
-
----
-
-## 11. Goals (hedefler)
-
-### `GET /goals`
-
-- **Amaç:** Kullanıcının hedef listesi ve ilerleme yüzdeleri.  
-- **Yanıt (özet):** `200` — `success`, `goals[]`, `count`.
-
-### `POST /goals`
-
-- **Amaç:** Yeni hedef oluşturma.  
-- **İstek gövdesi (özet):** `type` (`weekly_workouts` | `total_points` | `streak_days`); isteğe bağlı `title`, `target`.  
-- **Yanıt (özet):** `201` — `success`, `message`, `goal` (ilerleme alanlarıyla).
-
-### `PUT /goals/:id`
-
-- **Amaç:** Hedef güncelleme veya manuel tamamlama.  
-- **İstek gövdesi (özet):** `title`, `target`, `manualComplete` (isteğe bağlı).  
-- **Yanıt (özet):** `200` — `success`, `message`, `goal`.
-
----
-
-## 12. Activity Feed (aktivite akışı)
-
-### `GET /activity-feed`
-
-- **Amaç:** Son kullanıcı aktiviteleri (antrenman, puan, rozet, hedef).  
-- **Yanıt (özet):** `200` — `success`, `activities[]` (`id`, `type`, `message`, `createdAt`), `count`.  
-- **Mobil not:** `HomeScreen` son 5 kaydı gösterir; tam liste aynı endpoint’ten alınabilir.
-
----
-
-## 13. Altyapı (Docker, Jenkins, Redis, RabbitMQ)
-
-Proje final kapsamında aşağıdaki bileşenler **tamamlanmıştır**; ayrıntılar [README.md](README.md) içindedir:
-
-| Bileşen | Kullanım |
-|---------|----------|
-| **Docker Compose** | `backend`, `web-frontend`, `redis`, `rabbitmq` — tek komutla yerel yığın |
-| **Redis** | Leaderboard önbelleği (`fitstack:` öneki) |
-| **RabbitMQ** | `fitstack.workout.created` kuyruğu; `POST /workouts` sonrası olay yayını |
-| **Jenkins** | Kök `Jenkinsfile` — kurulum, syntax check, web build, mobil export, `docker compose build` |
-
-**Statistics (mobil):** Ayrı REST endpoint yoktur; mobil uygulama workout/program/points verisinden istemci tarafında özet üretir.
+Ana dosya:
+
+```text
+fitstack-mobile/src/context/AuthContext.js
+```
+
+Sağlanan temel işlemler:
+
+| İşlem | Açıklama |
+|---|---|
+| `login` | Kullanıcı girişi yapar, token varsa saklar. |
+| `register` | Kullanıcı kaydı isteği gönderir. |
+| `logout` | Token'ı temizler ve kullanıcı oturumunu kapatır. |
+| `refreshProfile` | Profil bilgisini tekrar API'den çekmeyi dener. |
+
+Uygulama açılışında token varsa profil çekilmeye çalışılır. Hata olursa uygulama çökmeyecek şekilde davranır.
+
+## AsyncStorage Token Yönetimi
+
+Ana dosya:
+
+```text
+fitstack-mobile/src/utils/storage.js
+```
+
+Fonksiyonlar:
+
+| Fonksiyon | Açıklama |
+|---|---|
+| `saveToken(token)` | Token'ı kaydeder. |
+| `getToken()` | Kayıtlı token'ı okur. |
+| `removeToken()` | Token'ı siler. |
+
+## Bağlanan Endpointler
+
+| Gereksinim no | Endpoint | Method | Mobil ekran | Açıklama |
+|---|---|---|---|---|
+| 1 | `/users/register` | POST | Register | Kullanıcı kaydı |
+| 2 | `/users/login` | POST | Login | Kullanıcı girişi ve token alma |
+| 3 | `/users/profile` | GET | Profil | Profil bilgisi görüntüleme |
+| 4 | `/users/profile` | PUT | Profil | Profil bilgisi güncelleme |
+| 5 | `/users/profile` | DELETE | Profil | Hesap silme |
+| 6 | `/programs` | GET | Programlar | Program listesi |
+| 7 | `/programs?level=...` | GET | Programlar | Seviye filtresi |
+| 8 | `/programs/:id`, `/programs/:id/select` | GET, POST | Program Detayı | Program detay ve seçme |
+| 9 | `/workouts` | POST | Antrenmanlar | Antrenman kaydetme |
+| 10 | `/workouts` | GET | Antrenmanlar | Geçmiş antrenmanları listeleme |
+| 11 | `/workouts/:id/points` | PUT | Antrenmanlar | Workout puanı kazanma |
+| 12 | `/users/points` | GET | Ana Sayfa | Toplam puan görüntüleme |
+| 13 | `/badges` | POST | Ana Sayfa | Demo rozet kazanma |
+| 14 | `/badges` | GET | Ana Sayfa | Rozetleri görüntüleme |
+| 15 | `/streak` | GET | Ana Sayfa | Günlük seri görüntüleme |
+| 16 | `/streak` | PUT | Ana Sayfa | Günlük seri güncelleme |
+| 17 | `/workouts/:id` | DELETE | Antrenmanlar | Antrenman kaydını silme |
+| Demo | `/leaderboard?period=week/month` | GET | Liderlik | Redis cache kanıtı |
+
+## Redis Bağlantısı
+
+Leaderboard ekranı `GET /leaderboard?period=week/month` endpointini çağırır. Backend bu yanıtta Redis cache kullanır. Kanıt videosunda ilk istek cache miss, sonraki istek cache hit olarak backend logları veya Redis CLI ile gösterilebilir.
+
+## RabbitMQ Bağlantısı
+
+Antrenmanlar ekranındaki **Demo Antrenman Kaydet** butonu `POST /workouts` endpointini çağırır. Backend bu işlemde RabbitMQ tarafına `fitstack.workout.created` kuyruğu üzerinden workout oluşturma olayı yayınlar. Kanıt videosunda RabbitMQ management panelde bu kuyrukta spike/hareket gösterilebilir.
+
+## 17 Gereksinim ve API İlişkisi
+
+| Gereksinim | API / mobil bağlantı |
+|---|---|
+| Register / Login | `/users/register`, `/users/login` |
+| Profil görüntüle / güncelle / sil | `/users/profile` GET/PUT/DELETE |
+| Program listele / filtrele | `/programs` |
+| Program detay + program seç | `/programs/:id`, `/programs/:id/select` |
+| Antrenman kaydet | `/workouts` POST |
+| Geçmiş antrenmanları görüntüle | `/workouts` GET |
+| Antrenman için puan kazan | `/workouts/:id/points` |
+| Toplam puan görüntüle | `/users/points` |
+| Rozet kazan / görüntüle | `/badges` |
+| Streak/seri görüntüle / güncelle | `/streak` GET/PUT |
+| Antrenman kaydını sil | `/workouts/:id` DELETE |
+
+## Jenkins CI/CD
+
+Kök `Jenkinsfile` içinde mobil uygulama için `Mobile Install and Config Check` stage'i vardır.
+
+```bash
+cd fitstack-mobile
+npm ci || npm install
+npx expo config --type public
+```
+
+CI ortamında development server takılı kalmasın diye `npx expo start` kullanılmaz.
+
+## Hüseyin Boğatekin'in Mobil Backend Katkıları
+
+Hüseyin Boğatekin'in mobil back-end / REST API entegrasyonu kapsamındaki katkıları:
+
+- Axios API client kurulumu
+- Authorization Bearer token interceptor
+- Response error handling
+- AuthContext yapısı
+- AsyncStorage token yönetimi
+- Login/Register API bağlantısı
+- Programs API bağlantısı
+- Program seçme API bağlantısı
+- Dashboard için points, badges ve streak bağlantıları
+- Workout history listeleme ve silme bağlantısı
+- Profile update/delete/logout bağlantısı
+- Backend kapalıyken mock fallback davranışları
+- Redis leaderboard bağlantısı
+- RabbitMQ workout demo tetikleyicisi
+- Jenkins mobil CI stage açıklaması
+
+İlgili branch ve commitler:
+
+```text
+feature/huseyin-mobile-api
+c0835f4e Connect FitStack mobile screens to API
+ac561364 Improve mobile API connected screens
+c9a9fe97 Add mobile Redis and RabbitMQ demo triggers
+75e423b3 Complete mobile requirement demo actions
+419dbfe4 Upgrade mobile app to Expo SDK 54
+```
+
+## Backend Kapalıyken Davranış
+
+Backend kapalıysa uygulama çökmez.
+
+Fallback davranışları:
+
+- `ProgramsScreen`: Mock program listesi gösterilir.
+- `WorkoutHistoryScreen`: Mock workout geçmişi gösterilir.
+- `DashboardScreen`: Mock puan/streak/rozet bilgileri korunur.
+- `LeaderboardScreen`: Mock liderlik listesi gösterilir.
+
+Bu fallback sadece demo akışının tamamen boş kalmaması içindir. REST API kanıtı için backend açıkken gösterim yapılmalıdır.
+
+## REST API Kanıtı İçin Demo Senaryosu
+
+1. Kullanıcı kayıt ekranı açılır.
+2. Kullanıcı giriş ekranından demo kullanıcıyla giriş yapar.
+3. Program listesi API'den çekilir.
+4. Program detayına girilir.
+5. Program seçme butonu ile `/programs/:id/select` isteği gösterilir.
+6. Dashboard'da points/badges/streak bilgileri kontrol edilir.
+7. Profile ekranında profil güncelleme denenir.
+8. Workout geçmişi ekranında kayıtlar listelenir.
+9. Demo Antrenman Kaydet ile RabbitMQ kuyruğu izlenir.
+10. Leaderboard Yenile ile Redis cache hit/miss izlenir.
+11. Jenkins pipeline içinde mobil stage gösterilir.
+
+## Kanıt Videosunda Gösterilecek Backend Akışı
+
+1. Register/Login isteği
+2. Program listesi ve program seçme
+3. Antrenman kaydetme ve RabbitMQ kuyruğu
+4. Leaderboard yenileme ve Redis cache davranışı
+5. Profil güncelleme/silme
+6. Workout puan kazanma ve workout silme
+7. Jenkins pipeline mobil kontrol stage'i
+
+## Kapsam Dışı Kalanlar
+
+Goals ve activity feed endpointleri backend tarafında vardır, ancak bu aşamada mobil UI'a bağlanmamıştır.

@@ -1,49 +1,32 @@
-import { TextInput, View, Text, StyleSheet } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
+import colors from '../constants/colors';
 
-export default function AppInput({
-  label,
-  value,
-  onChangeText,
-  placeholder,
-  secureTextEntry = false,
-  keyboardType = 'default',
-  autoCapitalize = 'none',
-  style,
-}) {
+export default function AppInput({ label, style, ...props }) {
   return (
-    <View style={[styles.wrap, style]}>
+    <View style={styles.wrapper}>
       {label ? <Text style={styles.label}>{label}</Text> : null}
-      <TextInput
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor="#64748b"
-        secureTextEntry={secureTextEntry}
-        keyboardType={keyboardType}
-        autoCapitalize={autoCapitalize}
-        style={styles.input}
-      />
+      <TextInput placeholderTextColor={colors.mutedText} style={[styles.input, style]} {...props} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: {
-    marginBottom: 14,
+  wrapper: {
+    gap: 8,
   },
   label: {
-    color: '#94a3b8',
-    marginBottom: 6,
+    color: colors.text,
     fontSize: 14,
+    fontWeight: '700',
   },
   input: {
-    backgroundColor: '#1e293b',
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    color: colors.text,
     fontSize: 16,
-    color: '#f8fafc',
+    minHeight: 48,
+    paddingHorizontal: 14,
   },
 });

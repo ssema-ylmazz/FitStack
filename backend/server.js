@@ -18,7 +18,7 @@ const PORT = Number(process.env.PORT) || 3000;
 /** Docker ve dış erişim için tüm arayüzlerde dinle (varsayılan 0.0.0.0) */
 const HOST = process.env.HOST || '0.0.0.0';
 
-/** @type {Array<{id:number,title:string,level:'beginner'|'intermediate'|'advanced',duration:number,category:string,calories:number,description:string}>} */
+/** @type {Array<{id:number,title:string,level:'beginner'|'intermediate'|'advanced',duration:number,category:string,calories:number,description:string,rewardPoints:number,steps:Array<{id:number,title:string,instruction:string,imageUrl:string}>}>} */
 const PROGRAMS = [
   {
     id: 1,
@@ -28,6 +28,27 @@ const PROGRAMS = [
     category: 'cardio',
     calories: 180,
     description: 'Düşük tempolu kardiyo ile güne güvenli bir başlangıç.',
+    rewardPoints: 60,
+    steps: [
+      {
+        id: 1,
+        title: 'Isınma yürüyüşü',
+        instruction: 'Omuzlarını rahat bırak ve 5 dakika kontrollü tempoda yürü.',
+        imageUrl: 'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 2,
+        title: 'Tempo koşusu',
+        instruction: 'Nefes ritmini koruyarak 12 dakika orta tempoda koş.',
+        imageUrl: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 3,
+        title: 'Soğuma ve esneme',
+        instruction: 'Temponu düşür, ardından bacaklarını kontrollü şekilde esnet.',
+        imageUrl: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80',
+      },
+    ],
   },
   {
     id: 2,
@@ -37,6 +58,27 @@ const PROGRAMS = [
     category: 'strength',
     calories: 320,
     description: 'Göğüs, sırt ve omuz odaklı direnç antrenmanı.',
+    rewardPoints: 90,
+    steps: [
+      {
+        id: 1,
+        title: 'Şınav seti',
+        instruction: 'Vücudunu düz tutarak kontrollü 10 şınav tamamla.',
+        imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 2,
+        title: 'Omuz press',
+        instruction: 'Ağırlıkları omuz hizasından yukarı kontrollü biçimde kaldır.',
+        imageUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 3,
+        title: 'Sırt çekişi',
+        instruction: 'Dirseklerini geriye çekerek sırt kaslarını sık ve başlangıca dön.',
+        imageUrl: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=1200&q=80',
+      },
+    ],
   },
   {
     id: 3,
@@ -46,6 +88,27 @@ const PROGRAMS = [
     category: 'hiit',
     calories: 450,
     description: 'Yüksek yoğunluklu aralıklı antrenman ile maksimum kalori.',
+    rewardPoints: 120,
+    steps: [
+      {
+        id: 1,
+        title: 'Jumping jack',
+        instruction: '30 saniye boyunca ritmi bozmadan jumping jack yap.',
+        imageUrl: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 2,
+        title: 'Squat sıçraması',
+        instruction: 'Dizlerini kontrollü bük, yukarı sıçra ve yumuşak iniş yap.',
+        imageUrl: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=1200&q=80',
+      },
+      {
+        id: 3,
+        title: 'Mountain climber',
+        instruction: 'Plank pozisyonunda dizlerini sırayla göğsüne çek.',
+        imageUrl: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=1200&q=80',
+      },
+    ],
   },
 ];
 
@@ -88,7 +151,7 @@ function seedDefaultGoals() {
 /** @type {Map<string, {id:number,email:string,password:string,name:string,username:string,level:string}>} */
 const usersByEmail = new Map();
 
-/** @type {Map<number, {workouts:object[], badges:object[], totalPoints:number, streak:{currentStreak:number,lastWorkoutDate:string|null,updatedAt:string}, selectedProgramId:number|null}>} */
+/** @type {Map<number, {workouts:object[], badges:object[], totalPoints:number, streak:{currentStreak:number,lastWorkoutDate:string|null,updatedAt:string}, selectedProgramId:number|null,completedExerciseIds:number[]}>} */
 const userState = new Map();
 
 function defaultUserState() {
@@ -109,6 +172,7 @@ function defaultUserState() {
       updatedAt: new Date().toISOString(),
     },
     selectedProgramId: null,
+    completedExerciseIds: [],
     goals: seedDefaultGoals(),
     activities: [],
   };
@@ -122,6 +186,9 @@ function getState(userId) {
   }
   if (!Array.isArray(st.activities)) {
     st.activities = [];
+  }
+  if (!Array.isArray(st.completedExerciseIds)) {
+    st.completedExerciseIds = [];
   }
   return st;
 }
@@ -553,6 +620,102 @@ app.get('/programs/:id', (req, res) => {
   return res.status(200).json({
     success: true,
     program,
+  });
+});
+
+/* ---------------- EXERCISE COMPLETION ---------------- */
+
+app.post('/exercises/complete', (req, res) => {
+  if (!activeUser) {
+    return res.status(401).json({
+      success: false,
+      error: 'UNAUTHORIZED',
+      message: 'Oturum yok.',
+    });
+  }
+
+  const programId = Number(req.body?.programId);
+  const completedStepIds = Array.isArray(req.body?.completedStepIds)
+    ? req.body.completedStepIds.map(Number)
+    : [];
+  const program = PROGRAMS.find((p) => p.id === programId);
+
+  if (!program) {
+    return res.status(404).json({
+      success: false,
+      error: 'NOT_FOUND',
+      message: 'Egzersiz programı bulunamadı.',
+    });
+  }
+
+  const requiredStepIds = program.steps.map((step) => step.id);
+  const completedAllSteps =
+    completedStepIds.length === requiredStepIds.length &&
+    requiredStepIds.every((id) => completedStepIds.includes(id));
+
+  if (!completedAllSteps) {
+    return res.status(400).json({
+      success: false,
+      error: 'INCOMPLETE_STEPS',
+      message: 'Puan kazanmak için tüm egzersiz adımları sırayla tamamlanmalıdır.',
+      requiredStepIds,
+    });
+  }
+
+  const st = getState(activeUser.id);
+  if (st.completedExerciseIds.includes(program.id)) {
+    return res.status(409).json({
+      success: false,
+      error: 'ALREADY_COMPLETED',
+      message: 'Bu egzersiz daha önce tamamlandı ve puanı eklendi.',
+      totalPoints: st.totalPoints,
+    });
+  }
+
+  const completedAt = new Date().toISOString();
+  const workout = {
+    id: nextWorkoutId++,
+    programId: program.id,
+    programTitle: program.title,
+    duration: program.duration,
+    calories: program.calories,
+    date: completedAt.slice(0, 10),
+    note: 'Sıralı egzersiz adımları tamamlandı.',
+  };
+
+  st.completedExerciseIds.push(program.id);
+  st.totalPoints += program.rewardPoints;
+  st.workouts.unshift(workout);
+  pushActivity(
+    st,
+    'exercise_complete',
+    `${userFirstName(activeUser)} ${program.title} egzersizini bitirdi ve ${program.rewardPoints} puan kazandı.`,
+  );
+
+  console.log(
+    `[exercise complete] ${activeUser.name} kullanıcısı "${program.title}" egzersizini bitirdi, ${program.rewardPoints} puan eklendi. Yeni toplam: ${st.totalPoints}.`,
+  );
+
+  rabbitmq.publishWorkoutCreated({
+    type: 'EXERCISE_COMPLETED',
+    workoutId: workout.id,
+    programId: program.id,
+    userId: activeUser.id,
+    gainedPoints: program.rewardPoints,
+    createdAt: completedAt,
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: 'Egzersiz tamamlandı ve puan eklendi.',
+    gainedPoints: program.rewardPoints,
+    totalPoints: st.totalPoints,
+    completedAt,
+    program: {
+      id: program.id,
+      title: program.title,
+    },
+    workout,
   });
 });
 

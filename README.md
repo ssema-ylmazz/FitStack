@@ -6,6 +6,10 @@
 
 ---
 
+## Not
+
+FitStack; egzersiz programı keşfi, antrenman takibi, puan, rozet ve günlük streak sistemi içeren bir fitness takip uygulamasıdır. Projede web arayüzü, mobil Expo uygulaması, REST API, Redis önbelleği, RabbitMQ olay kuyruğu, Docker ve Jenkins CI/CD akışı birlikte ele alınmıştır.
+
 ## Proje Hakkında
 
 **Proje Tanımı:**
@@ -14,7 +18,11 @@
 
 **Proje Kategorisi:**
 
-> Fitness Takip Sistemi
+> Fitness / Sağlık / Egzersiz Takip
+
+**Referans uygulamalar:**
+
+> Nike Training Club, Strava, Fitbod ve Google Fit gibi antrenman takip ve motivasyon uygulamaları.
 
 ---
 
@@ -24,19 +32,22 @@
 |--------|----------------|
 | **Backend** | Node.js, Express, in-memory mock veri; isteğe bağlı **Redis** (önbellek) ve **RabbitMQ** (olay yayını) |
 | **Web** | React (Create React App), Axios, React Router |
-| **Mobil** | React Native, Expo, React Navigation |
+| **Mobil** | Expo SDK 54, React Native, React Navigation, Axios |
 | **Altyapı** | Docker, Docker Compose, Jenkins (CI/CD) |
 
 ---
 
-## Proje linkleri
+## Proje Linkleri
 
-- **REST API adresi:** [https://fitstack-a5v0.onrender.com](https://fitstack-a5v0.onrender.com)
-- **Web frontend adresi:** [https://fit-stack-nine.vercel.app](https://fit-stack-nine.vercel.app)
+- **REST API local adresi:** [http://localhost:3000](http://localhost:3000)
+- **Web frontend local adresi:** [http://localhost:3001](http://localhost:3001)
+- **Mobil uygulama klasörü:** `fitstack-mobile/`
+- **Canlı REST API adresi:** [https://fitstack-a5v0.onrender.com](https://fitstack-a5v0.onrender.com)
+- **Canlı web frontend adresi:** [https://fit-stack-nine.vercel.app](https://fit-stack-nine.vercel.app)
 
 ---
 
-## Proje ekibi
+## Proje Ekibi
 
 **Grup adı:** DevFit
 
@@ -67,15 +78,17 @@ Geliştirme sunucusu varsayılan olarak **3000** portunu kullanır. Backend ile 
 
 ### Mobil uygulama
 
+Mobil Expo uygulaması `fitstack-mobile/` klasörü altındadır ve Expo SDK 54 kullanır.
+
 ```bash
-cd fitstack-mobile && npm install && npx expo start
+cd fitstack-mobile
+npm install
+npm start
 ```
 
-**fitstack-mobile** Docker Compose yığınının parçası değildir; yerelde Expo ile çalıştırılır. Aynı makinede geliştirme için API genelde `http://localhost:3000`; Android emülatörde `http://10.0.2.2:3000` veya bilgisayarın LAN IP’si (`EXPO_PUBLIC_API_URL`, mobil `client.js` dokümantasyonuna bakın).
+Expo Go ile fiziksel telefonda test ederken telefon ve bilgisayar aynı Wi-Fi ağında olmalıdır. Telefonda `localhost` bilgisayarı değil telefonun kendisini gösterir; bu nedenle `fitstack-mobile/src/constants/config.js` içinde backend adresi bilgisayarın LAN IP adresiyle geçici olarak ayarlanmalıdır. Android emulator için genellikle `http://10.0.2.2:3000`, web/local test için `http://localhost:3000` kullanılır.
 
----
-
-## Docker Compose
+## Docker
 
 Tam yığın dört servisi birlikte kapsar: **backend**, **web-frontend**, **redis**, **rabbitmq**.
 
@@ -87,6 +100,8 @@ Tam yığın dört servisi birlikte kapsar: **backend**, **web-frontend**, **red
 | **rabbitmq** | AMQP broker; yönetim paneli | AMQP **5672**; panel [http://localhost:15672](http://localhost:15672) — **guest** / **guest** |
 
 Backend konteynerinde `REDIS_HOST=redis`, `REDIS_PORT=6379`, `RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672` tanımlıdır.
+
+Mobil Expo uygulaması Docker container olarak çalıştırılmaz. Mobil uygulama Expo Go, iOS/Android emülatörü veya web üzerinden backend REST API'ye bağlanır.
 
 ### Docker ile test
 
@@ -108,7 +123,16 @@ Bilgisayarda **3000**, **3001**, **6379** veya **5672** / **15672** başka süre
 
 ---
 
-## Jenkins CI/CD
+## Redis ve RabbitMQ Kanıt Akışları
+
+| Teknoloji | Mobil akış | Backend etkisi | Kanıt |
+|---|---|---|---|
+| RabbitMQ | Antrenmanlar ekranı > Demo Antrenman Kaydet | `POST /workouts` çağrılır | `fitstack.workout.created` kuyruğunda mesaj/spike |
+| Redis | Liderlik ekranı > Yenile | `GET /leaderboard?period=week/month` çağrılır | Redis cache miss/hit logları ve `fitstack:leaderboard:*` anahtarları |
+
+RabbitMQ management paneli: [http://localhost:15672](http://localhost:15672) — **guest** / **guest**. Redis varsayılan portu: `6379`.
+
+## CI/CD
 
 Kök dizinde **`Jenkinsfile`** bulunur. Declarative pipeline şu aşamaları çalıştırır:
 
@@ -117,9 +141,8 @@ Kök dizinde **`Jenkinsfile`** bulunur. Declarative pipeline şu aşamaları ça
 3. **Backend syntax check** — `node --check server.js` (backend’deki `npm test` placeholder olduğu için kullanılmaz).
 4. **Web frontend install** — `fitstack-frontend` içinde `npm ci` veya `npm install`.
 5. **Web frontend build** — `npm run build`.
-6. **Mobile install** — `fitstack-mobile` içinde `npm ci` veya `npm install`.
-7. **Mobile export check** — `npx expo export --platform android` (başarısızsa yedek olarak `npm run start -- --help` / `expo --help`); **mobil deploy yok**, yalnızca derlenebilirlik kanıtı.
-8. **Docker compose build** — proje kökünde `docker compose build` (veya `docker-compose build`). **İmaj push ve canlı deploy bu dosyada yok.**
+6. **Mobile Install and Config Check** — `fitstack-mobile` içinde `npm ci || npm install` ve `npx expo config --type public`.
+7. **Docker compose build** — proje kökünde `docker compose build` (veya `docker-compose build`). **İmaj push ve canlı deploy bu dosyada yok.**
 
 ### Jenkins’te job oluşturma (özet)
 
@@ -130,10 +153,12 @@ Kök dizinde **`Jenkinsfile`** bulunur. Declarative pipeline şu aşamaları ça
 
 ### Gereksinimler
 
-- **Node.js** ve **npm** (Expo export için uyumlu Node sürümü, projede `>=18` önerilir).
+- **Node.js** ve **npm** (projede `>=18` önerilir).
 - **Docker** — `docker compose build` adımı için Jenkins çalıştığı makinede Docker erişimi (Linux agent + docker grubu veya Docker-in-Docker yapılandırması).
 
 Bu pipeline **GitHub token / secret / credential** tanımlamaz; özel registry push veya sunucu deploy adımları eklenmemiştir.
+
+CI/CD kanıtı için GitHub Actions değil Jenkins pipeline ekranı gösterilmelidir. Mobil kontrol için `Mobile Install and Config Check` stage'i kullanılır.
 
 ---
 
@@ -141,17 +166,45 @@ Bu pipeline **GitHub token / secret / credential** tanımlamaz; özel registry p
 
 Backend, **leaderboard** yanıtlarını Redis üzerinde kısa süreli (TTL) önbelleğe alır. Anahtarlar `fitstack:` önekiyle saklanır (ör. `fitstack:leaderboard:week`, `fitstack:leaderboard:month`; TTL 60 sn). Loglar: `Leaderboard cache hit` / `Leaderboard cache miss`. Redis kapalı, hata veya `REDIS_DISABLED=1` iken uygulama çalışmaya devam eder; yanıt doğrudan hesaplanır.
 
+Mobil kanıt akışı: **Liderlik** ekranındaki **Yenile** butonu `GET /leaderboard?period=week/month` isteğini tetikler. İlk istek cache miss, sonraki istek cache hit olarak backend logları veya Redis CLI ile gösterilebilir.
+
 ---
 
 ## RabbitMQ
 
 Antrenman oluşturma olayları **`fitstack.workout.created`** kuyruğuna yayınlanabilir. Broker erişilemez veya `amqplib` / bağlantı yapılandırması yoksa backend çökmez; yayın no-op olur. Yönetim arayüzü: [http://localhost:15672](http://localhost:15672) — **guest** / **guest**.
 
+Mobil kanıt akışı: **Antrenmanlar** ekranındaki **Demo Antrenman Kaydet** butonu `POST /workouts` isteğini tetikler ve RabbitMQ tarafında `fitstack.workout.created` kuyruğunda hareket oluşturur.
+
 ---
 
 ## Demo kullanıcı
 
 Mock oturum için: **`demo@fitstack.local`** / **`demo`**.
+
+---
+
+## Mobilde Karşılanan Gereksinimler
+
+| No | Gereksinim | HTTP metodu | Mobil ekran | Durum |
+|---|---|---|---|---|
+| 1 | Kullanıcı sisteme kayıt olur | POST | Register | Tamam |
+| 2 | Kullanıcı sisteme giriş yapar | POST | Login | Tamam |
+| 3 | Kullanıcı profil bilgilerini görüntüler | GET | Profil | Tamam |
+| 4 | Kullanıcı profil bilgilerini günceller | PUT | Profil | Tamam |
+| 5 | Kullanıcı hesabını siler | DELETE | Profil | Tamam |
+| 6 | Kullanıcı hazır egzersiz programlarını listeler | GET | Programlar | Tamam |
+| 7 | Kullanıcı programları zorluk seviyesine göre filtreler | GET | Programlar | Tamam |
+| 8 | Kullanıcı bir program seçer ve detaylarını görüntüler | GET, POST | Program Detayı | Tamam |
+| 9 | Kullanıcı yaptığı antrenmanı kaydeder | POST | Antrenmanlar | Tamam |
+| 10 | Kullanıcı geçmiş antrenmanlarını görüntüler | GET | Antrenmanlar | Tamam |
+| 11 | Kullanıcı tamamladığı antrenman için puan kazanır | PUT | Antrenmanlar | Tamam |
+| 12 | Kullanıcı toplam puanını görüntüler | GET | Ana Sayfa | Tamam |
+| 13 | Kullanıcı belirli puanlara ulaştığında rozet kazanır | POST | Ana Sayfa | Tamam |
+| 14 | Kullanıcı kazandığı rozetleri görüntüler | GET | Ana Sayfa | Tamam |
+| 15 | Kullanıcı günlük seri sayısını görüntüler | GET | Ana Sayfa | Tamam |
+| 16 | Kullanıcı seri bilgilerini günceller | PUT | Ana Sayfa | Tamam |
+| 17 | Kullanıcı antrenman kaydını siler | DELETE | Antrenmanlar | Tamam |
 
 ---
 
@@ -163,29 +216,23 @@ Makine okunur API sözleşmesi: **[openapi.yaml](openapi.yaml)** (kök dizin, `/
 
 ## Dokümantasyon
 
+Proje dokümantasyonuna aşağıdaki bağlantılardan ulaşabilirsiniz:
 
-
-1. [Gereksinim Analizi](gereksinimler.md)
-2. [REST API Tasarımı](API-Tasarimi.md)
+1. [Gereksinim Analizi](docs/Kullanim-Senaryolari.md)
+2. [REST API Tasarımı](openapi.yaml)
 3. [REST API](Rest-API.md)
 4. [Web Front-End](Web%20Frontend.md)
-5. [Mobil Front-End](MobilFrontEnd.md) — React Native + Expo, klasör yapısı, ekranlar, navigasyon, API mantığı ve 17 gereksinim eşlemesi
-6. [Mobil Back-End (REST)](MobilBackEnd.md) — Mobil istemcinin kullanacağı endpoint özetleri ve örnek yanıtlar
-7. [Sunum](Sunum.md)
+5. [Mobil Front-End](MobilFrontEnd.md) — React Native + Expo SDK 54, ekranlar, navigation, componentler ve 17 gereksinim eşlemesi
+6. [Mobil Back-End / REST API Bağlantısı](MobilBackEnd.md) — Mobil API client, endpointler, Redis/RabbitMQ ve Jenkins mobil stage açıklaması
+7. [Mobil Expo README](fitstack-mobile/README.md)
+8. [Sema Yılmaz Mobil Front-End Görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md)
+9. [Hüseyin Boğatekin Mobil Back-End Görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md)
+10. [Video Sunum / Kanıt Planı](Sunum.md)
 
 ### Mobil görev dağılımı
 
- -[Sema — Mobil Front-End görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md)
- -[Sema — Mobil Back-End (API) görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Backend-Gorevleri.md)
- -[Hüseyin — Mobil Front-End görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Frontend-Gorevleri.md)
- -[Hüseyin — Mobil Back-End (API) görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md)
-
-### Ek özellikler ve altyapı (görev dağılımı)
-
-| Özellik | Sorumlu |
-|---------|---------|
-| **Leaderboard** | Hüseyin Boğatekin |
-| **Statistics** (istemci tarafı özet) | Sema Nur Yılmaz |
-| **Goals** | Sema Nur Yılmaz |
-| **Activity Feed** | Ortak |
-| **Docker / Jenkins / Redis / RabbitMQ** | Ortak |
+| Alan | Sorumlu |
+|---|---|
+| Mobil Front-End, ekran tasarımı, component yapısı ve navigation | Sema Nur Yılmaz |
+| Mobil REST API bağlantısı, Redis/RabbitMQ tetikleyicileri ve Jenkins mobil stage açıklaması | Hüseyin Boğatekin |
+| Docker, Redis, RabbitMQ ve Jenkins kanıt akışı | Ortak |

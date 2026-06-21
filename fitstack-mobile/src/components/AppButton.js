@@ -1,63 +1,59 @@
-import { Pressable, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
+import colors from '../constants/colors';
 
-export default function AppButton({
-  title,
-  onPress,
-  variant = 'primary',
-  disabled = false,
-  loading = false,
-  style,
-}) {
+export default function AppButton({ title, onPress, disabled, variant = 'primary', style }) {
   return (
     <Pressable
+      accessibilityRole="button"
+      disabled={disabled}
       onPress={onPress}
-      disabled={disabled || loading}
       style={({ pressed }) => [
-        styles.base,
-        variant === 'secondary' ? styles.secondary : styles.primary,
-        (disabled || loading) && styles.disabled,
-        pressed && styles.pressed,
+        styles.button,
+        variant === 'secondary' && styles.secondary,
+        variant === 'ghost' && styles.ghost,
+        disabled && styles.disabled,
+        pressed && !disabled && styles.pressed,
         style,
       ]}
     >
-      {loading ? (
-        <ActivityIndicator color={variant === 'secondary' ? '#a3e635' : '#0f172a'} />
-      ) : (
-        <Text style={[styles.label, variant === 'secondary' && styles.labelSecondary]}>{title}</Text>
-      )}
+      <Text style={[styles.text, variant !== 'primary' && styles.secondaryText]}>{title}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  base: {
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+  button: {
     alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: 8,
     minHeight: 48,
-  },
-  primary: {
-    backgroundColor: '#a3e635',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
   },
   secondary: {
-    backgroundColor: 'transparent',
+    backgroundColor: colors.primarySoft,
+    borderColor: colors.primary,
     borderWidth: 1,
-    borderColor: '#a3e635',
+  },
+  ghost: {
+    backgroundColor: 'transparent',
+    minHeight: 40,
+    paddingHorizontal: 8,
   },
   disabled: {
-    opacity: 0.5,
+    opacity: 0.55,
   },
   pressed: {
-    opacity: 0.85,
+    backgroundColor: colors.primaryDark,
   },
-  label: {
+  text: {
+    color: '#ffffff',
+    flexShrink: 1,
+    fontSize: 15,
     fontWeight: '700',
-    fontSize: 16,
-    color: '#0f172a',
+    textAlign: 'center',
   },
-  labelSecondary: {
-    color: '#a3e635',
+  secondaryText: {
+    color: colors.primaryDark,
   },
 });

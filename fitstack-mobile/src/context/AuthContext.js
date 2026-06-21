@@ -1,90 +1,106 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import * as tokenStorage from '../storage/tokenStorage';
-import * as authService from '../api/authService';
+import { createContext, useEffect, useMemo, useState } from 'react';
+import { getProfile as fetchProfile, loginUser, registerUser } from '../api/authApi';
+import { getToken, removeToken, saveToken } from '../utils/storage';
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext({
+  user: null,
+  token: null,
+  loading: true,
+  login: async () => {},
+  register: async () => {},
+  logout: async () => {},
+  refreshProfile: async () => {},
+});
+
+function readToken(data) {
+  return data?.token || data?.accessToken || data?.data?.token || data?.data?.accessToken || null;
+}
+
+function readUser(data) {
+  return data?.user || data?.data?.user || null;
+}
 
 export function AuthProvider({ children }) {
-  const [token, setTokenState] = useState(null);
   const [user, setUser] = useState(null);
-  const [ready, setReady] = useState(false);
-  const [authBusy, setAuthBusy] = useState(false);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  async function refreshProfile() {
+    try {
+      const response = await fetchProfile();
+      const nextUser = readUser(response.data);
+      setUser(nextUser);
+      return nextUser;
+    } catch (error) {
+      console.log('[Auth] Profil yuklenemedi:', error.userMessage || error.message);
+      return null;
+    }
+  }
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
+    let mounted = true;
+
+    async function restoreSession() {
       try {
-        const stored = await tokenStorage.getToken();
-        if (!cancelled) {
-          setTokenState(stored);
+        const storedToken = await getToken();
+        if (!mounted) return;
+        if (storedToken) {
+          setToken(storedToken);
+          await refreshProfile();
         }
+      } catch (error) {
+        console.log('[Auth] Oturum yuklenemedi:', error.message);
       } finally {
-        if (!cancelled) setReady(true);
+        if (mounted) setLoading(false);
       }
-    })();
+    }
+
+    restoreSession();
+
     return () => {
-      cancelled = true;
+      mounted = false;
     };
   }, []);
 
-  const login = useCallback(async (email, password) => {
-    setAuthBusy(true);
-    try {
-      const { token: newToken, user: nextUser } = await authService.loginWithPassword(email, password);
-      await tokenStorage.setToken(newToken);
-      setUser(nextUser);
-      setTokenState(newToken);
-      return { ok: true };
-    } catch (e) {
-      const message = e instanceof Error ? e.message : 'Giriş yapılamadı.';
-      return { ok: false, error: message };
-    } finally {
-      setAuthBusy(false);
-    }
-  }, []);
+  async function login(credentials) {
+    const response = await loginUser(credentials);
+    const nextToken = readToken(response.data);
+    const nextUser = readUser(response.data);
 
-  const register = useCallback(async ({ email, password, name, username }) => {
-    setAuthBusy(true);
-    try {
-      await authService.registerAccount({ email, password, name, username });
-      const { token: newToken, user: nextUser } = await authService.loginWithPassword(email, password);
-      await tokenStorage.setToken(newToken);
-      setUser(nextUser);
-      setTokenState(newToken);
-      return { ok: true };
-    } catch (e) {
-      const message = e instanceof Error ? e.message : 'Kayıt tamamlanamadı.';
-      return { ok: false, error: message };
-    } finally {
-      setAuthBusy(false);
+    if (nextToken) {
+      await saveToken(nextToken);
+      setToken(nextToken);
     }
-  }, []);
+    if (nextUser) {
+      setUser(nextUser);
+    }
 
-  const logout = useCallback(async () => {
-    await tokenStorage.removeToken();
+    return response.data;
+  }
+
+  async function register(payload) {
+    const response = await registerUser(payload);
+    return response.data;
+  }
+
+  async function logout() {
+    await removeToken();
+    setToken(null);
     setUser(null);
-    setTokenState(null);
-  }, []);
+  }
 
   const value = useMemo(
-    () => ({ token, user, ready, authBusy, login, register, logout }),
-    [token, user, ready, authBusy, login, register, logout],
+    () => ({
+      user,
+      token,
+      loading,
+      login,
+      register,
+      logout,
+      refreshProfile,
+    }),
+    [user, token, loading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error('useAuth yalnızca AuthProvider içinde kullanılabilir.');
-  }
-  return ctx;
 }
