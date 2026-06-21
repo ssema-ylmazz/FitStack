@@ -56,6 +56,15 @@ FitStack; egzersiz programı keşfi, antrenman takibi, puan, rozet ve günlük s
 * Sema Nur Yılmaz
 * Hüseyin Boğatekin
 
+### Ekip ve Görev Dağılımı
+
+Her ekip üyesi kendi sorumlu olduğu gereksinimin mobil ekranını ve REST API bağlantılı çalışmasını kendi kanıt videosunda göstermektedir. Görev dağılımı teknoloji bazlı değil, gereksinim bazlı yapılmıştır.
+
+| Ekip üyesi | Sorumlu gereksinimler | Kapsam |
+|---|---|---|
+| Sema Nur Yılmaz | 1, 2, 6, 7, 8, 12, 14, 15 | Kayıt/giriş, program listeleme, filtreleme, program detay/seçme, toplam puan, rozet görüntüleme ve günlük seri görüntüleme gereksinimlerinin mobil ekran + API bağlantılı demo akışı |
+| Hüseyin Boğatekin | 3, 4, 5, 9, 10, 11, 13, 16, 17 | Profil işlemleri, antrenman kaydetme/geçmiş/puan/silme, rozet kazanma, seri güncelleme, Redis/RabbitMQ tetikleyicileri ve REST API bağlantılı demo akışı |
+
 ---
 ## Dokümantasyon
 
@@ -74,11 +83,11 @@ Proje dokümantasyonuna aşağıdaki bağlantılardan ulaşabilirsiniz:
 
 ### Mobil görev dağılımı
 
-| Alan | Sorumlu |
-|---|---|
-| Mobil Front-End, ekran tasarımı, component yapısı ve navigation | Sema Nur Yılmaz |
-| Mobil REST API bağlantısı, Redis/RabbitMQ tetikleyicileri ve Jenkins mobil stage açıklaması | Hüseyin Boğatekin |
-| Docker, Redis, RabbitMQ ve Jenkins kanıt akışı | Ortak |
+| Ekip üyesi | Sorumlu gereksinimler | Kanıt kapsamı |
+|---|---|---|
+| Sema Nur Yılmaz | 1, 2, 6, 7, 8, 12, 14, 15 | Kendi gereksinimlerinin mobil ekranı, navigation akışı ve API bağlantılı çalışması |
+| Hüseyin Boğatekin | 3, 4, 5, 9, 10, 11, 13, 16, 17 | Kendi gereksinimlerinin mobil ekran/API akışı, auth/token, profil, workout, puan, rozet, streak ve Redis/RabbitMQ kanıtı |
+| Ortak | Docker, Jenkins, Redis/RabbitMQ altyapı gösterimi | Teknik servislerin çalıştığını ve mobil demo ile bağlandığını gösterme |
 
 
 ## Yerel geliştirme
@@ -236,4 +245,3 @@ Mock oturum için: **`demo@fitstack.local`** / **`demo`**.
 Makine okunur API sözleşmesi: **[openapi.yaml](openapi.yaml)** (kök dizin, `/v1` öneki kullanılmaz).
 
 ---
-
