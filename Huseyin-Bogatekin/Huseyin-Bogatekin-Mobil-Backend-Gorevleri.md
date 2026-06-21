@@ -14,6 +14,9 @@
 |---|---|
 | `c0835f4e Connect FitStack mobile screens to API` | Mobil API client, AuthContext, token storage ve temel API bağlantıları |
 | `ac561364 Improve mobile API connected screens` | Dashboard, profile, program filtreleme ve workout history API bağlantılarının güçlendirilmesi |
+| `c9a9fe97 Add mobile Redis and RabbitMQ demo triggers` | Redis leaderboard ve RabbitMQ workout demo tetikleyicilerinin mobil UI'a bağlanması |
+| `75e423b3 Complete mobile requirement demo actions` | 17 gereksinimin mobil demo sırasında görünür hale getirilmesi |
+| `419dbfe4 Upgrade mobile app to Expo SDK 54` | Expo Go uyumluluğu için mobil uygulamanın SDK 54'e yükseltilmesi |
 
 ## Yapılan İşler
 
@@ -35,6 +38,9 @@ Hüseyin'in mobil back-end / REST API entegrasyonu kapsamında yaptığı işler
 - Profile delete
 - Logout akışı
 - Backend kapalıyken mock fallback davranışları
+- Redis kanıtı için Leaderboard endpoint bağlantısı
+- RabbitMQ kanıtı için Demo Antrenman Kaydet aksiyonu
+- Jenkins mobil CI stage bilgisinin dokümantasyonda görünür hale getirilmesi
 
 ## İlgili Dosyalar
 
@@ -54,6 +60,7 @@ Hüseyin'in mobil back-end / REST API entegrasyonu kapsamında yaptığı işler
 | `fitstack-mobile/src/screens/DashboardScreen.js` | Points, badges, streak API bağlantısı |
 | `fitstack-mobile/src/screens/WorkoutHistoryScreen.js` | Workout geçmişi ve silme API bağlantısı |
 | `fitstack-mobile/src/screens/ProfileScreen.js` | Profile update/delete/logout bağlantısı |
+| `fitstack-mobile/src/screens/LeaderboardScreen.js` | Leaderboard API bağlantısı ve Redis cache demo akışı |
 
 ## Bağlanan REST Endpointleri
 
@@ -76,6 +83,14 @@ Hüseyin'in mobil back-end / REST API entegrasyonu kapsamında yaptığı işler
 | GET | `/badges` |
 | GET | `/streak` |
 | PUT | `/streak` |
+| GET | `/leaderboard?period=week/month` |
+
+## Redis/RabbitMQ Kanıt Akışları
+
+| Teknoloji | Mobil ekran/aksiyon | Endpoint | Kanıt |
+|---|---|---|---|
+| RabbitMQ | Antrenmanlar > Demo Antrenman Kaydet | `POST /workouts` | `fitstack.workout.created` kuyruğunda mesaj hareketi |
+| Redis | Liderlik > Yenile | `GET /leaderboard?period=week/month` | Redis cache miss/hit ve `fitstack:leaderboard:*` anahtarları |
 
 ## Kanıt Videosunda Gösterilecek Hüseyin Görevleri
 
@@ -89,6 +104,8 @@ Hüseyin'in mobil back-end / REST API entegrasyonu kapsamında yaptığı işler
 8. Workout silme
 9. Profile update
 10. Profile delete veya logout akışı
+11. RabbitMQ için Demo Antrenman Kaydet akışı
+12. Redis için Liderlik > Yenile akışı
 
 ## Backend Kapalıyken Fallback
 

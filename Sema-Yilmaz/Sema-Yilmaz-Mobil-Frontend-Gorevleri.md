@@ -7,7 +7,7 @@
 | Öğrenci adı | Sema Nur Yılmaz |
 | Görev alanı | Mobil Front-End |
 | Branch | `feature/sema-mobile-frontend` |
-| Commit | `bf2595bc Add FitStack mobile frontend screens` |
+| Commitler | `bf2595bc Add FitStack mobile frontend screens`, `b27bbe1 Polish mobile UI for final demo` |
 
 ## Yapılan İşler
 
@@ -23,6 +23,8 @@ Sema'nın mobil front-end kapsamında yaptığı işler:
 - Ortak componentlerin oluşturulması
 - Navigation yapısının kurulması
 - Mock data ile demo görünümünün hazırlanması
+- Türkçe tab adları ve final demo görünümünün iyileştirilmesi
+- Program kartları, dashboard, leaderboard ve workout ekranlarında okunabilirlik düzenlemeleri
 
 ## İlgili Dosyalar
 
@@ -60,6 +62,7 @@ Sema'nın mobil front-end kapsamında yaptığı işler:
 4. ProgramDetail ekranındaki egzersiz listesi
 5. Tab navigasyon yapısı
 6. Ortak componentlerin farklı ekranlarda kullanımı
+7. Final demo için Türkçe tablar: Ana Sayfa, Programlar, Antrenmanlar, Liderlik, Profil
 
 ## Not
 

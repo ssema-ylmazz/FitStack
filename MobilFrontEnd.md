@@ -10,6 +10,7 @@ FitStack mobil uygulaması `fitstack-mobile/` klasörü altında Expo tabanlı R
 |---|---|
 | React Native | Mobil arayüz geliştirme |
 | Expo | Mobil geliştirme ve Expo Go ile çalıştırma |
+| Expo SDK 54 | Güncel iOS Expo Go ile uyumluluk |
 | React Navigation | Auth, tab ve program detay navigasyonu |
 | Axios | REST API istekleri için altyapı |
 | AsyncStorage | Token saklama altyapısı |
@@ -30,6 +31,7 @@ fitstack-mobile/
 | `ProgramsScreen` | Program listesini ve seviye filtrelerini gösterir. |
 | `ProgramDetailScreen` | Program detayını, egzersiz listesini ve program seçme aksiyonunu gösterir. |
 | `WorkoutHistoryScreen` | Antrenman geçmişi listesini ve silme aksiyonunu gösterir. |
+| `LeaderboardScreen` | Redis cache kanıtı için liderlik tablosunu gösterir. |
 | `ProfileScreen` | Kullanıcı bilgilerini, profil güncelleme/silme ve çıkış aksiyonlarını gösterir. |
 
 ## Ortak Componentler
@@ -50,10 +52,36 @@ fitstack-mobile/
 | Navigasyon | Açıklama |
 |---|---|
 | `AuthNavigator` | Login ve Register ekranlarını yönetir. |
-| `MainTabs` | Dashboard, Programs, Workouts ve Profile tablarını içerir. |
+| `MainTabs` | Ana Sayfa, Programlar, Antrenmanlar, Liderlik ve Profil tablarını içerir. |
 | Program stack | Programs listesinden ProgramDetail ekranına geçiş sağlar. |
 
 Uygulama `AuthProvider` ile sarılır. Token veya kullanıcı bilgisi varsa ana tab ekranları, yoksa auth ekranları gösterilir.
+
+## Güncel Tab Adları
+
+| Tab | Amaç |
+|---|---|
+| Ana Sayfa | Puan, seri, rozet ve son aktivite özeti |
+| Programlar | Program listesi, filtreleme ve detay geçişi |
+| Antrenmanlar | Workout geçmişi, puan kazanma, kayıt silme ve RabbitMQ demo aksiyonu |
+| Liderlik | Redis cache kanıtı için leaderboard listesi |
+| Profil | Profil görüntüleme, güncelleme, silme ve çıkış |
+
+## 17 Gereksinimin Front-End Görünürlüğü
+
+| Gereksinim | Mobil ekran |
+|---|---|
+| Register / Login | `RegisterScreen`, `LoginScreen` |
+| Profil görüntüle / güncelle / sil | `ProfileScreen` |
+| Program listele / filtrele | `ProgramsScreen` |
+| Program detay + program seç | `ProgramDetailScreen` |
+| Antrenman kaydet | `WorkoutHistoryScreen` |
+| Geçmiş antrenmanları görüntüle | `WorkoutHistoryScreen` |
+| Antrenman için puan kazan | `WorkoutHistoryScreen` |
+| Toplam puan görüntüle | `DashboardScreen` |
+| Rozet kazan / rozetleri görüntüle | `DashboardScreen` |
+| Streak/seri görüntüle / güncelle | `DashboardScreen` |
+| Antrenman kaydını sil | `WorkoutHistoryScreen` |
 
 ## Sema'nın Katkısı
 
@@ -73,6 +101,7 @@ Sema Nur Yılmaz'ın mobil front-end kapsamındaki katkıları:
 ```text
 feature/sema-mobile-frontend
 bf2595bc Add FitStack mobile frontend screens
+b27bbe1 Polish mobile UI for final demo
 ```
 
 ## Çalıştırma Komutları
@@ -111,6 +140,8 @@ Android emulator için genellikle:
 export const API_BASE_URL = 'http://10.0.2.2:3000';
 ```
 
+Bu proje Expo SDK 54 ile güncellenmiştir; iOS Expo Go ile testte bu sürüm kullanılmalıdır.
+
 ## Demo Sırasında Gösterilecek Front-End Ekranları
 
 1. Login ekranı
@@ -119,7 +150,8 @@ export const API_BASE_URL = 'http://10.0.2.2:3000';
 4. Programs listesi ve filtreleri
 5. ProgramDetail ekranı
 6. WorkoutHistory ekranı
-7. Profile ekranı
+7. Leaderboard ekranı
+8. Profile ekranı
 
 ## Kısa Not
 

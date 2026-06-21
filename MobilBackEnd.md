@@ -82,6 +82,30 @@ Fonksiyonlar:
 | GET | `/badges` | Dashboard rozet bilgisi |
 | GET | `/streak` | Dashboard streak bilgisi |
 | PUT | `/streak` | Streak güncelleme API fonksiyonu |
+| GET | `/leaderboard?period=week/month` | Leaderboard ve Redis cache kanıtı |
+
+## Redis ve RabbitMQ Mobil Tetikleyicileri
+
+| Mobil aksiyon | Endpoint | Kanıt |
+|---|---|---|
+| Antrenmanlar > Demo Antrenman Kaydet | `POST /workouts` | RabbitMQ `fitstack.workout.created` kuyruğunda mesaj hareketi |
+| Liderlik > Yenile | `GET /leaderboard?period=week/month` | Redis `fitstack:leaderboard:week/month` cache hit/miss davranışı |
+
+## 17 Gereksinim ve API İlişkisi
+
+| Gereksinim | API / mobil bağlantı |
+|---|---|
+| Register / Login | `/users/register`, `/users/login` |
+| Profil görüntüle / güncelle / sil | `/users/profile` GET/PUT/DELETE |
+| Program listele / filtrele | `/programs` |
+| Program detay + program seç | `/programs/:id`, `/programs/:id/select` |
+| Antrenman kaydet | `/workouts` POST |
+| Geçmiş antrenmanları görüntüle | `/workouts` GET |
+| Antrenman için puan kazan | `/workouts/:id/points` |
+| Toplam puan görüntüle | `/users/points` |
+| Rozet kazan / görüntüle | `/badges` |
+| Streak/seri görüntüle / güncelle | `/streak` GET/PUT |
+| Antrenman kaydını sil | `/workouts/:id` DELETE |
 
 ## Hüseyin'in Katkısı
 
@@ -106,6 +130,9 @@ Hüseyin Boğatekin'in mobil back-end / REST API entegrasyonu kapsamındaki katk
 feature/huseyin-mobile-api
 c0835f4e Connect FitStack mobile screens to API
 ac561364 Improve mobile API connected screens
+c9a9fe97 Add mobile Redis and RabbitMQ demo triggers
+75e423b3 Complete mobile requirement demo actions
+419dbfe4 Upgrade mobile app to Expo SDK 54
 ```
 
 ## Backend Kapalıyken Davranış
@@ -117,8 +144,13 @@ Fallback davranışları:
 - `ProgramsScreen`: Mock program listesi gösterilir.
 - `WorkoutHistoryScreen`: Mock workout geçmişi gösterilir.
 - `DashboardScreen`: Mock puan/streak/rozet bilgileri korunur.
+- `LeaderboardScreen`: Mock liderlik listesi gösterilir.
 
 Bu fallback sadece demo akışının tamamen boş kalmaması içindir. REST API kanıtı için backend açıkken gösterim yapılmalıdır.
+
+## Jenkins Mobil CI Bilgisi
+
+Kök `Jenkinsfile` içinde mobil uygulama için `Mobile Install and Config Check` stage'i vardır. Bu stage `fitstack-mobile` içinde bağımlılık kurulumunu ve `npx expo config --type public` kontrolünü çalıştırır. CI ortamında takılı kalmaması için `expo start` kullanılmaz.
 
 ## REST API Kanıtı İçin Demo Senaryosu
 
