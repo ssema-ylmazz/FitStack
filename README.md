@@ -222,9 +222,17 @@ Proje dokümantasyonuna aşağıdaki bağlantılardan ulaşabilirsiniz:
 2. [REST API Tasarımı](openapi.yaml)
 3. [REST API](Rest-API.md)
 4. [Web Front-End](Web%20Frontend.md)
-5. [Mobil Front-End](MobilFrontEnd.md)
-6. [Mobil Back-End / REST API Bağlantısı](MobilBackEnd.md)
+5. [Mobil Front-End](MobilFrontEnd.md) — React Native + Expo SDK 54, ekranlar, navigation, componentler ve 17 gereksinim eşlemesi
+6. [Mobil Back-End / REST API Bağlantısı](MobilBackEnd.md) — Mobil API client, endpointler, Redis/RabbitMQ ve Jenkins mobil stage açıklaması
 7. [Mobil Expo README](fitstack-mobile/README.md)
 8. [Sema Yılmaz Mobil Front-End Görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md)
 9. [Hüseyin Boğatekin Mobil Back-End Görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md)
-10. [Video Sunum](Sunum.md)
+10. [Video Sunum / Kanıt Planı](Sunum.md)
+
+### Mobil görev dağılımı
+
+| Alan | Sorumlu |
+|---|---|
+| Mobil Front-End, ekran tasarımı, component yapısı ve navigation | Sema Nur Yılmaz |
+| Mobil REST API bağlantısı, Redis/RabbitMQ tetikleyicileri ve Jenkins mobil stage açıklaması | Hüseyin Boğatekin |
+| Docker, Redis, RabbitMQ ve Jenkins kanıt akışı | Ortak |
