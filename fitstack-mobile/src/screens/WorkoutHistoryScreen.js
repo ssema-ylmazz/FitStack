@@ -31,15 +31,15 @@ export default function WorkoutHistoryScreen() {
     } catch (err) {
       setWorkouts(mockWorkouts);
       setUsingFallback(true);
-      setError(err.userMessage || 'Antrenman gecmisi alinamadi. Demo liste gosteriliyor.');
+      setError(err.userMessage || 'Antrenman geçmişi alınamadı. Demo liste gösteriliyor.');
     } finally {
       setLoading(false);
     }
   }
 
   function confirmDelete(workout) {
-    Alert.alert('Antrenmani sil', 'Bu antrenman kaydi silinsin mi?', [
-      { text: 'Vazgec', style: 'cancel' },
+    Alert.alert('Antrenmanı sil', 'Bu antrenman kaydı silinsin mi?', [
+      { text: 'Vazgeç', style: 'cancel' },
       { text: 'Sil', style: 'destructive', onPress: () => handleDelete(workout) },
     ]);
   }
@@ -73,7 +73,7 @@ export default function WorkoutHistoryScreen() {
       Alert.alert('Antrenman kaydedildi', 'RabbitMQ kuyruğunu kontrol edebilirsiniz.');
       await loadWorkouts();
     } catch (err) {
-      setError(err.userMessage || 'Demo antrenman kaydedilemedi. Backend kapali olabilir.');
+      setError(err.userMessage || 'Demo antrenman kaydedilemedi. Backend kapalı olabilir.');
     } finally {
       setCreatingDemo(false);
     }
@@ -88,7 +88,7 @@ export default function WorkoutHistoryScreen() {
           item.id === workout.id ? { ...item, points: (item.points || 0) + 50, gainedPoints: 50 } : item,
         ),
       );
-      Alert.alert('Demo puan kazanildi', 'Backend kapaliyken mock workout puani guncellendi.');
+      Alert.alert('Demo puan kazanıldı', 'Backend kapalıyken mock workout puanı güncellendi.');
       return;
     }
 
@@ -97,7 +97,7 @@ export default function WorkoutHistoryScreen() {
     try {
       const response = await updateWorkoutPoints(workout.id, { points: 50 });
       const gainedPoints = response.data?.gainedPoints ?? 50;
-      Alert.alert('Puan kazanildi', `${gainedPoints} puan eklendi.`);
+      Alert.alert('Puan kazanıldı', `${gainedPoints} puan eklendi.`);
       await loadWorkouts();
     } catch (err) {
       setError(err.userMessage || 'Puan eklenemedi.');
@@ -108,15 +108,15 @@ export default function WorkoutHistoryScreen() {
 
   return (
     <ScreenContainer scroll contentStyle={styles.container}>
-      <Text style={styles.title}>Antrenman Gecmisi</Text>
+      <Text style={styles.title}>Antrenman Geçmişi</Text>
       <Text style={styles.subtitle}>
-        {usingFallback ? 'Backend kapaliyken demo kayitlar gosteriliyor.' : 'Tamamlanan antrenman kayitlari.'}
+        {usingFallback ? 'Backend kapalıyken demo kayıtlar gösteriliyor.' : 'Tamamlanan antrenman kayıtları.'}
       </Text>
 
       <View style={styles.demoBox}>
-        <Text style={styles.demoTitle}>RabbitMQ Kanit Aksiyonu</Text>
+        <Text style={styles.demoTitle}>Antrenman Kaydet</Text>
         <Text style={styles.demoText}>
-          Bu islem POST /workouts endpointini cagirir ve backend RabbitMQ'ya WORKOUT_CREATED mesaji uretir.
+          Bu işlem POST /workouts endpointini çağırır ve RabbitMQ mesajı üretir.
         </Text>
         <AppButton
           disabled={creatingDemo}
@@ -125,13 +125,13 @@ export default function WorkoutHistoryScreen() {
         />
       </View>
 
-      {loading ? <LoadingState message="Antrenmanlar yukleniyor..." /> : null}
+      {loading ? <LoadingState message="Antrenmanlar yükleniyor..." /> : null}
       {error ? <ErrorState message={error} /> : null}
 
       {!loading && workouts.length === 0 ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>Henuz antrenman kaydi yok</Text>
-          <Text style={styles.emptyText}>Bir program tamamladiginda gecmis burada gorunecek.</Text>
+          <Text style={styles.emptyTitle}>Henüz antrenman kaydı yok</Text>
+          <Text style={styles.emptyText}>Bir program tamamladığında geçmiş burada görünecek.</Text>
         </View>
       ) : null}
 

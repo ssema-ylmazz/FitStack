@@ -17,7 +17,7 @@ export default function LoginScreen({ navigation }) {
   async function handleLogin() {
     if (submitting) return;
     if (!email.trim() || !password.trim()) {
-      setError('Email ve password alanlari zorunludur.');
+      setError('E-posta ve şifre alanları zorunludur.');
       return;
     }
 
@@ -26,7 +26,7 @@ export default function LoginScreen({ navigation }) {
     try {
       await login({ email: email.trim(), password });
     } catch (err) {
-      setError(err.userMessage || 'Giris yapilamadi. Bilgileri kontrol edin.');
+      setError(err.userMessage || 'Giriş yapılamadı. Bilgileri kontrol edin.');
     } finally {
       setSubmitting(false);
     }
@@ -36,21 +36,21 @@ export default function LoginScreen({ navigation }) {
     <ScreenContainer contentStyle={styles.container}>
       <View style={styles.hero}>
         <Text style={styles.logo}>FitStack</Text>
-        <Text style={styles.subtitle}>Antrenmanlarini takip et, puan kazan, gelisimini gor.</Text>
+        <Text style={styles.subtitle}>Antrenmanlarını takip et, puan kazan, gelişimini gör.</Text>
       </View>
       <View style={styles.form}>
         {error ? <ErrorState message={error} /> : null}
         <AppInput
           autoCapitalize="none"
           keyboardType="email-address"
-          label="Email"
+          label="E-posta"
           onChangeText={setEmail}
           placeholder="sema@fitstack.dev"
           value={email}
         />
-        <AppInput label="Password" onChangeText={setPassword} placeholder="••••••••" secureTextEntry value={password} />
-        <AppButton disabled={submitting} title={submitting ? 'Giris yapiliyor...' : 'Giris Yap'} onPress={handleLogin} />
-        <AppButton title="Kayit Ol" variant="ghost" onPress={() => navigation?.navigate('Register')} />
+        <AppInput label="Şifre" onChangeText={setPassword} placeholder="••••••••" secureTextEntry value={password} />
+        <AppButton disabled={submitting} title={submitting ? 'Giriş yapılıyor...' : 'Giriş Yap'} onPress={handleLogin} />
+        <AppButton title="Kayıt Ol" variant="ghost" onPress={() => navigation?.navigate('Register')} />
       </View>
     </ScreenContainer>
   );

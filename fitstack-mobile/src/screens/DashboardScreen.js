@@ -12,7 +12,7 @@ export default function DashboardScreen({ navigation }) {
   const [summary, setSummary] = useState({
     totalPoints: dashboardSummary.totalPoints,
     streakDays: dashboardSummary.streakDays,
-    badges: ['Yeni Baslayan', 'Kararli Sporcu'],
+    badges: ['Yeni Başlayan', 'Kararlı Sporcu'],
     usingFallback: false,
     error: '',
     message: '',
@@ -50,7 +50,7 @@ export default function DashboardScreen({ navigation }) {
         setSummary((current) => ({
           ...current,
           usingFallback: true,
-          error: error.userMessage || 'Canli ozet alinamadi; demo veriler gosteriliyor.',
+          error: error.userMessage || 'Canlı özet alınamadı; demo veriler gösteriliyor.',
         }));
       }
     }
@@ -85,7 +85,7 @@ export default function DashboardScreen({ navigation }) {
       setSummary((current) => ({
         ...current,
         usingFallback: true,
-        error: error.userMessage || 'Ozet yenilenemedi; mevcut veriler korunuyor.',
+        error: error.userMessage || 'Özet yenilenemedi; mevcut veriler korunuyor.',
         message,
       }));
     }
@@ -100,12 +100,12 @@ export default function DashboardScreen({ navigation }) {
         key: `mobile_demo_${Date.now()}`,
         name: 'Mobil Demo Rozeti',
       });
-      await refreshDashboardSummary('Rozet kazanildi.');
-      Alert.alert('Rozet kazanildi', 'GET /badges ile rozet listesi yenilendi.');
+      await refreshDashboardSummary('Rozet kazanıldı.');
+      Alert.alert('Rozet kazanıldı', 'GET /badges ile rozet listesi yenilendi.');
     } catch (error) {
       setSummary((current) => ({
         ...current,
-        error: error.userMessage || 'Rozet kazanilamadi. Backend kapali olabilir.',
+        error: error.userMessage || 'Rozet kazanılamadı. Backend kapalı olabilir.',
       }));
     } finally {
       setEarningBadge(false);
@@ -122,12 +122,12 @@ export default function DashboardScreen({ navigation }) {
         currentStreak: nextStreak,
         lastWorkoutDate: new Date().toISOString().slice(0, 10),
       });
-      await refreshDashboardSummary('Seri guncellendi.');
-      Alert.alert('Seri guncellendi', `Yeni seri: ${nextStreak} gun.`);
+      await refreshDashboardSummary('Seri güncellendi.');
+      Alert.alert('Seri güncellendi', `Yeni seri: ${nextStreak} gün.`);
     } catch (error) {
       setSummary((current) => ({
         ...current,
-        error: error.userMessage || 'Seri guncellenemedi. Backend kapali olabilir.',
+        error: error.userMessage || 'Seri güncellenemedi. Backend kapalı olabilir.',
       }));
     } finally {
       setUpdatingStreak(false);
@@ -137,14 +137,14 @@ export default function DashboardScreen({ navigation }) {
   return (
     <ScreenContainer scroll contentStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.kicker}>Bugunku durum</Text>
+        <Text style={styles.kicker}>Bugünkü Durum</Text>
         <Text style={styles.title}>Merhaba, {dashboardSummary.userName}</Text>
-        <Text style={styles.subtitle}>Bugun de hareket hedeflerine bir adim daha yaklas.</Text>
+        <Text style={styles.subtitle}>Bugün de hareket hedeflerine bir adım daha yaklaş.</Text>
       </View>
 
       <View style={styles.statsRow}>
         <StatCard label="Toplam Puan" value={summary.totalPoints} />
-        <StatCard label="Streak" value={`${summary.streakDays} gun`} tone="accent" />
+        <StatCard label="Seri" value={`${summary.streakDays} gün`} tone="accent" />
       </View>
       <View style={styles.statsRow}>
         <StatCard label="Tamamlanan" value={dashboardSummary.completedWorkouts} tone="info" />
@@ -155,14 +155,14 @@ export default function DashboardScreen({ navigation }) {
       <View style={styles.actionRow}>
         <AppButton
           disabled={updatingStreak}
-          title={updatingStreak ? 'Guncelleniyor...' : 'Seriyi Guncelle'}
+          title={updatingStreak ? 'Güncelleniyor...' : 'Seriyi Güncelle'}
           variant="secondary"
           style={styles.actionButton}
           onPress={handleUpdateStreak}
         />
         <AppButton
           disabled={earningBadge}
-          title={earningBadge ? 'Kazaniliyor...' : 'Demo Rozet Kazan'}
+          title={earningBadge ? 'Kazanılıyor...' : 'Demo Rozet Kazan'}
           variant="secondary"
           style={styles.actionButton}
           onPress={handleEarnBadge}
@@ -170,9 +170,9 @@ export default function DashboardScreen({ navigation }) {
       </View>
 
       <View style={styles.programCard}>
-        <Text style={styles.programLabel}>Secili program</Text>
+        <Text style={styles.programLabel}>Seçili Program</Text>
         <Text style={styles.programTitle}>{dashboardSummary.selectedProgram}</Text>
-        <Text style={styles.programText}>Baslangic icin dengeli ve takip etmesi kolay bir antrenman plani.</Text>
+        <Text style={styles.programText}>Başlangıç için dengeli ve takip etmesi kolay bir antrenman planı.</Text>
         <AppButton title="Programlara Git" onPress={() => navigation.navigate('Programs')} />
       </View>
 

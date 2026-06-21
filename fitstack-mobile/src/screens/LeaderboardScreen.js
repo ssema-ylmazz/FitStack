@@ -9,14 +9,14 @@ import colors from '../constants/colors';
 import { mockLeaderboard } from '../constants/mockData';
 
 const periods = [
-  { label: 'Week', value: 'week' },
-  { label: 'Month', value: 'month' },
+  { label: 'Hafta', value: 'week' },
+  { label: 'Ay', value: 'month' },
 ];
 
 function normalizeRows(rows) {
   return rows.map((row, index) => ({
     id: row.id ?? `${row.username || 'user'}-${index}`,
-    username: row.username || row.name || 'FitStack Kullanici',
+    username: row.username || row.name || 'FitStack Kullanıcı',
     points: row.points ?? row.totalPoints ?? 0,
     streak: row.streak ?? row.currentStreak ?? 0,
     rank: row.rank ?? index + 1,
@@ -45,7 +45,7 @@ export default function LeaderboardScreen() {
     } catch (err) {
       setRows(mockLeaderboard);
       setUsingFallback(true);
-      setError(err.userMessage || 'Liderlik tablosu alinamadi. Demo liste gosteriliyor.');
+      setError(err.userMessage || 'Liderlik tablosu alınamadı. Demo liste gösteriliyor.');
     } finally {
       setLoading(false);
     }
@@ -56,7 +56,7 @@ export default function LeaderboardScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>Liderlik Tablosu</Text>
         <Text style={styles.subtitle}>
-          Redis cache kaniti icin bu ekran backend leaderboard endpointini cagirir.
+          Redis cache kanıtı için leaderboard endpointini çağırır.
         </Text>
         <Text style={styles.endpoint}>GET /leaderboard?period={period}</Text>
       </View>
@@ -74,14 +74,14 @@ export default function LeaderboardScreen() {
 
       <AppButton disabled={loading} title={loading ? 'Yenileniyor...' : 'Yenile'} onPress={() => loadLeaderboard()} />
 
-      {usingFallback ? <Text style={styles.notice}>Backend kapaliyken demo siralama gosteriliyor.</Text> : null}
-      {loading ? <LoadingState message="Liderlik tablosu yukleniyor..." /> : null}
+      {usingFallback ? <Text style={styles.notice}>Backend kapalıyken demo sıralama gösteriliyor.</Text> : null}
+      {loading ? <LoadingState message="Liderlik tablosu yükleniyor..." /> : null}
       {error ? <ErrorState message={error} /> : null}
 
       {!loading && rows.length === 0 ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>Siralama verisi yok</Text>
-          <Text style={styles.emptyText}>Leaderboard endpointinden veri geldiginde burada listelenecek.</Text>
+          <Text style={styles.emptyTitle}>Sıralama verisi yok</Text>
+          <Text style={styles.emptyText}>Leaderboard endpointinden veri geldiğinde burada listelenecek.</Text>
         </View>
       ) : null}
 
@@ -91,7 +91,7 @@ export default function LeaderboardScreen() {
             <Text style={styles.rank}>#{row.rank}</Text>
             <View style={styles.user}>
               <Text style={styles.username}>{row.username}</Text>
-              <Text style={styles.meta}>{row.streak} gun streak</Text>
+              <Text style={styles.meta}>{row.streak} gün seri</Text>
             </View>
             <Text style={styles.points}>{row.points} puan</Text>
           </View>

@@ -9,10 +9,10 @@ import { getPrograms } from '../api/programsApi';
 import { programs as mockPrograms } from '../constants/mockData';
 
 const filters = [
-  { label: 'All', value: '' },
-  { label: 'Beginner', value: 'beginner' },
-  { label: 'Intermediate', value: 'intermediate' },
-  { label: 'Advanced', value: 'advanced' },
+  { label: 'Tümü', value: '' },
+  { label: 'Başlangıç', value: 'beginner' },
+  { label: 'Orta', value: 'intermediate' },
+  { label: 'İleri', value: 'advanced' },
 ];
 
 function normalizeProgram(program) {
@@ -71,7 +71,7 @@ export default function ProgramsScreen({ navigation }) {
       <View style={styles.header}>
         <Text style={styles.title}>Programlar</Text>
         <Text style={styles.subtitle}>
-          {usingFallback ? 'API baglantisi yokken demo programlar gosteriliyor.' : 'FitStack hazir egzersiz programlari.'}
+          {usingFallback ? 'API bağlantısı yokken demo programlar gösteriliyor.' : 'Seviyene uygun programı seç ve detayını incele.'}
         </Text>
       </View>
       <View style={styles.filters}>
@@ -88,7 +88,7 @@ export default function ProgramsScreen({ navigation }) {
           );
         })}
       </View>
-      {loading ? <LoadingState message="Programlar yukleniyor..." /> : null}
+      {loading ? <LoadingState message="Programlar yükleniyor..." /> : null}
       {error ? <ErrorState message={error} /> : null}
       <View style={styles.list}>
         {programs.map((program) => (

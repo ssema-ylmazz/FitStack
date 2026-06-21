@@ -48,8 +48,10 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#ffffff',
-    fontSize: 16,
+    flexShrink: 1,
+    fontSize: 15,
     fontWeight: '700',
+    textAlign: 'center',
   },
   secondaryText: {
     color: colors.primaryDark,

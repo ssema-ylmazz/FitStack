@@ -19,7 +19,7 @@ export default function RegisterScreen({ navigation }) {
   async function handleRegister() {
     if (submitting) return;
     if (!name.trim() || !email.trim() || !password.trim()) {
-      setError('Ad soyad, email ve password alanlari zorunludur.');
+      setError('Ad soyad, e-posta ve şifre alanları zorunludur.');
       setMessage('');
       return;
     }
@@ -29,10 +29,10 @@ export default function RegisterScreen({ navigation }) {
     setSubmitting(true);
     try {
       await register({ name: name.trim(), email: email.trim(), password });
-      setMessage('Kayit basarili. Giris ekranina yonlendiriliyorsun.');
+      setMessage('Kayıt başarılı. Giriş ekranına yönlendiriliyorsun.');
       navigation?.navigate('Login');
     } catch (err) {
-      setError(err.userMessage || 'Kayit tamamlanamadi.');
+      setError(err.userMessage || 'Kayıt tamamlanamadı.');
     } finally {
       setSubmitting(false);
     }
@@ -40,8 +40,8 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <ScreenContainer contentStyle={styles.container}>
-      <Text style={styles.title}>Kayit Ol</Text>
-      <Text style={styles.subtitle}>FitStack ile hedeflerini takip etmek icin demo hesabini hazirla.</Text>
+      <Text style={styles.title}>Kayıt Ol</Text>
+      <Text style={styles.subtitle}>FitStack ile hedeflerini takip etmek için demo hesabını hazırla.</Text>
       <View style={styles.form}>
         {error ? <ErrorState message={error} /> : null}
         {message ? <Text style={styles.success}>{message}</Text> : null}
@@ -49,14 +49,14 @@ export default function RegisterScreen({ navigation }) {
         <AppInput
           autoCapitalize="none"
           keyboardType="email-address"
-          label="Email"
+          label="E-posta"
           onChangeText={setEmail}
           placeholder="sema@fitstack.dev"
           value={email}
         />
-        <AppInput label="Password" onChangeText={setPassword} placeholder="••••••••" secureTextEntry value={password} />
-        <AppButton disabled={submitting} title={submitting ? 'Kayit yapiliyor...' : 'Kayit Ol'} onPress={handleRegister} />
-        <AppButton title="Girise Don" variant="ghost" onPress={() => navigation?.navigate('Login')} />
+        <AppInput label="Şifre" onChangeText={setPassword} placeholder="••••••••" secureTextEntry value={password} />
+        <AppButton disabled={submitting} title={submitting ? 'Kayıt yapılıyor...' : 'Kayıt Ol'} onPress={handleRegister} />
+        <AppButton title="Girişe Dön" variant="ghost" onPress={() => navigation?.navigate('Login')} />
       </View>
     </ScreenContainer>
   );

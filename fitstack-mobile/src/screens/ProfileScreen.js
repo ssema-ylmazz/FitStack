@@ -36,17 +36,17 @@ export default function ProfileScreen() {
         level: level.trim(),
       });
       await refreshProfile();
-      setMessage('Profil bilgileri guncellendi.');
+      setMessage('Profil bilgileri güncellendi.');
     } catch (err) {
-      setError(err.userMessage || 'Profil guncellenemedi.');
+      setError(err.userMessage || 'Profil güncellenemedi.');
     } finally {
       setSubmitting(false);
     }
   }
 
   function confirmDeleteProfile() {
-    Alert.alert('Profili sil', 'Hesabini silmek istediginden emin misin?', [
-      { text: 'Vazgec', style: 'cancel' },
+    Alert.alert('Profili sil', 'Hesabını silmek istediğinden emin misin?', [
+      { text: 'Vazgeç', style: 'cancel' },
       { text: 'Sil', style: 'destructive', onPress: handleDeleteProfile },
     ]);
   }
@@ -65,9 +65,9 @@ export default function ProfileScreen() {
   return (
     <ScreenContainer scroll contentStyle={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.label}>Aktif Kullanici</Text>
-        <Text style={styles.title}>{user?.name || 'FitStack Kullanici'}</Text>
-        <Text style={styles.email}>{user?.email || 'Profil bilgisi yuklenemedi'}</Text>
+        <Text style={styles.label}>Aktif Kullanıcı</Text>
+        <Text style={styles.title}>{user?.name || 'FitStack Kullanıcı'}</Text>
+        <Text style={styles.email}>{user?.email || 'Profil bilgisi yüklenemedi'}</Text>
       </View>
 
       {error ? <ErrorState message={error} /> : null}
@@ -75,17 +75,17 @@ export default function ProfileScreen() {
 
       <View style={styles.form}>
         <AppInput label="Ad Soyad" onChangeText={setName} placeholder="Ad Soyad" value={name} />
-        <AppInput label="Kullanici Adi" onChangeText={setUsername} placeholder="username" value={username} />
+        <AppInput label="Kullanıcı Adı" onChangeText={setUsername} placeholder="username" value={username} />
         <AppInput label="Seviye" onChangeText={setLevel} placeholder="beginner" value={level} />
         <AppButton
           disabled={submitting}
-          title={submitting ? 'Guncelleniyor...' : 'Profili Guncelle'}
+          title={submitting ? 'Güncelleniyor...' : 'Profili Güncelle'}
           onPress={handleUpdateProfile}
         />
       </View>
 
       <AppButton title="Profili Sil" variant="secondary" onPress={confirmDeleteProfile} />
-      <AppButton title="Cikis Yap" variant="secondary" onPress={logout} />
+      <AppButton title="Çıkış Yap" variant="secondary" onPress={logout} />
     </ScreenContainer>
   );
 }

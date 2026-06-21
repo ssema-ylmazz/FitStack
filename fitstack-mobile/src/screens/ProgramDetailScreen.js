@@ -22,9 +22,9 @@ export default function ProgramDetailScreen({ route }) {
     setSubmitting(true);
     try {
       await selectProgram(program.id);
-      Alert.alert('Program secildi', `${program.title} aktif programa eklendi.`);
+      Alert.alert('Program seçildi', `${program.title} aktif programa eklendi.`);
     } catch (err) {
-      setError(err.userMessage || 'Program secilemedi. Backend kapali olabilir.');
+      setError(err.userMessage || 'Program seçilemedi. Backend kapalı olabilir.');
     } finally {
       setSubmitting(false);
     }
@@ -55,7 +55,7 @@ export default function ProgramDetailScreen({ route }) {
       {error ? <ErrorState message={error} /> : null}
       <AppButton
         disabled={submitting}
-        title={submitting ? 'Seciliyor...' : 'Programi Sec'}
+        title={submitting ? 'Seçiliyor...' : 'Programı Seç'}
         onPress={handleSelectProgram}
       />
     </ScreenContainer>

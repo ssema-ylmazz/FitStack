@@ -20,8 +20,8 @@ function ProgramsStack() {
         headerTintColor: colors.primary,
       }}
     >
-      <Stack.Screen name="ProgramsList" component={ProgramsScreen} options={{ title: 'Programs' }} />
-      <Stack.Screen name="ProgramDetail" component={ProgramDetailScreen} options={{ title: 'Program Detail' }} />
+      <Stack.Screen name="ProgramsList" component={ProgramsScreen} options={{ title: 'Programlar' }} />
+      <Stack.Screen name="ProgramDetail" component={ProgramDetailScreen} options={{ title: 'Program Detayı' }} />
     </Stack.Navigator>
   );
 }
@@ -34,16 +34,16 @@ export default function MainTabs() {
         headerTitleStyle: { color: colors.text, fontWeight: '800' },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.mutedText,
-        tabBarStyle: { borderTopColor: colors.border },
+        tabBarStyle: { borderTopColor: colors.border, height: 64, paddingBottom: 8, paddingTop: 8 },
         tabBarIcon: () => null,
-        tabBarLabelStyle: { fontSize: 12, fontWeight: '700' },
+        tabBarLabelStyle: { fontSize: 12, fontWeight: '800' },
       }}
     >
-      <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Dashboard' }} />
-      <Tab.Screen name="Programs" component={ProgramsStack} options={{ headerShown: false, title: 'Programs' }} />
-      <Tab.Screen name="Workouts" component={WorkoutHistoryScreen} options={{ title: 'Workouts' }} />
-      <Tab.Screen name="Leaderboard" component={LeaderboardScreen} options={{ title: 'Leaderboard' }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
+      <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Ana Sayfa' }} />
+      <Tab.Screen name="Programs" component={ProgramsStack} options={{ headerShown: false, title: 'Programlar' }} />
+      <Tab.Screen name="Workouts" component={WorkoutHistoryScreen} options={{ title: 'Antrenmanlar' }} />
+      <Tab.Screen name="Leaderboard" component={LeaderboardScreen} options={{ title: 'Liderlik' }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profil' }} />
     </Tab.Navigator>
   );
 }

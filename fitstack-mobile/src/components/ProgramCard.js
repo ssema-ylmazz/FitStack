@@ -16,6 +16,7 @@ export default function ProgramCard({ program, onPress }) {
       <View style={styles.footer}>
         <Text style={styles.meta}>{program.duration} dk</Text>
         <Text style={styles.meta}>{program.exercises.length} egzersiz</Text>
+        <Text style={styles.link}>Detayı Gör</Text>
       </View>
     </Pressable>
   );
@@ -66,12 +67,20 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   footer: {
+    alignItems: 'center',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 10,
   },
   meta: {
     color: colors.subtleText,
     fontSize: 13,
     fontWeight: '700',
+  },
+  link: {
+    color: colors.primaryDark,
+    fontSize: 13,
+    fontWeight: '900',
+    marginLeft: 'auto',
   },
 });
