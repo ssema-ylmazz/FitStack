@@ -23,3 +23,7 @@ export function updateStreak(payload) {
 export function getBadges() {
   return client.get('/badges');
 }
+
+export function createBadge(payload) {
+  return client.post('/badges', payload);
+}

@@ -4,7 +4,7 @@ import AppButton from '../components/AppButton';
 import ErrorState from '../components/ErrorState';
 import LoadingState from '../components/LoadingState';
 import ScreenContainer from '../components/ScreenContainer';
-import { createWorkout, deleteWorkout, getWorkouts } from '../api/workoutsApi';
+import { createWorkout, deleteWorkout, getWorkouts, updateWorkoutPoints } from '../api/workoutsApi';
 import colors from '../constants/colors';
 import { mockWorkouts } from '../constants/mockData';
 
@@ -14,6 +14,7 @@ export default function WorkoutHistoryScreen() {
   const [error, setError] = useState('');
   const [usingFallback, setUsingFallback] = useState(false);
   const [creatingDemo, setCreatingDemo] = useState(false);
+  const [pointsLoadingId, setPointsLoadingId] = useState(null);
 
   useEffect(() => {
     loadWorkouts();
@@ -78,6 +79,33 @@ export default function WorkoutHistoryScreen() {
     }
   }
 
+  async function handleGainPoints(workout) {
+    if (pointsLoadingId) return;
+
+    if (usingFallback || String(workout.id).startsWith('mock-')) {
+      setWorkouts((current) =>
+        current.map((item) =>
+          item.id === workout.id ? { ...item, points: (item.points || 0) + 50, gainedPoints: 50 } : item,
+        ),
+      );
+      Alert.alert('Demo puan kazanildi', 'Backend kapaliyken mock workout puani guncellendi.');
+      return;
+    }
+
+    setPointsLoadingId(workout.id);
+    setError('');
+    try {
+      const response = await updateWorkoutPoints(workout.id, { points: 50 });
+      const gainedPoints = response.data?.gainedPoints ?? 50;
+      Alert.alert('Puan kazanildi', `${gainedPoints} puan eklendi.`);
+      await loadWorkouts();
+    } catch (err) {
+      setError(err.userMessage || 'Puan eklenemedi.');
+    } finally {
+      setPointsLoadingId(null);
+    }
+  }
+
   return (
     <ScreenContainer scroll contentStyle={styles.container}>
       <Text style={styles.title}>Antrenman Gecmisi</Text>
@@ -123,7 +151,16 @@ export default function WorkoutHistoryScreen() {
                   </Text>
                   <Text style={styles.points}>{points} puan</Text>
                 </View>
-                <AppButton title="Sil" variant="secondary" style={styles.deleteButton} onPress={() => confirmDelete(workout)} />
+                <View style={styles.cardActions}>
+                  <AppButton
+                    disabled={pointsLoadingId === workout.id}
+                    title={pointsLoadingId === workout.id ? 'Ekleniyor...' : 'Puan Kazan'}
+                    variant="secondary"
+                    style={styles.smallButton}
+                    onPress={() => handleGainPoints(workout)}
+                  />
+                  <AppButton title="Sil" variant="secondary" style={styles.smallButton} onPress={() => confirmDelete(workout)} />
+                </View>
               </View>
             </View>
           );
@@ -218,8 +255,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '800',
   },
-  deleteButton: {
+  cardActions: {
+    gap: 8,
+    width: 112,
+  },
+  smallButton: {
     minHeight: 40,
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
   },
 });

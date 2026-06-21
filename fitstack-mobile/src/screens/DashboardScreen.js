@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import AppButton from '../components/AppButton';
 import SectionTitle from '../components/SectionTitle';
 import ScreenContainer from '../components/ScreenContainer';
 import StatCard from '../components/StatCard';
-import { getBadges, getStreak, getUserPoints } from '../api/profileApi';
+import { createBadge, getBadges, getStreak, getUserPoints, updateStreak } from '../api/profileApi';
 import colors from '../constants/colors';
 import { dashboardSummary } from '../constants/mockData';
 
@@ -15,7 +15,10 @@ export default function DashboardScreen({ navigation }) {
     badges: ['Yeni Baslayan', 'Kararli Sporcu'],
     usingFallback: false,
     error: '',
+    message: '',
   });
+  const [earningBadge, setEarningBadge] = useState(false);
+  const [updatingStreak, setUpdatingStreak] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -40,6 +43,7 @@ export default function DashboardScreen({ navigation }) {
           badges,
           usingFallback: false,
           error: '',
+          message: '',
         });
       } catch (error) {
         if (!mounted) return;
@@ -58,6 +62,78 @@ export default function DashboardScreen({ navigation }) {
     };
   }, []);
 
+  async function refreshDashboardSummary(message = '') {
+    try {
+      const [pointsResponse, badgesResponse, streakResponse] = await Promise.all([
+        getUserPoints(),
+        getBadges(),
+        getStreak(),
+      ]);
+      const totalPoints = pointsResponse.data?.totalPoints ?? dashboardSummary.totalPoints;
+      const badges = badgesResponse.data?.badges || [];
+      const streak = streakResponse.data?.streak;
+
+      setSummary({
+        totalPoints,
+        streakDays: streak?.currentStreak ?? dashboardSummary.streakDays,
+        badges,
+        usingFallback: false,
+        error: '',
+        message,
+      });
+    } catch (error) {
+      setSummary((current) => ({
+        ...current,
+        usingFallback: true,
+        error: error.userMessage || 'Ozet yenilenemedi; mevcut veriler korunuyor.',
+        message,
+      }));
+    }
+  }
+
+  async function handleEarnBadge() {
+    if (earningBadge) return;
+
+    setEarningBadge(true);
+    try {
+      await createBadge({
+        key: `mobile_demo_${Date.now()}`,
+        name: 'Mobil Demo Rozeti',
+      });
+      await refreshDashboardSummary('Rozet kazanildi.');
+      Alert.alert('Rozet kazanildi', 'GET /badges ile rozet listesi yenilendi.');
+    } catch (error) {
+      setSummary((current) => ({
+        ...current,
+        error: error.userMessage || 'Rozet kazanilamadi. Backend kapali olabilir.',
+      }));
+    } finally {
+      setEarningBadge(false);
+    }
+  }
+
+  async function handleUpdateStreak() {
+    if (updatingStreak) return;
+
+    const nextStreak = Number(summary.streakDays || 0) + 1;
+    setUpdatingStreak(true);
+    try {
+      await updateStreak({
+        currentStreak: nextStreak,
+        lastWorkoutDate: new Date().toISOString().slice(0, 10),
+      });
+      await refreshDashboardSummary('Seri guncellendi.');
+      Alert.alert('Seri guncellendi', `Yeni seri: ${nextStreak} gun.`);
+    } catch (error) {
+      setSummary((current) => ({
+        ...current,
+        error: error.userMessage || 'Seri guncellenemedi. Backend kapali olabilir.',
+      }));
+    } finally {
+      setUpdatingStreak(false);
+    }
+  }
+
   return (
     <ScreenContainer scroll contentStyle={styles.container}>
       <View style={styles.header}>
@@ -75,6 +151,23 @@ export default function DashboardScreen({ navigation }) {
         <StatCard label="Rozet" value={summary.badges.length} />
       </View>
       {summary.error ? <Text style={styles.notice}>{summary.error}</Text> : null}
+      {summary.message ? <Text style={styles.success}>{summary.message}</Text> : null}
+      <View style={styles.actionRow}>
+        <AppButton
+          disabled={updatingStreak}
+          title={updatingStreak ? 'Guncelleniyor...' : 'Seriyi Guncelle'}
+          variant="secondary"
+          style={styles.actionButton}
+          onPress={handleUpdateStreak}
+        />
+        <AppButton
+          disabled={earningBadge}
+          title={earningBadge ? 'Kazaniliyor...' : 'Demo Rozet Kazan'}
+          variant="secondary"
+          style={styles.actionButton}
+          onPress={handleEarnBadge}
+        />
+      </View>
 
       <View style={styles.programCard}>
         <Text style={styles.programLabel}>Secili program</Text>
@@ -164,6 +257,23 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     padding: 12,
+  },
+  success: {
+    backgroundColor: colors.primarySoft,
+    borderRadius: 8,
+    color: colors.primaryDark,
+    fontSize: 13,
+    fontWeight: '700',
+    padding: 12,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  actionButton: {
+    flex: 1,
+    minHeight: 44,
+    paddingHorizontal: 10,
   },
   badgeList: {
     flexDirection: 'row',

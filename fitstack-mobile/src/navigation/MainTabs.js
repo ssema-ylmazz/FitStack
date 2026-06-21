@@ -35,6 +35,8 @@ export default function MainTabs() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.mutedText,
         tabBarStyle: { borderTopColor: colors.border },
+        tabBarIcon: () => null,
+        tabBarLabelStyle: { fontSize: 12, fontWeight: '700' },
       }}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Dashboard' }} />
