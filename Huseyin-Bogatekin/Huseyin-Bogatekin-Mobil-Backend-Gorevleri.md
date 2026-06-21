@@ -85,6 +85,18 @@ Hüseyin'in mobil back-end / REST API entegrasyonu kapsamında yaptığı işler
 | PUT | `/streak` |
 | GET | `/leaderboard?period=week/month` |
 
+## İlgili Gereksinim Numaraları
+
+| Gereksinim no | Backend/API katkısı |
+|---|---|
+| 1, 2 | Register/Login API bağlantıları |
+| 3, 4, 5 | Profil görüntüleme, güncelleme ve silme |
+| 6, 7, 8 | Program listeleme, filtreleme, detay ve seçme |
+| 9, 10, 11, 17 | Workout kaydetme, listeleme, puan kazanma ve silme |
+| 12, 13, 14 | Puan ve rozet API bağlantıları |
+| 15, 16 | Streak görüntüleme ve güncelleme |
+| Demo | Leaderboard/Redis ve RabbitMQ workout kanıt akışları |
+
 ## Redis/RabbitMQ Kanıt Akışları
 
 | Teknoloji | Mobil ekran/aksiyon | Endpoint | Kanıt |

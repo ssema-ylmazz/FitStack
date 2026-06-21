@@ -1,10 +1,27 @@
-# FitStack Mobil Front-End
+# Mobil Frontend Görev Dağılımı
 
 ## Genel Bilgi
 
-FitStack mobil uygulaması `fitstack-mobile/` klasörü altında Expo tabanlı React Native projesi olarak geliştirilmiştir. Bu doküman mobil arayüz, ekranlar, component yapısı ve demo sırasında gösterilecek front-end akışını özetler.
+Bu dokümanda FitStack mobil uygulamasının kullanıcı arayüzü ve kullanıcı deneyimi görevleri listelenir. Mobil uygulama `fitstack-mobile/` klasörü altında Expo tabanlı React Native projesi olarak geliştirilmiştir.
 
-## Kullanılan Teknolojiler
+## Grup Üyelerinin Mobil Frontend Görevleri
+
+| Üye | Görev alanı | Doküman |
+|---|---|---|
+| Sema Nur Yılmaz | Mobil ekran tasarımları, component yapısı, navigation ve final demo görünümü | [Sema mobil frontend görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md) |
+| Hüseyin Boğatekin | Mobil REST API bağlantıları ve veri akışı | [Hüseyin mobil backend görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md) |
+
+Not: Mobil frontend ana sorumluluğu Sema Nur Yılmaz'a aittir. Hüseyin Boğatekin'in katkısı daha çok API bağlantısı, Redis/RabbitMQ demo tetikleyicileri ve son entegrasyon akışları üzerindedir.
+
+## Genel Mobil Frontend Prensipleri
+
+- Türkçe, sade ve demo sırasında kolay anlaşılır arayüz metinleri kullanılmıştır.
+- Ekranlar SafeArea ve scroll desteğiyle mobil cihazlarda taşma riskine karşı düzenlenmiştir.
+- Loading, error ve empty state bileşenleriyle API durumları kullanıcıya görünür yapılmıştır.
+- Kart tabanlı, okunabilir ve öğrenci projesi için profesyonel bir tasarım dili tercih edilmiştir.
+- Redis/RabbitMQ kanıtı gerektiren aksiyonlar açıklayıcı butonlarla görünür tutulmuştur.
+
+## Kullanılan Mobil Frontend Teknolojileri
 
 | Teknoloji | Kullanım amacı |
 |---|---|
@@ -12,6 +29,7 @@ FitStack mobil uygulaması `fitstack-mobile/` klasörü altında Expo tabanlı R
 | Expo | Mobil geliştirme ve Expo Go ile çalıştırma |
 | Expo SDK 54 | Güncel iOS Expo Go ile uyumluluk |
 | React Navigation | Auth, tab ve program detay navigasyonu |
+| React Native StyleSheet | Ekran ve component stilleri |
 | Axios | REST API istekleri için altyapı |
 | AsyncStorage | Token saklama altyapısı |
 
@@ -21,18 +39,18 @@ FitStack mobil uygulaması `fitstack-mobile/` klasörü altında Expo tabanlı R
 fitstack-mobile/
 ```
 
-## Ekranlar
+## Mobil Ekranlar
 
-| Ekran | Açıklama |
-|---|---|
-| `LoginScreen` | Giriş ekranı; email/password alanları ve kayıt yönlendirmesi içerir. |
-| `RegisterScreen` | Kayıt ekranı; ad soyad, email ve password alanları içerir. |
-| `DashboardScreen` | Puan, streak, rozet, seçili program ve son aktiviteler alanlarını gösterir. |
-| `ProgramsScreen` | Program listesini ve seviye filtrelerini gösterir. |
-| `ProgramDetailScreen` | Program detayını, egzersiz listesini ve program seçme aksiyonunu gösterir. |
-| `WorkoutHistoryScreen` | Antrenman geçmişi listesini ve silme aksiyonunu gösterir. |
-| `LeaderboardScreen` | Redis cache kanıtı için liderlik tablosunu gösterir. |
-| `ProfileScreen` | Kullanıcı bilgilerini, profil güncelleme/silme ve çıkış aksiyonlarını gösterir. |
+| Ekran | Açıklama | İlgili gereksinimler |
+|---|---|---|
+| `LoginScreen` | Giriş ekranı; e-posta/şifre alanları ve kayıt yönlendirmesi içerir. | 2 |
+| `RegisterScreen` | Kayıt ekranı; ad soyad, e-posta ve şifre alanları içerir. | 1 |
+| `DashboardScreen` / Ana Sayfa | Puan, seri, rozet, seçili program ve son aktiviteler alanlarını gösterir. | 12, 13, 14, 15, 16 |
+| `ProgramsScreen` / Programlar | Program listesini ve seviye filtrelerini gösterir. | 6, 7 |
+| `ProgramDetailScreen` | Program detayını, egzersiz listesini ve program seçme aksiyonunu gösterir. | 8 |
+| `WorkoutHistoryScreen` / Antrenmanlar | Antrenman geçmişi, workout kaydetme, puan kazanma ve silme aksiyonlarını gösterir. | 9, 10, 11, 17 |
+| `LeaderboardScreen` / Liderlik | Redis cache kanıtı için liderlik tablosunu gösterir. | Demo/Redis kanıtı |
+| `ProfileScreen` / Profil | Kullanıcı bilgilerini, profil güncelleme/silme ve çıkış aksiyonlarını gösterir. | 3, 4, 5 |
 
 ## Ortak Componentler
 
@@ -83,7 +101,7 @@ Uygulama `AuthProvider` ile sarılır. Token veya kullanıcı bilgisi varsa ana 
 | Streak/seri görüntüle / güncelle | `DashboardScreen` |
 | Antrenman kaydını sil | `WorkoutHistoryScreen` |
 
-## Sema'nın Katkısı
+## Sema Nur Yılmaz'ın Frontend Katkıları
 
 Sema Nur Yılmaz'ın mobil front-end kapsamındaki katkıları:
 
@@ -95,6 +113,7 @@ Sema Nur Yılmaz'ın mobil front-end kapsamındaki katkıları:
 - Ortak component yapısı
 - Mobil navigation kurulumu
 - Mock data ile demo görünümünün hazırlanması
+- Türkçe tab adları ve final demo görünümü
 
 İlgili branch ve commit:
 

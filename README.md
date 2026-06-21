@@ -6,6 +6,10 @@
 
 ---
 
+## Not
+
+FitStack; egzersiz programı keşfi, antrenman takibi, puan, rozet ve günlük streak sistemi içeren bir fitness takip uygulamasıdır. Projede web arayüzü, mobil Expo uygulaması, REST API, Redis önbelleği, RabbitMQ olay kuyruğu, Docker ve Jenkins CI/CD akışı birlikte ele alınmıştır.
+
 ## Proje Hakkında
 
 **Proje Tanımı:**
@@ -14,7 +18,11 @@
 
 **Proje Kategorisi:**
 
-> Fitness Takip Sistemi
+> Fitness / Sağlık / Egzersiz Takip
+
+**Referans uygulamalar:**
+
+> Nike Training Club, Strava, Fitbod ve Google Fit gibi antrenman takip ve motivasyon uygulamaları.
 
 ---
 
@@ -29,14 +37,17 @@
 
 ---
 
-## Proje linkleri
+## Proje Linkleri
 
-- **REST API adresi:** [https://fitstack-a5v0.onrender.com](https://fitstack-a5v0.onrender.com)
-- **Web frontend adresi:** [https://fit-stack-nine.vercel.app](https://fit-stack-nine.vercel.app)
+- **REST API local adresi:** [http://localhost:3000](http://localhost:3000)
+- **Web frontend local adresi:** [http://localhost:3001](http://localhost:3001)
+- **Mobil uygulama klasörü:** `fitstack-mobile/`
+- **Canlı REST API adresi:** [https://fitstack-a5v0.onrender.com](https://fitstack-a5v0.onrender.com)
+- **Canlı web frontend adresi:** [https://fit-stack-nine.vercel.app](https://fit-stack-nine.vercel.app)
 
 ---
 
-## Proje ekibi
+## Proje Ekibi
 
 **Grup adı:** DevFit
 
@@ -77,7 +88,7 @@ npm start
 
 Expo Go ile fiziksel telefonda test ederken telefon ve bilgisayar aynı Wi-Fi ağında olmalıdır. Telefonda `localhost` bilgisayarı değil telefonun kendisini gösterir; bu nedenle `fitstack-mobile/src/constants/config.js` içinde backend adresi bilgisayarın LAN IP adresiyle geçici olarak ayarlanmalıdır. Android emulator için genellikle `http://10.0.2.2:3000`, web/local test için `http://localhost:3000` kullanılır.
 
-## Docker Compose
+## Docker
 
 Tam yığın dört servisi birlikte kapsar: **backend**, **web-frontend**, **redis**, **rabbitmq**.
 
@@ -112,7 +123,16 @@ Bilgisayarda **3000**, **3001**, **6379** veya **5672** / **15672** başka süre
 
 ---
 
-## Jenkins CI/CD
+## Redis ve RabbitMQ Kanıt Akışları
+
+| Teknoloji | Mobil akış | Backend etkisi | Kanıt |
+|---|---|---|---|
+| RabbitMQ | Antrenmanlar ekranı > Demo Antrenman Kaydet | `POST /workouts` çağrılır | `fitstack.workout.created` kuyruğunda mesaj/spike |
+| Redis | Liderlik ekranı > Yenile | `GET /leaderboard?period=week/month` çağrılır | Redis cache miss/hit logları ve `fitstack:leaderboard:*` anahtarları |
+
+RabbitMQ management paneli: [http://localhost:15672](http://localhost:15672) — **guest** / **guest**. Redis varsayılan portu: `6379`.
+
+## CI/CD
 
 Kök dizinde **`Jenkinsfile`** bulunur. Declarative pipeline şu aşamaları çalıştırır:
 
@@ -138,6 +158,8 @@ Kök dizinde **`Jenkinsfile`** bulunur. Declarative pipeline şu aşamaları ça
 
 Bu pipeline **GitHub token / secret / credential** tanımlamaz; özel registry push veya sunucu deploy adımları eklenmemiştir.
 
+CI/CD kanıtı için GitHub Actions değil Jenkins pipeline ekranı gösterilmelidir. Mobil kontrol için `Mobile Install and Config Check` stage'i kullanılır.
+
 ---
 
 ## Redis önbelleği
@@ -159,6 +181,30 @@ Mobil kanıt akışı: **Antrenmanlar** ekranındaki **Demo Antrenman Kaydet** b
 ## Demo kullanıcı
 
 Mock oturum için: **`demo@fitstack.local`** / **`demo`**.
+
+---
+
+## Mobilde Karşılanan Gereksinimler
+
+| No | Gereksinim | HTTP metodu | Mobil ekran | Durum |
+|---|---|---|---|---|
+| 1 | Kullanıcı sisteme kayıt olur | POST | Register | Tamam |
+| 2 | Kullanıcı sisteme giriş yapar | POST | Login | Tamam |
+| 3 | Kullanıcı profil bilgilerini görüntüler | GET | Profil | Tamam |
+| 4 | Kullanıcı profil bilgilerini günceller | PUT | Profil | Tamam |
+| 5 | Kullanıcı hesabını siler | DELETE | Profil | Tamam |
+| 6 | Kullanıcı hazır egzersiz programlarını listeler | GET | Programlar | Tamam |
+| 7 | Kullanıcı programları zorluk seviyesine göre filtreler | GET | Programlar | Tamam |
+| 8 | Kullanıcı bir program seçer ve detaylarını görüntüler | GET, POST | Program Detayı | Tamam |
+| 9 | Kullanıcı yaptığı antrenmanı kaydeder | POST | Antrenmanlar | Tamam |
+| 10 | Kullanıcı geçmiş antrenmanlarını görüntüler | GET | Antrenmanlar | Tamam |
+| 11 | Kullanıcı tamamladığı antrenman için puan kazanır | PUT | Antrenmanlar | Tamam |
+| 12 | Kullanıcı toplam puanını görüntüler | GET | Ana Sayfa | Tamam |
+| 13 | Kullanıcı belirli puanlara ulaştığında rozet kazanır | POST | Ana Sayfa | Tamam |
+| 14 | Kullanıcı kazandığı rozetleri görüntüler | GET | Ana Sayfa | Tamam |
+| 15 | Kullanıcı günlük seri sayısını görüntüler | GET | Ana Sayfa | Tamam |
+| 16 | Kullanıcı seri bilgilerini günceller | PUT | Ana Sayfa | Tamam |
+| 17 | Kullanıcı antrenman kaydını siler | DELETE | Antrenmanlar | Tamam |
 
 ---
 
