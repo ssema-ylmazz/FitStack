@@ -4,14 +4,14 @@
 
 Bu dokümanda FitStack mobil uygulamasının kullanıcı arayüzü ve kullanıcı deneyimi görevleri listelenir. Mobil uygulama `fitstack-mobile/` klasörü altında Expo tabanlı React Native projesi olarak geliştirilmiştir.
 
-## Grup Üyelerinin Mobil Frontend Görevleri
+## Grup Üyelerinin Gereksinim Bazlı Mobil Görevleri
 
-| Üye | Görev alanı | Doküman |
+| Üye | Sorumlu gereksinimler | Doküman |
 |---|---|---|
-| Sema Nur Yılmaz | Mobil ekran tasarımları, component yapısı, navigation ve final demo görünümü | [Sema mobil frontend görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md) |
-| Hüseyin Boğatekin | Mobil REST API bağlantıları ve veri akışı | [Hüseyin mobil backend görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md) |
+| Sema Nur Yılmaz | 1, 2, 6, 7, 8, 12, 14, 15 | [Sema mobil görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md) |
+| Hüseyin Boğatekin | 3, 4, 5, 9, 10, 11, 13, 16, 17 | [Hüseyin mobil görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md) |
 
-Not: Mobil frontend ana sorumluluğu Sema Nur Yılmaz'a aittir. Hüseyin Boğatekin'in katkısı daha çok API bağlantısı, Redis/RabbitMQ demo tetikleyicileri ve son entegrasyon akışları üzerindedir.
+Not: Bu dosya mobil arayüz yapısını açıklar; görev sahipliği ise gereksinim bazlıdır. Her ekip üyesi kendi sorumlu olduğu gereksinimin mobil ekranını ve API bağlantılı çalışmasını kanıt videosunda anlatır.
 
 ## Genel Mobil Frontend Prensipleri
 
@@ -51,6 +51,21 @@ fitstack-mobile/
 | `WorkoutHistoryScreen` / Antrenmanlar | Antrenman geçmişi, workout kaydetme, puan kazanma ve silme aksiyonlarını gösterir. | 9, 10, 11, 17 |
 | `LeaderboardScreen` / Liderlik | Redis cache kanıtı için liderlik tablosunu gösterir. | Demo/Redis kanıtı |
 | `ProfileScreen` / Profil | Kullanıcı bilgilerini, profil güncelleme/silme ve çıkış aksiyonlarını gösterir. | 3, 4, 5 |
+
+## Sema Nur Yılmaz'ın Sorumlu Gereksinimleri
+
+API bağlantı altyapısı ortak mobil kod üzerinden çalışır. Sema Nur Yılmaz, aşağıdaki gereksinimleri mobilde çalışır şekilde gösterir ve kanıt videosunda kendi sesiyle anlatır.
+
+| Gereksinim no | Açıklama | HTTP metodu | Mobil ekran |
+|---|---|---|---|
+| 1 | Kullanıcı sisteme kayıt olur | POST | Register |
+| 2 | Kullanıcı sisteme giriş yapar | POST | Login |
+| 6 | Kullanıcı hazır egzersiz programlarını listeler | GET | Programlar |
+| 7 | Kullanıcı programları zorluk seviyesine göre filtreler | GET | Programlar |
+| 8 | Kullanıcı bir program seçer ve detaylarını görüntüler | GET, POST | Program Detayı |
+| 12 | Kullanıcı toplam puanını görüntüler | GET | Ana Sayfa |
+| 14 | Kullanıcı kazandığı rozetleri görüntüler | GET | Ana Sayfa |
+| 15 | Kullanıcı günlük seri sayısını görüntüler | GET | Ana Sayfa |
 
 ## Ortak Componentler
 
@@ -101,9 +116,9 @@ Uygulama `AuthProvider` ile sarılır. Token veya kullanıcı bilgisi varsa ana 
 | Streak/seri görüntüle / güncelle | `DashboardScreen` |
 | Antrenman kaydını sil | `WorkoutHistoryScreen` |
 
-## Sema Nur Yılmaz'ın Frontend Katkıları
+## Sema Nur Yılmaz'ın Mobil Katkıları
 
-Sema Nur Yılmaz'ın mobil front-end kapsamındaki katkıları:
+Sema Nur Yılmaz'ın sorumlu olduğu mobil gereksinimlerin ekran ve demo akışı kapsamındaki katkıları:
 
 - Expo mobil iskeletinin oluşturulması
 - Login/Register ekran tasarımları
@@ -114,6 +129,7 @@ Sema Nur Yılmaz'ın mobil front-end kapsamındaki katkıları:
 - Mobil navigation kurulumu
 - Mock data ile demo görünümünün hazırlanması
 - Türkçe tab adları ve final demo görünümü
+- Sorumlu gereksinimlerin mobilde API bağlantılı çalışır şekilde gösterilmesi
 
 İlgili branch ve commit:
 

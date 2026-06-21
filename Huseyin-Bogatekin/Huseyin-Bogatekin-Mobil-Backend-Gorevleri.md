@@ -1,11 +1,11 @@
-# Hüseyin Boğatekin Mobil Back-End Görevleri
+# Hüseyin Boğatekin Sorumlu Mobil Gereksinim Görevleri
 
 ## Öğrenci Bilgisi
 
 | Alan | Bilgi |
 |---|---|
 | Öğrenci adı | Hüseyin Boğatekin |
-| Görev alanı | Mobil Back-End / REST API Entegrasyonu |
+| Görev alanı | Sorumlu mobil gereksinimlerin REST API bağlantılı demo akışı |
 | Branch | `feature/huseyin-mobile-api` |
 
 ## Commitler
@@ -20,7 +20,7 @@
 
 ## Yapılan İşler
 
-Hüseyin'in mobil back-end / REST API entegrasyonu kapsamında yaptığı işler:
+Hüseyin'in sorumlu olduğu mobil gereksinimlerin REST API bağlantılı demo akışı kapsamında yaptığı işler:
 
 - Axios API client kurulumu
 - `Authorization: Bearer <token>` header desteği
@@ -41,6 +41,20 @@ Hüseyin'in mobil back-end / REST API entegrasyonu kapsamında yaptığı işler
 - Redis kanıtı için Leaderboard endpoint bağlantısı
 - RabbitMQ kanıtı için Demo Antrenman Kaydet aksiyonu
 - Jenkins mobil CI stage bilgisinin dokümantasyonda görünür hale getirilmesi
+
+## Sorumlu Gereksinimler
+
+| Gereksinim no | Açıklama | HTTP metodu | Mobil ekran | Videoda gösterilecek işlem |
+|---|---|---|---|---|
+| 3 | Kullanıcı profil bilgilerini görüntüler | GET | Profil | Profil bilgisinin API ile görüntülenmesi |
+| 4 | Kullanıcı profil bilgilerini günceller | PUT | Profil | Profil güncelleme isteği |
+| 5 | Kullanıcı hesabını siler | DELETE | Profil | Hesap silme onay akışı |
+| 9 | Kullanıcı yaptığı antrenmanı kaydeder | POST | Antrenmanlar | Demo Antrenman Kaydet ve RabbitMQ kuyruğu |
+| 10 | Kullanıcı geçmiş antrenmanlarını görüntüler | GET | Antrenmanlar | Workout geçmişi listesi |
+| 11 | Kullanıcı tamamladığı antrenman için puan kazanır | PUT | Antrenmanlar | Puan Kazan aksiyonu |
+| 13 | Kullanıcı belirli puanlara ulaştığında rozet kazanır | POST | Ana Sayfa | Demo Rozet Kazan aksiyonu |
+| 16 | Kullanıcı seri bilgilerini günceller | PUT | Ana Sayfa | Seriyi Güncelle aksiyonu |
+| 17 | Kullanıcı antrenman kaydını siler | DELETE | Antrenmanlar | Workout silme işlemi |
 
 ## İlgili Dosyalar
 
@@ -85,18 +99,6 @@ Hüseyin'in mobil back-end / REST API entegrasyonu kapsamında yaptığı işler
 | PUT | `/streak` |
 | GET | `/leaderboard?period=week/month` |
 
-## İlgili Gereksinim Numaraları
-
-| Gereksinim no | Backend/API katkısı |
-|---|---|
-| 1, 2 | Register/Login API bağlantıları |
-| 3, 4, 5 | Profil görüntüleme, güncelleme ve silme |
-| 6, 7, 8 | Program listeleme, filtreleme, detay ve seçme |
-| 9, 10, 11, 17 | Workout kaydetme, listeleme, puan kazanma ve silme |
-| 12, 13, 14 | Puan ve rozet API bağlantıları |
-| 15, 16 | Streak görüntüleme ve güncelleme |
-| Demo | Leaderboard/Redis ve RabbitMQ workout kanıt akışları |
-
 ## Redis/RabbitMQ Kanıt Akışları
 
 | Teknoloji | Mobil ekran/aksiyon | Endpoint | Kanıt |
@@ -106,18 +108,15 @@ Hüseyin'in mobil back-end / REST API entegrasyonu kapsamında yaptığı işler
 
 ## Kanıt Videosunda Gösterilecek Hüseyin Görevleri
 
-1. Login API ile giriş
-2. Register API ile kayıt isteği
-3. Program listesinin API'den çekilmesi
-4. Program filtreleme
-5. Program seçme API isteği
-6. Dashboard points/badges/streak verileri
-7. Workout history listeleme
-8. Workout silme
-9. Profile update
-10. Profile delete veya logout akışı
-11. RabbitMQ için Demo Antrenman Kaydet akışı
-12. Redis için Liderlik > Yenile akışı
+1. Profil görüntüleme, güncelleme ve silme
+2. Demo Antrenman Kaydet ile `POST /workouts` ve RabbitMQ kuyruğu
+3. Workout geçmişi listeleme
+4. Puan Kazan aksiyonu
+5. Demo Rozet Kazan aksiyonu
+6. Seriyi Güncelle aksiyonu
+7. Workout silme işlemi
+8. Redis için Liderlik > Yenile akışı
+9. Kendi sorumlu gereksinimlerini kendi sesiyle anlatması
 
 ## Backend Kapalıyken Fallback
 

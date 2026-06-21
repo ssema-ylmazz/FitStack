@@ -1,17 +1,17 @@
-# Sema Yılmaz Mobil Front-End Görevleri
+# Sema Yılmaz Sorumlu Mobil Gereksinim Görevleri
 
 ## Öğrenci Bilgisi
 
 | Alan | Bilgi |
 |---|---|
 | Öğrenci adı | Sema Nur Yılmaz |
-| Görev alanı | Mobil Front-End |
+| Görev alanı | Sorumlu mobil gereksinimlerin ekran + API bağlantılı demo akışı |
 | Branch | `feature/sema-mobile-frontend` |
 | Commitler | `bf2595bc Add FitStack mobile frontend screens`, `b27bbe1 Polish mobile UI for final demo` |
 
 ## Yapılan İşler
 
-Sema'nın mobil front-end kapsamında yaptığı işler:
+Sema'nın sorumlu olduğu mobil gereksinimlerin demo akışı kapsamında yaptığı işler:
 
 - Expo mobil uygulama iskeletinin oluşturulması
 - Login ekranı tasarımı
@@ -25,6 +25,20 @@ Sema'nın mobil front-end kapsamında yaptığı işler:
 - Mock data ile demo görünümünün hazırlanması
 - Türkçe tab adları ve final demo görünümünün iyileştirilmesi
 - Program kartları, dashboard, leaderboard ve workout ekranlarında okunabilirlik düzenlemeleri
+- Sorumlu gereksinimlerin mobilde API bağlantılı çalışır şekilde gösterilmesi
+
+## Sorumlu Gereksinimler
+
+| Gereksinim no | Açıklama | HTTP metodu | Mobil ekran | Videoda gösterilecek işlem |
+|---|---|---|---|---|
+| 1 | Kullanıcı sisteme kayıt olur | POST | Register | Kayıt formu ve kayıt isteği |
+| 2 | Kullanıcı sisteme giriş yapar | POST | Login | Giriş formu ve oturum açma |
+| 6 | Kullanıcı hazır egzersiz programlarını listeler | GET | Programlar | Program listesinin görüntülenmesi |
+| 7 | Kullanıcı programları zorluk seviyesine göre filtreler | GET | Programlar | Seviye filtresinin kullanılması |
+| 8 | Kullanıcı bir program seçer ve detaylarını görüntüler | GET, POST | Program Detayı | Detay ekranı ve Programı Seç aksiyonu |
+| 12 | Kullanıcı toplam puanını görüntüler | GET | Ana Sayfa | Toplam puan kartının gösterilmesi |
+| 14 | Kullanıcı kazandığı rozetleri görüntüler | GET | Ana Sayfa | Rozet listesinin gösterilmesi |
+| 15 | Kullanıcı günlük seri sayısını görüntüler | GET | Ana Sayfa | Seri bilgisinin gösterilmesi |
 
 ## İlgili Dosyalar
 
@@ -54,28 +68,15 @@ Sema'nın mobil front-end kapsamında yaptığı işler:
 | `fitstack-mobile/src/constants/colors.js` | Renk sabitleri |
 | `fitstack-mobile/src/constants/mockData.js` | Demo veriler |
 
-## İlgili Gereksinim Numaraları
-
-| Gereksinim no | Frontend katkısı |
-|---|---|
-| 1, 2 | Login/Register ekranlarının kullanıcı arayüzü |
-| 3, 4, 5 | Profil ekranı form ve aksiyon görünümü |
-| 6, 7, 8 | Program listeleme, filtreleme ve detay ekranları |
-| 9, 10, 11, 17 | Antrenmanlar ekranı, workout kartları ve aksiyon butonları |
-| 12, 13, 14, 15, 16 | Ana Sayfa puan, rozet ve seri kartları |
-| Demo | Liderlik tabı ve Redis kanıt ekranı görünümü |
-
 ## Kanıt Videosunda Gösterilecek Sema Görevleri
 
-1. Login/Register ekran tasarımları
-2. Dashboard kartları ve genel mobil görünüm
-3. Programs ekranındaki program kartları
-4. ProgramDetail ekranındaki egzersiz listesi
-5. Tab navigasyon yapısı
-6. Ortak componentlerin farklı ekranlarda kullanımı
-7. Final demo için Türkçe tablar: Ana Sayfa, Programlar, Antrenmanlar, Liderlik, Profil
-8. 17 gereksinimin mobil ekranda görünür olması
+1. Register ve Login akışı
+2. Program listesinin API bağlantılı şekilde gösterilmesi
+3. Program seviye filtresinin kullanılması
+4. Program detay ve seçme akışı
+5. Ana Sayfa toplam puan, rozet ve seri alanları
+6. Kendi sorumlu gereksinimlerini kendi sesiyle anlatması
 
 ## Not
 
-Bu dosya Sema'nın mobil front-end katkılarını görünür yapmak için hazırlanmıştır. REST API bağlantıları ve token yönetimi Hüseyin'in mobil back-end/API entegrasyon görevi altında belgelenmiştir.
+Bu dosya Sema'nın sorumlu olduğu gereksinimlerin mobil ekran ve API bağlantılı demo akışını görünür yapmak için hazırlanmıştır.

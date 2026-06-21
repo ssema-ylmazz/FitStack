@@ -8,8 +8,10 @@ FitStack; egzersiz programı listeleme, antrenman takibi, puan, rozet ve günlü
 
 | Ekip üyesi | Görev |
 |---|---|
-| Sema Nur Yılmaz | Mobil Frontend |
-| Hüseyin Boğatekin | Mobil Backend / REST API bağlantısı |
+| Sema Nur Yılmaz | Gereksinim 1, 2, 6, 7, 8, 12, 14, 15 için mobil ekran ve API bağlantılı demo akışı |
+| Hüseyin Boğatekin | Gereksinim 3, 4, 5, 9, 10, 11, 13, 16, 17 için mobil ekran/API akışı, Redis/RabbitMQ ve REST API kanıtı |
+
+Her ekip üyesi kendi sorumlu olduğu gereksinimleri kendi sesiyle anlatır. Görev dağılımı teknoloji bazlı değil, gereksinim bazlıdır.
 
 ## Kanıt Videosunda Gösterilecek Başlıklar
 
@@ -41,6 +43,35 @@ FitStack; egzersiz programı listeleme, antrenman takibi, puan, rozet ve günlü
 15. Ana Sayfa ekranında günlük seri bilgisi görüntülenir.
 16. Ana Sayfa ekranında Seriyi Güncelle aksiyonu gösterilir.
 17. Antrenmanlar ekranında workout silme aksiyonu gösterilir.
+
+## Sema Nur Yılmaz Sunum Akışı
+
+| Gereksinim no | Gösterilecek işlem | Mobil ekran |
+|---|---|---|
+| 1 | Kullanıcı kaydı | Register |
+| 2 | Kullanıcı girişi | Login |
+| 6 | Program listesini görüntüleme | Programlar |
+| 7 | Programları zorluk seviyesine göre filtreleme | Programlar |
+| 8 | Program detayını görüntüleme ve program seçme | Program Detayı |
+| 12 | Toplam puanı görüntüleme | Ana Sayfa |
+| 14 | Rozetleri görüntüleme | Ana Sayfa |
+| 15 | Günlük seri sayısını görüntüleme | Ana Sayfa |
+
+## Hüseyin Boğatekin Sunum Akışı
+
+| Gereksinim no | Gösterilecek işlem | Mobil ekran |
+|---|---|---|
+| 3 | Profil bilgilerini görüntüleme | Profil |
+| 4 | Profil bilgilerini güncelleme | Profil |
+| 5 | Hesap silme onay akışı | Profil |
+| 9 | Demo antrenman kaydetme | Antrenmanlar |
+| 10 | Geçmiş antrenmanları görüntüleme | Antrenmanlar |
+| 11 | Antrenman için puan kazanma | Antrenmanlar |
+| 13 | Demo rozet kazanma | Ana Sayfa |
+| 16 | Seri bilgisini güncelleme | Ana Sayfa |
+| 17 | Antrenman kaydını silme | Antrenmanlar |
+
+Teknik kanıt videolarında Jenkins grup adına bir kişi tarafından gösterilebilir. RabbitMQ ve Redis kanıtları ilgili mobil gereksinim aksiyonlarına bağlı olarak gösterilir.
 
 ## RabbitMQ Kanıtı
 

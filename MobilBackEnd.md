@@ -14,12 +14,12 @@ Bu dokümanda FitStack mobil uygulamasının backend REST API bağlantısı ve m
 
 Fiziksel telefonda `localhost` telefonun kendisini gösterdiği için bilgisayarın LAN IP adresi kullanılmalıdır. Kişisel IP değerleri repo'ya commitlenmemelidir.
 
-## Grup Üyelerinin Mobil Backend Görevleri
+## Grup Üyelerinin Gereksinim Bazlı Mobil Görevleri
 
-| Üye | Görev alanı | Doküman |
+| Üye | Sorumlu gereksinimler | Doküman |
 |---|---|---|
-| Hüseyin Boğatekin | Mobil REST API bağlantıları, token yönetimi, Redis/RabbitMQ tetikleyicileri | [Hüseyin mobil backend görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md) |
-| Sema Nur Yılmaz | Mobil ekran ve component tasarımları | [Sema mobil frontend görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md) |
+| Sema Nur Yılmaz | 1, 2, 6, 7, 8, 12, 14, 15 | [Sema mobil görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md) |
+| Hüseyin Boğatekin | 3, 4, 5, 9, 10, 11, 13, 16, 17 | [Hüseyin mobil görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md) |
 
 ## Genel Mobil Backend Prensipleri
 
@@ -110,6 +110,22 @@ Fonksiyonlar:
 | 17 | `/workouts/:id` | DELETE | Antrenmanlar | Antrenman kaydını silme |
 | Demo | `/leaderboard?period=week/month` | GET | Liderlik | Redis cache kanıtı |
 
+## Hüseyin Boğatekin'in Sorumlu Gereksinimleri
+
+Hüseyin Boğatekin, aşağıdaki gereksinimlerin mobil ekran/API akışını, REST API bağlantısını ve kanıt videosunda çalışır durumunu anlatır.
+
+| Gereksinim no | Açıklama | Endpoint | Method | Mobil ekran |
+|---|---|---|---|---|
+| 3 | Kullanıcı profil bilgilerini görüntüler | `/users/profile` | GET | Profil |
+| 4 | Kullanıcı profil bilgilerini günceller | `/users/profile` | PUT | Profil |
+| 5 | Kullanıcı hesabını siler | `/users/profile` | DELETE | Profil |
+| 9 | Kullanıcı yaptığı antrenmanı kaydeder | `/workouts` | POST | Antrenmanlar |
+| 10 | Kullanıcı geçmiş antrenmanlarını görüntüler | `/workouts` | GET | Antrenmanlar |
+| 11 | Kullanıcı tamamladığı antrenman için puan kazanır | `/workouts/:id/points` | PUT | Antrenmanlar |
+| 13 | Kullanıcı belirli puanlara ulaştığında rozet kazanır | `/badges` | POST | Ana Sayfa |
+| 16 | Kullanıcı seri bilgilerini günceller | `/streak` | PUT | Ana Sayfa |
+| 17 | Kullanıcı antrenman kaydını siler | `/workouts/:id` | DELETE | Antrenmanlar |
+
 ## Redis Bağlantısı
 
 Leaderboard ekranı `GET /leaderboard?period=week/month` endpointini çağırır. Backend bu yanıtta Redis cache kullanır. Kanıt videosunda ilk istek cache miss, sonraki istek cache hit olarak backend logları veya Redis CLI ile gösterilebilir.
@@ -146,9 +162,9 @@ npx expo config --type public
 
 CI ortamında development server takılı kalmasın diye `npx expo start` kullanılmaz.
 
-## Hüseyin Boğatekin'in Mobil Backend Katkıları
+## Hüseyin Boğatekin'in Sorumlu Gereksinim Katkıları
 
-Hüseyin Boğatekin'in mobil back-end / REST API entegrasyonu kapsamındaki katkıları:
+Hüseyin Boğatekin'in sorumlu olduğu mobil gereksinimlerin REST API bağlantılı demo akışı kapsamındaki katkıları:
 
 - Axios API client kurulumu
 - Authorization Bearer token interceptor
