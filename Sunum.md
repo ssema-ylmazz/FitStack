@@ -24,7 +24,7 @@
 | Video | Açıklama | Bağlantı |
 |---|---|---|
 | Mobil Gereksinim Kanıt Videosu | Hüseyin Boğatekin tarafından 3, 4, 5, 9, 10, 11, 13, 16 ve 17 numaralı gereksinimler gösterilecektir. | [Video linki eklenecek](#) |
-| Docker + Jenkins CI/CD Kanıt Videosu | Docker Compose servisleri ve CI/CD yapılandırması gösterilecektir. Jenkins kanıtı grup adına tek kişi tarafından sunulduğu için ayrıca Jenkins kurulumu gösterilmeyebilir. | [Video linki eklenecek](#) |
+| Docker + Jenkins CI/CD Kanıt Videosu | Docker Compose servisleri ve CI/CD yapılandırması gösterilecektir. Jenkins kanıtı grup adına tek kişi tarafından sunulduğu için ayrıca Jenkins kurulumu gösterilmeyebilir. | [Video linki ](https://www.youtube.com/watch?v=e7yQMmqll7E&t=12s) |
 | RabbitMQ/Kafka Kanıt Videosu | Antrenman kaydetme gereksinimi üzerinden RabbitMQ kullanımı gösterilecektir. | [Video linki eklenecek](#) |
 | Redis/Memcached Kanıt Videosu | Liderlik ekranı üzerinden Redis cache kullanımı gösterilecektir. | [Video linki](https://studio.youtube.com/video/M1wDtxhP8Ek/edit) |
 
