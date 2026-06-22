@@ -7,7 +7,7 @@
 | CI/CD ve Docker kanıt videosu | [](#) |
 | RabbitMQ kanıt videosu | [Video linki buraya eklenecek](#) |
 | Redis kanıt videosu | [Video linki buraya eklenecek](#) |
-| Genel ekip sunum videosu | (https://www.youtube.com/shorts/ezBXX10bPcs)(#) |
+| Genel ekip sunum videosu | (https://www.youtube.com/shorts/ezBXX10bPcs) |
 
 
 ## Proje Özeti
