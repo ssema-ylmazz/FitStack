@@ -14,7 +14,7 @@
 
 | Video | Açıklama | Bağlantı |
 |---|---|---|
-| Mobil Gereksinim Kanıt Videosu | ||[Video linki ](https://www.youtube.com/shorts/qiECklbSuuI) |
+| Mobil Gereksinim Kanıt Videosu | | [Video linki ](https://www.youtube.com/shorts/qiECklbSuuI) |
 | Docker + Jenkins CI/CD Kanıt Videosu | Docker Compose servisleri ve Jenkins CI/CD yapısı gösterilmiştir. Jenkins kanıtı grup adına tek kişi tarafından sunulmuştur. | [Video linki](https://www.youtube.com/watch?v=e7yQMmqll7E&t=12s) |
 | RabbitMQ/Kafka Kanıt Videosu | Antrenman kaydetme gereksinimi üzerinden RabbitMQ kullanımı gösterilecektir. | [Video linki eklenecek](#) |
 | Redis/Memcached Kanıt Videosu | Liderlik ekranı üzerinden Redis cache kullanımı gösterilecektir. | [Video linki eklenecek](#) |
