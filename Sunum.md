@@ -1,5 +1,15 @@
 # FitStack Video Sunum / Kanıt Planı
 
+## Video Linkleri
+
+| Video | Bağlantı |
+|---|---|
+| CI/CD ve Docker kanıt videosu | [https://www.youtube.com/watch?v=e7yQMmqll7E](#) |
+| RabbitMQ kanıt videosu | [Video linki buraya eklenecek](#) |
+| Redis kanıt videosu | [Video linki buraya eklenecek](#) |
+| Genel ekip sunum videosu | [Sunum videosu linki buraya eklenecek](#) |
+
+
 ## Proje Özeti
 
 FitStack; egzersiz programı listeleme, antrenman takibi, puan, rozet ve günlük seri sistemini içeren bir fitness takip uygulamasıdır. Projede web frontend, Expo tabanlı mobil uygulama, Node.js/Express REST API, Redis cache, RabbitMQ mesaj kuyruğu, Docker Compose ve Jenkins CI/CD akışı birlikte gösterilecektir.
@@ -131,14 +141,6 @@ npm install
 npm start
 ```
 
-## Video Linkleri
-
-| Video | Bağlantı |
-|---|---|
-| CI/CD ve Docker kanıt videosu | [Video linki buraya eklenecek](#) |
-| RabbitMQ kanıt videosu | [Video linki buraya eklenecek](#) |
-| Redis kanıt videosu | [Video linki buraya eklenecek](#) |
-| Genel ekip sunum videosu | [Sunum videosu linki buraya eklenecek](#) |
 
 ## Sunum Kontrol Listesi
 
