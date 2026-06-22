@@ -4,7 +4,7 @@
 
 | Video | Bağlantı |
 |---|---|
-| CI/CD ve Docker kanıt videosu | [https://www.youtube.com/watch?v=e7yQMmqll7E](#) |
+| CI/CD ve Docker kanıt videosu | [](#) |
 | RabbitMQ kanıt videosu | [Video linki buraya eklenecek](#) |
 | Redis kanıt videosu | [Video linki buraya eklenecek](#) |
 | Genel ekip sunum videosu | [Sunum videosu linki buraya eklenecek](#) |
