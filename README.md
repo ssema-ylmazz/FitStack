@@ -78,8 +78,7 @@ Proje dokümantasyonuna aşağıdaki bağlantılardan ulaşabilirsiniz:
 6. [Mobil Back-End / REST API Bağlantısı](MobilBackEnd.md) — Mobil API client, endpointler, Redis/RabbitMQ ve Jenkins mobil stage açıklaması
 7. [Video Sunum / Kanıt Planı](Sunum.md)
 8. [Mobil Expo README](fitstack-mobile/README.md)
-9. [Sema Yılmaz Mobil Front-End Görevleri](Sema-Yilmaz/Sema-Yilmaz-Mobil-Frontend-Gorevleri.md)
-10. [Hüseyin Boğatekin Mobil Back-End Görevleri](Huseyin-Bogatekin/Huseyin-Bogatekin-Mobil-Backend-Gorevleri.md)
+
 
 
 ### Mobil görev dağılımı
