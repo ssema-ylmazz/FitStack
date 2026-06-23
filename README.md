@@ -81,13 +81,6 @@ Proje dokümantasyonuna aşağıdaki bağlantılardan ulaşabilirsiniz:
 
 
 
-### Mobil görev dağılımı
-
-| Ekip üyesi | Sorumlu gereksinimler | Kanıt kapsamı |
-|---|---|---|
-| Sema Nur Yılmaz | 1, 2, 6, 7, 8, 12, 14, 15 | Kendi gereksinimlerinin mobil ekranı, navigation akışı ve API bağlantılı çalışması |
-| Hüseyin Boğatekin | 3, 4, 5, 9, 10, 11, 13, 16, 17 | Kendi gereksinimlerinin mobil ekran/API akışı, auth/token, profil, workout, puan, rozet, streak ve Redis/RabbitMQ kanıtı |
-| Ortak | Docker, Jenkins, Redis/RabbitMQ altyapı gösterimi | Teknik servislerin çalıştığını ve mobil demo ile bağlandığını gösterme |
 
 
 ## Yerel geliştirme
